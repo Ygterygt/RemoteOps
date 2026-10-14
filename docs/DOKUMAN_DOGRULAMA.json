@@ -1,0 +1,112 @@
+﻿{
+  "date": "2026-10-14",
+  "distribution": "YD_RemoteOps.App_v11",
+  "broken_document_links": [],
+  "pdfs": [
+    {
+      "file": "docs\\RemoteOps_Calisma_Mantigi.pdf",
+      "pages": 4,
+      "bytes": 75011
+    },
+    {
+      "file": "docs\\RemoteOps_Inceleme_Raporu.pdf",
+      "pages": 6,
+      "bytes": 57269
+    },
+    {
+      "file": "docs\\RemoteOps_Operasyon_Olustur_Tasarim.pdf",
+      "pages": 3,
+      "bytes": 70540
+    },
+    {
+      "file": "docs\\RemoteOps_Teknik_El_Kitabi.pdf",
+      "pages": 15,
+      "bytes": 111417
+    },
+    {
+      "file": "KULLANIM_KILAVUZU.pdf",
+      "pages": 15,
+      "bytes": 1045666
+    }
+  ],
+  "test_files": {
+    "total": 50,
+    "passed": 50,
+    "failed": 0,
+    "known_failures": []
+  },
+  "powershell_parse": {
+    "files": 67,
+    "errors": 0
+  },
+  "remote_pilot": "v11: 26/26 read-only local transport gates passed. Historical v10: 18/18 owned-fixture operations passed and resources cleaned. Company-domain acceptance remains separate.",
+  "visual_review": "Actual WPF yellow target and dashboard reviewed; Edge-rendered HTML single-unreachable graph shows 100% yellow and 0 error; rebuilt v11 PDF contact sheets and text reviewed.",
+  "v10_fixes": [
+    "Turkish culture ASCII I validation",
+    "DCOM scheduled-task deletion Confirm compatibility"
+  ],
+  "v10_features": [
+    "Operation field examples",
+    "Per-run pulled files and per-client Explorer shortcuts"
+  ],
+  "v11_access_live_test": {
+    "report": "docs/live-test-v11/ACCESS_LIVE_TEST.json",
+    "passed": 26,
+    "failed": 0,
+    "read_only": true,
+    "target_operations_invoked": false,
+    "target_resources_created": false
+  },
+  "v11_changes": [
+    "Common operation-specific SMB/DCOM gate before target execution, serial and parallel",
+    "Unreachable neutral in WPF rows/daily cards/categories/package summaries and HTML graphs",
+    "AccessDenied and genuine failures remain errors",
+    "Blocked package identity/action/detail preserved in durable results",
+    "Whole SMB probe bounded; own timeout child terminated",
+    "Unsupported operation/plugin dispatch validated before target access",
+    "Unchecked versionless scripts retain no-WMI semantics",
+    "Previous v10 operation modules unchanged by SHA256"
+  ],
+  "v11_code_review": {
+    "independent": true,
+    "remaining_blockers": 0,
+    "addressed": [
+      "Package metadata preservation",
+      "Network unreachable socket codes",
+      "Whole SMB deadline",
+      "Unknown/plugin validation order",
+      "Blank-identity direct-trigger compatibility"
+    ]
+  },
+  "runtime_sha256": {
+    "Modules\\ApplicationWorkers.ps1": "3545b6ecb54225776feef8e221d7f374a31d0b4a08415145e2381506d0867e72",
+    "Modules\\FileOperations.ps1": "369df022ad9b4f182843806960281d22a07ab2339fd6165d8ba23defb584e038",
+    "Modules\\HealthOperations.ps1": "9a5ccda1d8c47376b69a0d30ab16c4d59a0b23e8fb06dc35d97f43ce99e3cdf5",
+    "Modules\\InventoryOperations.ps1": "684aa995201a8d5383a45a0820c15d3b0c0f380269e26b5301c1350c20398574",
+    "Modules\\RegistryOperations.ps1": "0dd43d8b597ab1526638ba005d54b9c903217bce88c41a148718d44a431ac8d1",
+    "Modules\\ServiceTaskOperations.ps1": "d36e92db12ff3b22e49c820b04056619189439820934d4a1e58f64e7e425453d",
+    "RemoteOps.App\\RemoteOps.App.bat": "334974bc20a294b9609afaa240a25e44edcf9d2b72a2c67cfe10b930c3cfbd0b",
+    "RemoteOps.App\\RemoteOps.App.ps1": "06684ee687c601ea5877870895b06085b4faf6f952f54c3b889ef163a9f99bdb",
+    "RemoteOps.App\\RemoteOps.Deployment.ps1": "d0d992f8257269a30d321839021a3369387e8fc2c7a8ba375849f6051398459f",
+    "RemoteOps.App\\RemoteOps.Packages.ps1": "6bc576d0f096152c5cb5c24daea73882f0ecf21c9d6c6b525252020dee998007",
+    "RemoteOps.App\\RemoteOps.PackageUi.ps1": "048a9bf40e1d05a9f9d9c61d88a7e26cd272c4419d83cebf7bdce1453ba25fa1",
+    "RemoteOps.App\\RemoteOps.Reports.ps1": "a765df937db6712dca3a0ca03724bd85edae4122cc1728c47a281313386045fe",
+    "RemoteOps.App\\RemoteOps.Runner.ps1": "b77858e11d78be5461a951044aa8a7d11789e9ad028b3c3f3b6f25f6d1ae7e2d",
+    "RemoteOps.App\\RemoteOps.RunState.ps1": "283d95cfd2ba151f8fc2bdcaef28cf6f2fde73e9de2cd0242efa9d65b76c4842"
+  },
+  "publication": {
+    "version": 11,
+    "application_sources": "Unmodified v11 runtime sources",
+    "test_outputs": "Public summaries omit machine names, local paths and raw execution logs",
+    "third_party_binary": "PsExec.exe is not distributed in this repository; install separately from Microsoft Sysinternals.",
+    "verification": "All runtime PS1 files equal v11 byte-for-byte; secret-pattern/local-user-path scan and PDF text checks passed; Markdown links resolved.",
+    "test_portability": "PackageTrigger test resolves a temporary placeholder rather than requiring a distributed PsExec binary; no runtime source change.",
+    "regression_result": {
+      "test_files": 50,
+      "passed": 50,
+      "failed": 0,
+      "powershell_parse_files": 67,
+      "real_psexec_required_for_regression": false
+    }
+  }
+}

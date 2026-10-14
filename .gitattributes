@@ -1,0 +1,10 @@
+* text=auto
+# Preserve PowerShell BOM/line endings for Windows PowerShell 5.1.
+*.ps1 -text
+*.bat -text
+*.md text eol=lf
+*.yml text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.png binary
+*.pdf binary

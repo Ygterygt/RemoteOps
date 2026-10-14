@@ -1,0 +1,170 @@
+﻿{
+  "ExecutedAt": "2026-10-14T17:49:10.3692810+03:00",
+  "Version": 11,
+  "Admin": true,
+  "ReadOnly": true,
+  "TargetOperationsInvoked": false,
+  "TemporaryTargetResourcesCreated": false,
+  "Passed": 26,
+  "Failed": 0,
+  "Cases": [
+    {
+      "Operation": "ApplicationCheck",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.06
+    },
+    {
+      "Operation": "ApplicationInventory",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "EndpointInventory",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0
+    },
+    {
+      "Operation": "FileBrowser",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.52
+    },
+    {
+      "Operation": "FileCompare",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.38
+    },
+    {
+      "Operation": "FileDelete",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.42
+    },
+    {
+      "Operation": "FilePull",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.45
+    },
+    {
+      "Operation": "FilePush",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.4
+    },
+    {
+      "Operation": "FileRestore",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.47
+    },
+    {
+      "Operation": "FileRollback",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.42
+    },
+    {
+      "Operation": "HealthCheck",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "PackageDeployment",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.38
+    },
+    {
+      "Operation": "PackageTrigger",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.37
+    },
+    {
+      "Operation": "ProcessKill",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ProcessQuery",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "RegistryDelete",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0
+    },
+    {
+      "Operation": "RegistryEdit",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "RegistryRead",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "RegistryRollback",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ScheduledTaskAction",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ScheduledTaskDelete",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ScheduledTaskList",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ServiceControl",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ServiceList",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ServiceStartup",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    },
+    {
+      "Operation": "ServiceTaskRollback",
+      "Status": "Success",
+      "Passed": true,
+      "Seconds": 0.01
+    }
+  ],
+  "PublicCopy": true,
+  "Redactions": "Local computer names, filesystem paths, fixture identities and raw execution logs omitted."
+}

@@ -1,0 +1,11 @@
+# Katkı ve doğrulama
+
+- Uygulama Windows PowerShell 5.1 ve WPF kullanır. PowerShell kaynaklarında UTF-8 BOM ve mevcut Windows uyumluluğunu koruyun.
+- Değişikliği mevcut akışlarla sınırlayın; veri kökü ve AppData katalog/profil yollarını kendiliğinden değiştirmeyin.
+- İlgili regresyonu ekleyip `tests\Invoke-RegressionTests.ps1` çalıştırın. Normal tur yalnızca `*.Tests.ps1` dosyalarını yürütür.
+- `-RunLive` isteyen araçlar yönetici yetkisiyle gerçek yerel kaynaklara erişir; CI veya sıradan regresyon turuna eklemeyin.
+- README, kullanım kılavuzu ve VERSION.json tamamlanan teslimi aynı şekilde anlatmalıdır.
+- Profil, parola, gerçek hedef listesi, şirket paketi, toplanmış dosya veya operasyon logu commit etmeyin. Örneklerde `PC-TEST`, `server\share` ve geçici fixture kullanın.
+- PsExec.exe repo dışı bağımlılıktır. Kendi indirdiğiniz kopyayı köke yerleştirebilirsiniz; `.gitignore` bunu yayına dahil etmez.
+
+Sorun bildirirken operasyon, beklenen/gerçek davranış ve kişisel veriler temizlenmiş hata metni yeterlidir. Gerçek UNC adreslerini, bilgisayar adlarını ve kimlik bilgilerini paylaşmayın.

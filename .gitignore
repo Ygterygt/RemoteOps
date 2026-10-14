@@ -1,0 +1,34 @@
+# Third-party executables are installed separately.
+*.exe
+*.msi
+*.zip
+
+# Runtime state, credentials, collected data and local test output.
+/Logs/
+/PulledLogs/
+/PulledFiles/
+/Data/
+/Profiles/
+/Backups/
+/TestResults/
+*.log
+*.tmp
+*.clixml
+*.pfx
+*.p12
+*.key
+.env
+.env.*
+!.env.example
+
+# Local render scratch files and historic raw execution evidence.
+/docs/pdf-kontrol/
+/docs/live-test/evidence*/
+/docs/live-test/first-run/
+/docs/superpowers/
+__pycache__/
+*.pyc
+.vs/
+.idea/
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,109 @@
+﻿{
+  "ExecutedAt": "2026-10-14T17:28:30.8991285+03:00",
+  "Admin": true,
+  "RemoteCallsMocked": false,
+  "ReportAutoOpenSuppressed": true,
+  "CleanupChecks": {
+    "OwnedProcessExited": true,
+    "TaskFolderAbsent": true,
+    "SandboxAbsent": true,
+    "RegistryAbsent": true,
+    "ServiceAbsent": true,
+    "TaskAbsent": true
+  },
+  "CleanupErrors": [],
+  "Cases": [
+    {
+      "Case": "Transport.CIM-DCOM",
+      "Status": "PASS",
+      "Seconds": 0.33
+    },
+    {
+      "Case": "Transport.AdminShare",
+      "Status": "PASS",
+      "Seconds": 0.02
+    },
+    {
+      "Case": "File.Pull",
+      "Status": "PASS",
+      "Seconds": 0.24
+    },
+    {
+      "Case": "File.Push",
+      "Status": "PASS",
+      "Seconds": 0.07
+    },
+    {
+      "Case": "File.Compare",
+      "Status": "PASS",
+      "Seconds": 0.13
+    },
+    {
+      "Case": "File.BackupDeleteRestore",
+      "Status": "PASS",
+      "Seconds": 0.43
+    },
+    {
+      "Case": "File.BrowsePull",
+      "Status": "PASS",
+      "Seconds": 0.05
+    },
+    {
+      "Case": "File.BrowseMoveRollback",
+      "Status": "PASS",
+      "Seconds": 0.09
+    },
+    {
+      "Case": "File.BrowseReplaceRollback",
+      "Status": "PASS",
+      "Seconds": 0.07
+    },
+    {
+      "Case": "Registry.CreateOwnedFixture",
+      "Status": "PASS",
+      "Seconds": 0.01
+    },
+    {
+      "Case": "Registry.ReadEditRollback",
+      "Status": "PASS",
+      "Seconds": 0.26
+    },
+    {
+      "Case": "Registry.DeleteRollback",
+      "Status": "PASS",
+      "Seconds": 0.09
+    },
+    {
+      "Case": "Service.CreateOwnedFixture",
+      "Status": "PASS",
+      "Seconds": 0.24
+    },
+    {
+      "Case": "Service.ListStartRestartStop",
+      "Status": "PASS",
+      "Seconds": 11.93
+    },
+    {
+      "Case": "Service.StartupRollback",
+      "Status": "PASS",
+      "Seconds": 1.26
+    },
+    {
+      "Case": "Task.CreateOwnedFixture",
+      "Status": "PASS",
+      "Seconds": 0.38
+    },
+    {
+      "Case": "Task.ListDisableEnableRunDeleteRollback",
+      "Status": "PASS",
+      "Seconds": 9.42
+    },
+    {
+      "Case": "Process.QueryKillOwnedPID",
+      "Status": "PASS",
+      "Seconds": 0.67
+    }
+  ],
+  "PublicCopy": true,
+  "Redactions": "Local computer names, filesystem paths, fixture identities and raw execution logs omitted."
+}
