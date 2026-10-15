@@ -8,7 +8,7 @@ Tek operatörün yazılım dağıtımı ve uzak bilgisayar operasyonları için 
 
 ![Adım sonuçları — yerel örnek veri](docs/screenshots-v28/v28-adim-sonuclari.png)
 
-[v28 sürüm sayfası](https://github.com/Ygterygt/RemoteOps/releases/tag/v28) · [Tam v28 ZIP paketi — Google Drive](https://drive.google.com/file/d/1yEC8havMfPkcBlYaR_tYw_yGWCHpuqUG/view?usp=drivesdk)
+[v28 sürüm sayfası](https://github.com/Ygterygt/RemoteOps/releases/tag/v28) 
 
 ## Güncel sürüm
 
