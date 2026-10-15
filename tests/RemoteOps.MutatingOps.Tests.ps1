@@ -1,4 +1,4 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 # Mock-only tests for state-changing registry/service/process operations: wrong confirmation words must change nothing,
@@ -17,8 +17,11 @@ function Remove-CimSession {param($CimSession)}
 $script:Calls=@();$script:RegMode='string';$script:RegValue='old'
 function Invoke-CimMethod {
     param($CimSession,$Namespace,$ClassName,$InputObject,$MethodName,$Arguments)
+    if($MethodName -eq 'EnumValues'){
+        return [pscustomobject]@{ReturnValue=0;sNames=@('V');Types=@($(if($script:RegMode -eq 'binary'){3}else{1}))}
+    }
     if($MethodName -eq 'GetStringValue'){
-        if($script:RegMode -eq 'dword'){return [PSCustomObject]@{ReturnValue=[uint32]2147749893;sValue=$null}}
+        if($script:RegMode -eq 'binary'){return [PSCustomObject]@{ReturnValue=[uint32]2147749893;sValue=$null}}
         if($script:RegMode -eq 'missing'){return [PSCustomObject]@{ReturnValue=[uint32]2;sValue=$null}}
         if($script:RegMode -eq 'error1'){return [PSCustomObject]@{ReturnValue=[uint32]1;sValue=$null}}
         if($script:RegMode -eq 'denied'){return [PSCustomObject]@{ReturnValue=[uint32]5;sValue=$null}}
@@ -68,8 +71,8 @@ try{
     Add-Answers '4',$Manifest[0].FullName,'NO','0'
     [void](&{$C=Common 'RB-2';Invoke-RegistryOperationsMenu @C})
     Assert-NoWrite 'registry rollback with wrong confirmation'
-    # --- non-REG_SZ value (e.g. DWORD): GetStringValue returns a type-mismatch code; edit/delete must be refused
-    $script:RegMode='dword'
+    # --- unsupported REG_BINARY values remain protected; DWORD is covered by RegistryTypes tests
+    $script:RegMode='binary'
     foreach($Case in @(@('edit','2','SOFTWARE\T','V','new','EDIT'),@('delete','3','SOFTWARE\T','V','DELETE'))){
         $script:Calls=@()
         Add-Answers ($Case[1..($Case.Count-1)]+'0')
@@ -105,6 +108,6 @@ try{
         [void](&{$C=Common;Invoke-ServiceTaskOperationsMenu @C})
         Assert-NoWrite $Case[0]
     }
-    Write-Output 'PASS: wrong confirmation changes nothing (registry/service/process), registry delete+rollback round trip, non-string registry values are never overwritten or deleted.'
+    Write-Output 'PASS: wrong confirmation changes nothing (registry/service/process), registry delete+rollback round trip, unsupported registry types are never overwritten or deleted.'
 }
 finally{if(Test-Path -LiteralPath $Temp){Remove-Item -LiteralPath $Temp -Recurse -Force -ErrorAction SilentlyContinue}}

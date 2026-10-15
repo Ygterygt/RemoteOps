@@ -1,5 +1,15 @@
 # Değişiklikler
 
+## v27 - 15 Ekim 2026
+
+- Güncel kabul edilen sürüm v27. v26 uygulama kodu korunarak hafif kabul testi ve doğrulama kayıtları eklendi.
+- Otomatik adlandırılan adımlar, adımın içinde koşul, sabit reçete ekranı ve ayrı işlem/çalışma koşulu düzenleyicisi.
+- Otomatik registry türü karşılaştırması, bağlama göre servis kontrolleri, All/Any, atlama/durdurma ve mevcut reçete uyumluluğu.
+- Tek operatör için ortak hedef araçları, sonuç filtreleri, teşhis ve geri alma geçişleri.
+- 17/17 çevrimdışı operasyon senaryosu, 12/12 güvenli yerel regresyon ve beş negatif sınır kontrolü geçti. 16 çalışma kaydı bağımsız doğrulandı.
+- Tek komutla çevrimdışı doğrulama turu eklendi. Gerçek ağ, registry sağlayıcısı ve domain ortamı test edilmiş sayılmaz.
+- Önceki dağıtımlar ve Git geçmişi korunur. Üçüncü taraf PsExec ikilisi kaynak repoya dahil edilmez.
+
 ## v11 — 14 Ekim 2026
 
 - Bütün operasyonlara işlem öncesi ortak SMB/WMI erişim kontrolü.

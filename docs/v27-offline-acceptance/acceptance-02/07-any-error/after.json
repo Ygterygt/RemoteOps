@@ -1,0 +1,197 @@
+{
+    "Targets":  {
+                    "SIM-PC1":  {
+                                    "Service":  {
+                                                    "Exists":  true,
+                                                    "Name":  "OfflineDemo",
+                                                    "State":  "Stopped",
+                                                    "Startup":  "Automatic"
+                                                },
+                                    "Registry":  {
+                                                     "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                             "Exists":  true,
+                                                                                             "ValueType":  "REG_SZ",
+                                                                                             "Value":  "16.0.444"
+                                                                                         }
+                                                 },
+                                    "ProbeErrors":  {
+                                                        "Service":  "Fixture read denied"
+                                                    }
+                                }
+                },
+    "Events":  [
+                   {
+                       "PID":  14384,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "ValidateTarget",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   },
+                                      "ProbeErrors":  {
+                                                          "Service":  "Fixture read denied"
+                                                      }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  },
+                                     "ProbeErrors":  {
+                                                         "Service":  "Fixture read denied"
+                                                     }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:11.9260540Z"
+                   },
+                   {
+                       "PID":  1804,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "ValidateTarget",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   },
+                                      "ProbeErrors":  {
+                                                          "Service":  "Fixture read denied"
+                                                      }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  },
+                                     "ProbeErrors":  {
+                                                         "Service":  "Fixture read denied"
+                                                     }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:13.5433683Z"
+                   },
+                   {
+                       "PID":  1804,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Probe",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   },
+                                      "ProbeErrors":  {
+                                                          "Service":  "Fixture read denied"
+                                                      }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  },
+                                     "ProbeErrors":  {
+                                                         "Service":  "Fixture read denied"
+                                                     }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:14.0273201Z"
+                   },
+                   {
+                       "PID":  1804,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Probe",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   },
+                                      "ProbeErrors":  {
+                                                          "Service":  "Fixture read denied"
+                                                      }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  },
+                                     "ProbeErrors":  {
+                                                         "Service":  "Fixture read denied"
+                                                     }
+                                 },
+                       "Error":  "Fixture read denied",
+                       "Time":  "2026-10-15T20:40:14.0783095Z"
+                   }
+               ],
+    "PauseAfterMutationMs":  0
+}

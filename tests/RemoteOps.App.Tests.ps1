@@ -1,6 +1,7 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
+. (Join-Path $WorkspaceRoot 'RemoteOps.App\RemoteOps.Recovery.ps1')
 $RunnerPath = Join-Path $WorkspaceRoot 'RemoteOps.App\RemoteOps.Runner.ps1'
 $Tokens = $null
 $ParseErrors = $null
@@ -44,7 +45,7 @@ function Unregister-ScheduledTask {
 }
 function Register-ScheduledTask {
     param($CimSession,$TaskName,$TaskPath,$Xml,$ErrorAction)
-    if($TaskName -ne 'Nightly' -or $TaskPath -ne '\Ops\' -or $Xml.Trim() -ne $script:TaskXml){throw 'Rollback task definition or identity differs from backup.'}
+    if($TaskName -ne 'Nightly' -or $TaskPath -ne '\Ops\' -or ([xml]$Xml).DocumentElement.OuterXml -ne ([xml]$script:TaskXml).DocumentElement.OuterXml){throw 'Rollback task definition or identity differs from backup.'}
     $script:RegisterCalls++
 }
 
@@ -83,7 +84,7 @@ try {
     [void](Invoke-ScheduledTaskActionRequest -InputValues @{TaskName='Nightly';Action='Disable'})
     $DisableManifest = Join-Path $DataRoot 'ServiceTaskRollbacks\TASK-DISABLE-TEST_ScheduledTasks.csv'
     $DisableRows = @(Import-Csv -LiteralPath $DisableManifest -Delimiter ';')
-    if ($DisableRows.Count -ne 1 -or $DisableRows[0].OldEnabled -ne 'True' -or $DisableRows[0].Action -ne 'EnableDisable') { throw 'Disable did not create a rollback row with the previous task state.' }
+    if ($DisableRows.Count -ne 1 -or $DisableRows[0].OldEnabled -ne 'True' -or $DisableRows[0].NewEnabled -ne 'False' -or $DisableRows[0].Action -ne 'EnableDisable') { throw 'Disable did not record the previous and requested task states.' }
     if ($script:DisableCalls -ne 1) { throw 'Disable action was not invoked exactly once.' }
 
     $script:OperationID = 'TASK-RUN-TEST'

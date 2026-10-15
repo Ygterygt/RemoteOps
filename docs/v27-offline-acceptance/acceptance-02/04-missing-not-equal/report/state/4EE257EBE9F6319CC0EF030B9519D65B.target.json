@@ -1,0 +1,61 @@
+{
+    "ComputerName":  "SIM-PC2",
+    "OperationID":  "GUI-20261015-233951-8ED2F3",
+    "SnapshotHash":  "07955F012B45469CF51CF1467F7BF30F87699EFB9F6B90C5CC4A680BB5F96740",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  2,
+    "Rows":  [
+                 {
+                     "Status":  "Success",
+                     "CheckIndex":  1,
+                     "Kind":  "RegistryValue",
+                     "Path":  "HKLM\\SOFTWARE\\Fixture",
+                     "Name":  "Version",
+                     "Operator":  "NotEquals",
+                     "Expected":  "16.0.444",
+                     "ExpectedType":  "Auto",
+                     "Observed":  "Missing",
+                     "Exists":  false,
+                     "ValueType":  "REG_SZ",
+                     "Value":  "16.0.444",
+                     "State":  "",
+                     "Startup":  "",
+                     "Matched":  false,
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "db45f4fc-18ed-4456-bcc0-be95882ac20a",
+                     "ParentRunId":  "GUI-20261015-233951-8ED2F3",
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-233951-8ED2F3",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 04-missing-not-equal",
+                     "OriginalOperationID":  "GUI-20261015-233951-8ED2F3-0002-S01",
+                     "RecipeId":  "d5c9abdf-0d9f-4ef1-aa1d-0019cfa1e737",
+                     "StepOperationID":  "GUI-20261015-233951-8ED2F3-0002-S01",
+                     "Operation":  "RecipeCondition"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-233951-8ED2F3",
+                     "ParentRunId":  "GUI-20261015-233951-8ED2F3",
+                     "StepOperationID":  "GUI-20261015-233951-8ED2F3-0002-S02",
+                     "StepId":  "177aeedd-cc97-4e13-83d0-37f7284c9dea",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "ConditionId":  "db45f4fc-18ed-4456-bcc0-be95882ac20a",
+                     "Status":  "Skipped",
+                     "ErrorDetail":  "Koşul sağlanmadığı için bu adım çalıştırılmadı."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC2",
+                    "Outcome":  "Completed",
+                    "CompletedAt":  "2026-10-15T23:39:58.1797067+03:00",
+                    "Detail":  "Reçete tamamlandı; koşul nedeniyle 1 adım atlandı.",
+                    "RecipeName":  "Offline 04-missing-not-equal",
+                    "RecipeId":  "d5c9abdf-0d9f-4ef1-aa1d-0019cfa1e737",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:39:58.1797067+03:00"
+}

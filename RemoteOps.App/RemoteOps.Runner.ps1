@@ -36,6 +36,8 @@ try {
     . (Join-Path $PSScriptRoot 'RemoteOps.Packages.ps1')
     . (Join-Path $PSScriptRoot 'RemoteOps.Deployment.ps1')
     . (Join-Path $PSScriptRoot 'RemoteOps.RunState.ps1')
+    . (Join-Path $PSScriptRoot 'RemoteOps.Recovery.ps1')
+    . (Join-Path $PSScriptRoot 'RemoteOps.RecipeExecution.ps1')
     # ReportCandidates : modullerin Start-Process ile acmaya calistigi .html/.csv dosyalari (sonuc kaynagi)
     # OperationMessages: Write-Host ile yazilan tum mesajlar (Activity raporu + sonuc tahmini icin)
     $script:ReportCandidates=@()
@@ -239,7 +241,7 @@ try {
     #   - Hedef sonucu (Success/Error/...) Activity'ye tek satir yazilir, progress guncellenir
     # ====================================================================
     function Invoke-TargetBatch {
-        param([string[]]$InputTargets,[string]$RunOperationID,[string]$ProgressPath,[scriptblock]$InvokeTarget,[int]$IndexOffset=0)
+        param([string[]]$InputTargets,[string]$RunOperationID,[string]$ProgressPath,[scriptblock]$InvokeTarget,[int]$IndexOffset=0,[string]$FixedTargetOperationID='')
         $BatchRows=New-Object 'System.Collections.Generic.List[object]'
         $BatchOutcomes=New-Object 'System.Collections.Generic.List[object]'
         $LiveTargets=@(foreach($Computer in $InputTargets){[PSCustomObject]@{ComputerName=$Computer;Stage='Pending';Outcome=''}})
@@ -250,7 +252,7 @@ try {
             $ReachableSystems=$Systems
             $UnreachableSystems=[string[]]@()
             # Hedef basina alt ID: modullerin ara dosyalari bu ID ile adlanir (sonra Detail'e tasinir).
-            $OperationID='{0}-{1:D4}' -f $RunOperationID,($IndexOffset+$Completed+1)
+            $OperationID=if($FixedTargetOperationID){if($InputTargets.Count -ne 1){throw 'Fixed step ID requires one target.'};$FixedTargetOperationID}else{'{0}-{1:D4}' -f $RunOperationID,($IndexOffset+$Completed+1)}
             $Common=$Common.Clone()
             $Common.Systems=$Systems
             $Common.ReachableSystems=$Systems
@@ -303,7 +305,7 @@ try {
                     foreach($Row in $SourceRows){
                         if($null -ne $Row.PSObject.Properties['OperationID']){
                             if([string]$Row.OperationID -ne $OperationID){continue}
-                            $Row.OperationID=$RunOperationID
+                            $Row.OperationID=if($FixedTargetOperationID){$FixedTargetOperationID}else{$RunOperationID}
                         }
                         $TargetRows+=$Row
                     }
@@ -360,8 +362,29 @@ try {
     #
     # Rollback manifest'ini (CSV) secili hedeflere gore filtreleyip gecici bir kopya uretir.
     # ManifestPath bossa ilgili klasordeki en yeni ve secili hedefleri iceren manifest kullanilir.
+    function Invoke-RemoteOpsRecoveryRequest {
+        param($InputValues)
+        $Details=Assert-RemoteOpsRecoveryDispatch $BasePath $InputValues $OperationName @($Systems)
+        $Validate={ [void](Assert-RemoteOpsRecoveryDispatch $BasePath $InputValues $OperationName @($Systems)) }.GetNewClosure()
+        switch($Details.Record.Kind){
+            Registry {$Path=Invoke-RegistryRollbackRequest $InputValues -RecoveryEntries $Details.Entries -RecoveryValidate $Validate;return [pscustomobject]@{Completed=$true;ResultCsv=$Path}}
+            {$_ -in @('Service','ScheduledTask')} {$Path=Invoke-ServiceTaskRollbackRequest $InputValues -RecoveryEntries $Details.Entries -RecoveryValidate $Validate;return [pscustomobject]@{Completed=$true;ResultCsv=$Path}}
+            FileRollback {
+                $Rows=@(Invoke-AORemoteFileRollback -BasePath $BasePath -RecoveryEntries $Details.Entries -RecoveryConfirm $InputValues.Confirm -RecoveryValidate $Validate)
+                $Path=Write-ApplicationRows -Name 'FileRollback' -Rows $Rows;return [pscustomobject]@{Completed=$true;ResultCsv=$Path}
+            }
+            FileRestore {
+                $Restore=Restore-AODeleteBackup -BasePath $BasePath -ReachableSystems $Systems -OperationID $OperationID -OperationDate $OperationDate -OperationTime $OperationTime -BackupRunId $InputValues.BackupPath -RecoveryEntries $Details.Entries -RecoveryConfirm $InputValues.Confirm -RecoveryValidate $Validate
+                return $Restore
+            }
+            default {throw 'Unsupported recovery kind.'}
+        }
+    }
     function New-TargetScopedManifest {
-        param([string]$ManifestPath,[string]$ManifestRoot,[string]$Label,[string[]]$AllowedObjectTypes=@())
+        param([string]$ManifestPath,[string]$ManifestRoot,[string]$Label,[string[]]$AllowedObjectTypes=@(),[object[]]$RecoveryEntries)
+        if($PSBoundParameters.ContainsKey('RecoveryEntries')){
+            $Rows=@($RecoveryEntries);$SourceManifest=$ManifestPath
+        }else{
         if(-not [string]::IsNullOrWhiteSpace($ManifestPath)){
             if(-not(Test-Path -LiteralPath $ManifestPath -PathType Leaf)){
                 throw "$Label rollback manifest not found: $ManifestPath"
@@ -380,6 +403,7 @@ try {
             }
             if($CandidateRows.Count -gt 0){$Rows=$CandidateRows;$SourceManifest=$Candidate.FullName;break}
         }
+        }
         if($Rows.Count -eq 0){
             throw "$Label rollback manifest not found for selected targets and supported object types."
         }
@@ -395,31 +419,30 @@ try {
     # Registry rollback: manifest'teki eski degeri geri yazar (eski deger yoksa degeri siler).
     # Uzak registry erisimi: CIM/DCOM uzerinden StdRegProv (HKLM = 2147483650).
     function Invoke-RegistryRollbackRequest {
-        param($InputValues)
-        $ScopedManifestInfo=New-TargetScopedManifest -ManifestPath ([string]$InputValues.ManifestPath) -ManifestRoot (Join-Path $BasePath 'RegistryRollback') -Label 'Registry'
+        param($InputValues,[object[]]$RecoveryEntries,[scriptblock]$RecoveryValidate)
+        $RecoveryArgs=@{};if($PSBoundParameters.ContainsKey('RecoveryEntries')){$RecoveryArgs.RecoveryEntries=$RecoveryEntries}
+        $ScopedManifestInfo=New-TargetScopedManifest -ManifestPath ([string]$InputValues.ManifestPath) -ManifestRoot (Join-Path $BasePath 'RegistryRollback') -Label 'Registry' @RecoveryArgs
         $ScopedManifest=[string]$ScopedManifestInfo.Path
         $Rows=@()
         try{
             foreach($Entry in Import-Csv -LiteralPath $ScopedManifest -Delimiter ';'){
                 $Session=$null
+                $RestorePath=[pscustomobject]@{FullPath=[string]$Entry.RegistryKey}
                 try{
+                    if($null -ne $RecoveryValidate){& $RecoveryValidate}
                     $Session=New-CimSession -ComputerName $Entry.ComputerName -SessionOption (New-CimSessionOption -Protocol Dcom) -OperationTimeoutSec 10 -ErrorAction Stop
-                    $Arguments=@{hDefKey=[uint32]2147483650;sSubKeyName=[string]$Entry.RegistryKey;sValueName=[string]$Entry.ValueName}
-                    if([string]$Entry.OldExists -eq 'True'){
-                        $Arguments.sValue=[string]$Entry.OldValue
-                        $Restore=Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName SetStringValue -Arguments $Arguments -ErrorAction Stop
-                    }
-                    else{
-                        $Restore=Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName DeleteValue -Arguments $Arguments -ErrorAction Stop
-                    }
+                    $RestorePath=Get-RemoteOpsRegistryManifestPath $Entry
+                    if($RestorePath.HiveName -eq 'HKEY_CURRENT_USER'){throw 'Rollback icin kayitli HKU SID yolu gerekli.'}
+                    if($null -ne $RecoveryValidate){& $RecoveryValidate}
+                    $Restore=Restore-RemoteOpsRegistryEntry -Session $Session -Entry $Entry
                     if([uint32]$Restore.ReturnValue -ne 0){
                         throw "Registry rollback failed with ReturnValue=$($Restore.ReturnValue)."
                     }
-                    $Rows += [PSCustomObject]@{ComputerName=$Entry.ComputerName;RegistryKey=$Entry.RegistryKey;ValueName=$Entry.ValueName;Status='Success';ReturnValue=$Restore.ReturnValue;ErrorDetail=''}
+                    $Rows += [PSCustomObject]@{ComputerName=$Entry.ComputerName;RegistryKey=$Entry.RegistryKey;RegistryPath=$RestorePath.FullPath;ValueName=$Entry.ValueName;ValueType=$(if($Entry.PSObject.Properties['OldType']){[string]$Entry.OldType}else{'REG_SZ'});Status='Success';ReturnValue=$Restore.ReturnValue;ErrorDetail=''}
                     Write-Host "$($Entry.ComputerName) : REGISTRY ROLLBACK OK | $($Entry.RegistryKey)\$($Entry.ValueName)" -ForegroundColor Green
                 }
                 catch{
-                    $Rows += [PSCustomObject]@{ComputerName=$Entry.ComputerName;RegistryKey=$Entry.RegistryKey;ValueName=$Entry.ValueName;Status='Failed';ReturnValue='';ErrorDetail=$_.Exception.Message}
+                    $Rows += [PSCustomObject]@{ComputerName=$Entry.ComputerName;RegistryKey=$Entry.RegistryKey;RegistryPath=$RestorePath.FullPath;ValueName=$Entry.ValueName;ValueType=$(if($Entry.PSObject.Properties['OldType']){[string]$Entry.OldType}else{'REG_SZ'});Status='Failed';ReturnValue='';ErrorDetail=$_.Exception.Message}
                     Write-Host "$($Entry.ComputerName) : REGISTRY ROLLBACK FAILED | $($_.Exception.Message)" -ForegroundColor Red
                 }
                 finally{if($null -ne $Session){Remove-CimSession -CimSession $Session -ErrorAction SilentlyContinue}}
@@ -431,44 +454,51 @@ try {
     # Servis/task rollback: servis durumu/baslangic tipi, task enable/disable ve silinen
     # task'in XML yedeginden yeniden olusturulmasi. Var olan task'in uzerine YAZILMAZ.
     function Invoke-ServiceTaskRollbackRequest {
-        param($InputValues)
-        $ScopedManifestInfo=New-TargetScopedManifest -ManifestPath ([string]$InputValues.ManifestPath) -ManifestRoot (Join-Path $BasePath 'ServiceTaskRollbacks') -Label 'Service/task' -AllowedObjectTypes @('Service','ScheduledTask')
+        param($InputValues,[object[]]$RecoveryEntries,[scriptblock]$RecoveryValidate)
+        $RecoveryArgs=@{};if($PSBoundParameters.ContainsKey('RecoveryEntries')){$RecoveryArgs.RecoveryEntries=$RecoveryEntries}
+        $ScopedManifestInfo=New-TargetScopedManifest -ManifestPath ([string]$InputValues.ManifestPath) -ManifestRoot (Join-Path $BasePath 'ServiceTaskRollbacks') -Label 'Service/task' -AllowedObjectTypes @('Service','ScheduledTask') @RecoveryArgs
         $ScopedManifest=[string]$ScopedManifestInfo.Path
         $Rows=@()
         try{
             foreach($Entry in Import-Csv -LiteralPath $ScopedManifest -Delimiter ';'){
                 $Session=$null
                 try{
+                    if($null -ne $RecoveryValidate){& $RecoveryValidate}
                     $Session=Get-ServiceTaskSession $Entry.ComputerName
                     if($Entry.ObjectType -eq 'Service'){
                         $Service=Get-CimInstance -CimSession $Session -ClassName Win32_Service -Filter ("Name='{0}'" -f ([string]$Entry.ObjectName -replace "'","''")) -ErrorAction Stop
                         if($null -eq $Service){throw "Service not found: $($Entry.ObjectName)"}
                         if($Entry.Action -eq 'StartStop'){
                             $Method=if($Entry.OldState -eq 'Running'){'StartService'}else{'StopService'}
+                            if($null -ne $RecoveryValidate){& $RecoveryValidate}
                             $Restore=Invoke-CimMethod -CimSession $Session -InputObject $Service -MethodName $Method -Arguments @{} -ErrorAction Stop
                             if([uint32]$Restore.ReturnValue -ne 0){
                                 throw "$Method returned $($Restore.ReturnValue)."
                             }
                         }
                         elseif($Entry.Action -eq 'StartupType'){
+                            if($null -ne $RecoveryValidate){& $RecoveryValidate}
                             [void](Set-ServiceTaskStartMode -Session $Session -Service $Service -Mode $Entry.OldStartMode)
                         }
                         else{throw "Unsupported service rollback action: $($Entry.Action)"}
                     }
                     elseif($Entry.ObjectType -eq 'ScheduledTask' -and $Entry.Action -eq 'EnableDisable'){
                         if([string]$Entry.OldEnabled -eq 'True'){
+                            if($null -ne $RecoveryValidate){& $RecoveryValidate}
                             Enable-ScheduledTask -CimSession $Session -TaskName $Entry.TaskName -TaskPath $Entry.TaskPath -ErrorAction Stop|Out-Null
                         }else{
+                            if($null -ne $RecoveryValidate){& $RecoveryValidate}
                             Disable-ScheduledTask -CimSession $Session -TaskName $Entry.TaskName -TaskPath $Entry.TaskPath -ErrorAction Stop|Out-Null
                         }
                     }
                     elseif($Entry.ObjectType -eq 'ScheduledTask' -and $Entry.Action -eq 'Delete'){
-                        $BackupXml=Get-Content -LiteralPath $Entry.BackupXml -Raw -Encoding UTF8 -ErrorAction Stop
+                        $BackupXml=if($null -ne $RecoveryValidate){Read-RemoteOpsRecoveryTaskXml $Entry.BackupXml}else{Get-Content -LiteralPath $Entry.BackupXml -Raw -Encoding UTF8 -ErrorAction Stop}
                         [void][xml]$BackupXml
                         $Existing=@(Get-CimInstance -CimSession $Session -Namespace 'root\Microsoft\Windows\TaskScheduler' -ClassName MSFT_ScheduledTask -ErrorAction Stop|Where-Object{$_.TaskName -eq $Entry.TaskName -and $_.TaskPath -eq $Entry.TaskPath})
                         if($Existing.Count -gt 0){
                             throw "Task already exists; rollback will not overwrite it: $($Entry.TaskPath)$($Entry.TaskName)"
                         }
+                        if($null -ne $RecoveryValidate){& $RecoveryValidate}
                         Register-ScheduledTask -CimSession $Session -TaskName $Entry.TaskName -TaskPath $Entry.TaskPath -Xml $BackupXml -ErrorAction Stop|Out-Null
                     }
                     else{throw "Rollback is not supported for $($Entry.ObjectType) / $($Entry.Action)."}
@@ -738,7 +768,7 @@ try {
                     $BackupRoot=Join-Path (Join-Path $BasePath 'ServiceTaskRollbacks') $OperationID
                     New-Item -ItemType Directory -Path $BackupRoot -Force -ErrorAction Stop|Out-Null
                     $BackupPath=Join-Path $BackupRoot (([guid]::NewGuid().ToString('N'))+'.xml')
-                    Set-Content -LiteralPath $BackupPath -Value $TaskXml -Encoding UTF8 -ErrorAction Stop
+                    Write-RemoteOpsRecoveryTaskXml -Path $BackupPath -Text $TaskXml
                     $ManifestRows += [PSCustomObject]@{ComputerName=$ComputerName;ObjectType='ScheduledTask';ObjectName=$Task.TaskName;TaskName=$Task.TaskName;TaskPath=$Task.TaskPath;Action='Delete';OldEnabled=[bool]$Task.Settings.Enabled;BackupXml=$BackupPath;OperationID=$OperationID}
                     Write-ServiceTaskManifest -Path $ManifestPath -Rows $ManifestRows
                     # DCOM sessions reject an explicitly bound -Confirm, even when false.
@@ -746,7 +776,7 @@ try {
                     & { $ConfirmPreference='None';Unregister-ScheduledTask -CimSession $Session -TaskName $Task.TaskName -TaskPath $Task.TaskPath -ErrorAction Stop }
                 }
                 else{
-                    $ManifestRows += [PSCustomObject]@{ComputerName=$ComputerName;ObjectType='ScheduledTask';ObjectName=$Task.TaskName;TaskName=$Task.TaskName;TaskPath=$Task.TaskPath;Action='EnableDisable';OldEnabled=[bool]$Task.Settings.Enabled;OperationID=$OperationID}
+                    $ManifestRows += [PSCustomObject]@{ComputerName=$ComputerName;ObjectType='ScheduledTask';ObjectName=$Task.TaskName;TaskName=$Task.TaskName;TaskPath=$Task.TaskPath;Action='EnableDisable';OldEnabled=[bool]$Task.Settings.Enabled;NewEnabled=($InputValues.Action -eq 'Enable');OperationID=$OperationID}
                     Write-ServiceTaskManifest -Path $ManifestPath -Rows $ManifestRows
                     if($InputValues.Action -eq 'Enable'){
                         Enable-ScheduledTask -CimSession $Session -TaskName $Task.TaskName -TaskPath $Task.TaskPath -ErrorAction Stop|Out-Null
@@ -1143,7 +1173,13 @@ try {
                 # Restore-AODeleteBackup ile ayni siralama: en yeni yedek = 1
                 $BackupRuns=@(Get-ChildItem -LiteralPath (Join-Path $BasePath 'DeleteBackups') -Directory -ErrorAction SilentlyContinue|Sort-Object LastWriteTime -Descending)
                 if($BackupRuns.Count -eq 0){throw 'Restore edilebilir silme yedegi bulunamadi.'}
-                $Number=if([string]::IsNullOrWhiteSpace([string]$InputValues.BackupPath)){1}else{0}
+                $Selection=([string]$InputValues.BackupPath).Trim()
+                $Selected=@($BackupRuns|Where-Object{$_.Name -eq $Selection})
+                if($Selected.Count -eq 1){
+                    if(-not(Test-Path -LiteralPath (Join-Path $Selected[0].FullName 'manifest.csv') -PathType Leaf)){throw 'Secilen yedekte manifest.csv yok.'}
+                    break
+                }
+                $Number=if([string]::IsNullOrWhiteSpace($Selection)){1}else{0}
                 if($Number -eq 0 -and -not [int]::TryParse(([string]$InputValues.BackupPath).Trim(),[ref]$Number)){throw "Yedek numarasi sayi olmali: $($InputValues.BackupPath)"}
                 if($Number -lt 1 -or $Number -gt $BackupRuns.Count){throw "Yedek numarasi gecersiz: $Number (mevcut yedek sayisi: $($BackupRuns.Count))."}
                 if(-not(Test-Path -LiteralPath (Join-Path $BackupRuns[$Number-1].FullName 'manifest.csv') -PathType Leaf)){throw "Secilen yedekte manifest.csv yok: $($BackupRuns[$Number-1].Name)"}
@@ -1206,13 +1242,15 @@ try {
     # Request.Worker doluysa bu surec paralel calismada tek hedefi isleyen bir worker'dir.
     $WorkerInfo=if($null -ne $Request.PSObject.Properties['Worker']){$Request.Worker}else{$null}
     $IsWorker=($null -ne $WorkerInfo)
+    $IsRecipeWorker=$IsWorker -and (Get-RemoteOpsPreviewValue $WorkerInfo Kind '') -ceq 'RemoteOps.RecipeStep/1'
+    $RecipeWorkerMeta=if($IsRecipeWorker){Assert-RemoteOpsRecipeWorkerRequest $Request $BasePath}else{$null}
     # Calisma ID'si: GUI-yyyyMMdd-HHmmss-XXXXXX (worker'lar koordinatorun ID'sini kullanir).
-    $OperationID = if($IsWorker){[string]$WorkerInfo.RunID}else{'GUI-{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),([Guid]::NewGuid().ToString('N').Substring(0,6).ToUpperInvariant())}
+    $OperationID = if($Request.Operation -eq 'RecipeRun'){[string]$Request.RecipeRunId}elseif($IsWorker){[string]$WorkerInfo.RunID}else{'GUI-{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),([Guid]::NewGuid().ToString('N').Substring(0,6).ToUpperInvariant())}
     $OperationDate = Get-Date -Format 'dd.MM.yyyy'
     $OperationTime = Get-Date -Format 'HH:mm:ss'
     $OperationName=[string]$Request.Operation
     # Bu calismanin tum ciktilari bu klasorde toplanir.
-    $RunReportRoot=Join-Path (Join-Path (Join-Path $BasePath 'Logs\Operations') $OperationName) $OperationID
+    $RunReportRoot=if($IsRecipeWorker){$RecipeWorkerMeta.ReportRoot}elseif($OperationName -eq 'RecipeRun'){Get-RemoteOpsRecipeRunRoot $BasePath $OperationID}else{Join-Path (Join-Path (Join-Path $BasePath 'Logs\Operations') $OperationName) $OperationID}
     New-Item -ItemType Directory -Path $RunReportRoot -Force|Out-Null
     New-Item -ItemType Directory -Path (Join-Path $BasePath 'PulledLogs') -Force|Out-Null
 
@@ -1255,10 +1293,19 @@ try {
         TechnicalLogWriter=${function:Write-RemoteOpsLog}; OperationHistoryWriter=${function:Write-RemoteOpsHistory}
     }
     $Values = $Request.Values
+    if($Request.Operation -eq 'RecipeRun'){
+        Assert-RemoteOpsRecipeRunSnapshot $Values.Snapshot
+        if($Values.Confirm -cne 'RECETE' -or (Get-RemoteOpsPreviewHash @($Systems)) -cne (Get-RemoteOpsPreviewHash @($Values.Snapshot.Targets)) -or [string]$Request.Domain -cne $Values.Snapshot.Identity.Domain -or [string]$Request.UserName -cne $Values.Snapshot.Identity.UserName -or [bool]$Request.IsMain -ne $Values.Snapshot.Identity.IsMain){throw 'Recipe approval/identity/target mismatch.'}
+        if($IsWorker){throw 'Nested recipe worker rejected.'}
+        $ExpectedCancel=Join-Path $RunReportRoot 'cancel.json';$ExpectedState=Join-Path $RunReportRoot 'state'
+        if($CancelPath -ine $ExpectedCancel -or $CheckpointRoot -ine $ExpectedState){throw 'Recipe runtime paths mismatch.'}
+    }
+
     $OperationName = [string]$Request.Operation
     $Result = $null
     # Degisiklik yapan operasyonlarda onay kelimesi burada TEKRAR kontrol edilir.
     $RequiredConfirmation=switch($OperationName){
+        'RecipeRun' {'RECETE'}
         'PackageTrigger' {'TRIGGER'} 'FileDelete' {'DELETE'} 'FileRestore' {'RESTORE'} 'FileRollback' {'ROLLBACK'}
         'PackageDeployment' {if([string]$Values.Action -eq 'Downgrade'){'DOWNGRADE'}else{'TRIGGER'}}
         'RegistryEdit' {'EDIT'} 'RegistryDelete' {'DELETE'} 'RegistryRollback' {'ROLLBACK'}
@@ -1271,6 +1318,16 @@ try {
     }
     if(-not [string]::IsNullOrWhiteSpace([string]$RequiredConfirmation) -and [string]$Values.Confirm -cne $RequiredConfirmation){
         throw "Confirmation mismatch for $OperationName. Expected $RequiredConfirmation."
+    }
+    if($OperationName -ceq 'RecipeCondition'){
+        if(-not $IsRecipeWorker){throw 'Conditions are available only inside an approved recipe worker.'}
+        $ConditionStep=$WorkerInfo.Snapshot.Definition.Steps[[int]$WorkerInfo.StepIndex-1]
+        $Checked=Invoke-RemoteOpsConditionChecks $ConditionStep.Values ([string]$WorkerInfo.ComputerName) ([string]$RecipeWorkerMeta.StepOperationID)
+        $Payload=New-RemoteOpsRecipeStepResult $Request @($Checked.Rows) @()
+        Assert-RemoteOpsRecipeStepResult $Payload $Request
+        New-Item -ItemType Directory -Path $RecipeWorkerMeta.ReportRoot -Force|Out-Null
+        Write-RemoteOpsAtomicJson $RecipeWorkerMeta.ResultPath $Payload 20
+        exit 0
     }
     # GIRDI ON KONTROLU: modul menuleri hatali girdide menuye geri doner ve sonraki cevabi menu secimi
     # sanir (anlamsiz hata veya yanlis islem). Bu yuzden belirgin girdi hatalari islem baslamadan,
@@ -1316,6 +1373,7 @@ try {
 
     $RunOperationID=$OperationID
     $script:RunLogID=$RunOperationID
+    if($Values -and (($Values -is [Collections.IDictionary] -and $Values.Contains('RecoverySelection')) -or $Values.PSObject.Properties['RecoverySelection'])){[void](Assert-RemoteOpsRecoveryDispatch $BasePath $Values $OperationName @($Systems))}
     $InputTargets=[string[]]$Systems
     # ====================================================================
     # OPERASYON YONLENDIRME (dispatch)
@@ -1331,8 +1389,10 @@ try {
     # Menu cevap dizilerindeki '1','2'... modul menusundeki secim numaralaridir; sonda '0' = menuden cik.
     # ====================================================================
     $InvokeTarget={
+    if($Values -and (($Values -is [Collections.IDictionary] -and $Values.Contains('RecoverySelection')) -or $Values.PSObject.Properties['RecoverySelection'])){return Invoke-RemoteOpsRecoveryRequest $Values}
     $Result=$null
     switch -Regex ($OperationName) {
+        '^RecipeRun$' {throw 'RecipeRun requires coordinator dispatch.'}
         '^PackageDeployment$' {
             $Result=Invoke-SavedPackageDeploymentRequest -InputValues $Values
             break
@@ -1430,7 +1490,9 @@ try {
             }
             Add-Answers $Answers
             try{
-                $Result = Invoke-RegistryOperationsMenu @Common
+                $TypeProperty=$Values.PSObject.Properties['ValueType']
+                $RegistryValueType=if($TypeProperty){[string]$TypeProperty.Value}else{'Auto'}
+                $Result = Invoke-RegistryOperationsMenu @Common -ValueType $RegistryValueType
             }finally{
                 if($OperationName -eq 'RegistryRollback' -and $ScopedManifest){
                     Remove-Item -LiteralPath $ScopedManifest -Force -ErrorAction SilentlyContinue
@@ -1501,7 +1563,14 @@ try {
     $ParallelAllowed=($script:ParallelSafeOperations -contains $OperationName) -or $PluginParallelSafe
     # Worker modu: tek hedefi isle, sonucu result.xml olarak yaz ve cik (rapor koordinatorde uretilir).
     if($IsWorker){
-        $Result=Invoke-TargetBatch -InputTargets $InputTargets -RunOperationID $RunOperationID -ProgressPath '' -InvokeTarget $InvokeTarget -IndexOffset ([int]$WorkerInfo.IndexOffset)
+        $RecipeBatchArgs=@{};if($IsRecipeWorker){$RecipeBatchArgs.FixedTargetOperationID=$RecipeWorkerMeta.StepOperationID}
+        $Result=Invoke-TargetBatch -InputTargets $InputTargets -RunOperationID $RunOperationID -ProgressPath '' -InvokeTarget $InvokeTarget -IndexOffset ([int]$WorkerInfo.IndexOffset) @RecipeBatchArgs
+        if($IsRecipeWorker){
+            $RecipePayload=New-RemoteOpsRecipeStepResult $Request @($Result.Rows) @($Result.Outcomes) @($script:OperationMessages)
+            Assert-RemoteOpsRecipeStepResult $RecipePayload $Request
+            Write-RemoteOpsAtomicJson $RecipeWorkerMeta.ResultPath $RecipePayload 20
+            return
+        }
         $Payload=[PSCustomObject]@{Rows=@($Result.Rows);Outcomes=@($Result.Outcomes);Messages=@($script:OperationMessages);Health=@($(if(Get-Variable AOHealthDetails -Scope Script -ErrorAction SilentlyContinue){$script:AOHealthDetails}))}
         $TemporaryResult=[string]$WorkerInfo.ResultPath+'.tmp'
         Export-Clixml -InputObject $Payload -LiteralPath $TemporaryResult -Depth 8
@@ -1509,7 +1578,12 @@ try {
         return
     }
     # Koordinator: paralel calistir; aksi halde sirali dongu.
-    if($RequestedParallelism -gt 1 -and $InputTargets.Count -gt 1 -and $ParallelAllowed){
+    if($OperationName -eq 'RecipeRun'){
+        $StepRunner={param($StepRequest) Invoke-RemoteOpsRecipeStepWorker $StepRequest (Join-Path $PSScriptRoot 'RemoteOps.Runner.ps1') $CancelPath}
+        $ProgressWriter={param($State) Write-TargetProgress -Path $ProgressPath -Total $InputTargets.Count -Completed ($State.TargetIndex-1) -CurrentTarget ($State.ComputerName+' | '+$State.StepIndex+'/'+$State.StepCount) -Stage 'Running'}
+        $Result=Invoke-RemoteOpsRecipeRun $Values.Snapshot $RunOperationID $BasePath $CancelPath $CheckpointRoot $StepRunner $ProgressWriter
+    }
+    elseif($RequestedParallelism -gt 1 -and $InputTargets.Count -gt 1 -and $ParallelAllowed){
         $Workers=[Math]::Min($RequestedParallelism,$InputTargets.Count)
         $Result=Invoke-ParallelTargets -InputTargets $InputTargets -RunOperationID $RunOperationID -ProgressPath $ProgressPath -Parallelism $Workers
     }
@@ -1556,8 +1630,12 @@ try {
         }
         catch{Write-Warning "Health report could not be written: $($_.Exception.Message)"}
     }
-    $ReportTitle=if($OperationName -eq 'PackageDeployment'){$Values.PackageDefinition.Name+' / '+$Values.Action}else{$OperationName}
+    $ReportTitle=if($OperationName -eq 'RecipeRun'){$Values.Snapshot.Definition.Name}elseif($OperationName -eq 'PackageDeployment'){$Values.PackageDefinition.Name+' / '+$Values.Action}else{$OperationName}
     Complete-RemoteOpsReports -Result $Result -Title $ReportTitle -OperationID $OperationID -ReportRoot $RunReportRoot -Candidates $script:ReportCandidates -Messages $script:OperationMessages -PrimaryReport $PrimaryReport
+    if($Values -and (($Values -is [Collections.IDictionary] -and $Values.Contains('RecoverySelection')) -or $Values.PSObject.Properties['RecoverySelection'])){
+        try{Write-RemoteOpsRecoveryReceipt $RunReportRoot $Values.RecoverySelection $Result $OperationID}catch{Write-Warning ('Local recovery result receipt could not be recorded: '+$_.Exception.Message)}
+    }
+    if($OperationName -eq 'RecipeRun'){Write-RemoteOpsAtomicJson (Join-Path $CheckpointRoot 'reported.json') ([pscustomobject]@{RunId=$RunOperationID;ReportedAt=(Get-Date).ToString('o')})}
     Write-TargetProgress -Path $ProgressPath -Total $InputTargets.Count -Completed $InputTargets.Count -CurrentTarget '' -Stage 'Completed'
     # Moduller sonuc uretince menuden kendisi cikabilir; bu durumda kuyrukta kalan '0' (menuden cik)
     # cevabi normaldir. Sadece gercekten kullanilmayan GUI degerleri uyari olarak yazilir.

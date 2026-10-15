@@ -8,3 +8,5 @@
 *.json text eol=lf
 *.png binary
 *.pdf binary
+# Keep the accepted distribution's application-file identity exact.
+RemoteOps.App/README.md -text

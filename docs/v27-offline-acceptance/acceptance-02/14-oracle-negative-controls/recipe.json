@@ -1,0 +1,21 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "865345dc-a237-42e3-b657-2e81620e960e",
+    "Revision":  1,
+    "Name":  "Offline 14-oracle-negative-controls",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:40:59.1534389+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:59.3454813+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "3b5d9693-0a39-4105-abad-65ad04ce2870",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

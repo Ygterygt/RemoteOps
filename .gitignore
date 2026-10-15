@@ -32,3 +32,9 @@ __pycache__/
 .idea/
 Thumbs.db
 Desktop.ini
+
+# Re-running offline validation produces local fixture evidence.
+/docs/v27-offline-acceptance/Run-*/
+/docs/v*-test-logs/
+/docs/v*-core-preflight/
+*.blocked.jsonl

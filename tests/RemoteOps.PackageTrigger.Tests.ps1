@@ -30,12 +30,7 @@ function Write-RemoteOpsLog { param($Level,$Message) }
 $Temporary=Join-Path $env:TEMP ('RemoteOpsPackage-'+[guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $Temporary|Out-Null
 try{
-    $ModulesRoot=Join-Path $WorkspaceRoot 'Modules'
-    # Package execution is mocked; resolving PsExec must not require a real third-party binary.
-    $WorkspaceRoot=Join-Path $Temporary 'project'
-    New-Item -ItemType Directory -Path $WorkspaceRoot|Out-Null
-    Set-Content -LiteralPath (Join-Path $WorkspaceRoot 'PsExec.exe') -Value 'fixture placeholder; never executed'
-    $BasePath=$Temporary;$RunReportRoot=Join-Path $Temporary 'BLANK-PACKAGE';$Systems=@('PC-A','PC-B');$ReachableSystems=$Systems;$OperationID='BLANK-PACKAGE'
+    $BasePath=$Temporary;$RunReportRoot=Join-Path $Temporary 'BLANK-PACKAGE';$ModulesRoot=Join-Path $WorkspaceRoot 'Modules';$Systems=@('PC-A','PC-B');$ReachableSystems=$Systems;$OperationID='BLANK-PACKAGE'
     foreach($Mode in @('Version controlled','Presence only','Trigger without checks')){
         $Values=[PSCustomObject]@{PackagePath='\\server\packages';PackageFile='install.bat';Action='Install';CheckMode=$Mode;SearchType='DisplayName exact';Application='';Version='';RegistryKey='';CollectLogs=$false}
         $Result=Invoke-PackageRequest -InputValues $Values

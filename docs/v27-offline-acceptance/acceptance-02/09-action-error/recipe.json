@@ -1,0 +1,31 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "9685888e-662d-4bde-98d6-ed634a261470",
+    "Revision":  1,
+    "Name":  "Offline 09-action-error",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:40:26.2932615+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:26.5288347+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "4756cae9-0f52-4c91-bbb0-614415e1d6a4",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "a0ffcee5-b4bf-49ee-9a36-cc585d41cd14",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

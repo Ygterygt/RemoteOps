@@ -1,4 +1,4 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 # Proves that the package worker never opens a window/interactive session on the endpoint: runs the real PackageScript worker
@@ -58,7 +58,7 @@ try{
             foreach($Name in $Patterns.Keys){
                 if($L -match $Patterns[$Name]){
                     # the administrator-side WPF app is allowed its own message boxes
-                    if($Name -eq 'MessageBox on remote' -and $F.FullName -in @((Join-Path $Root 'RemoteOps.App\RemoteOps.App.ps1'),(Join-Path $Root 'RemoteOps.App\RemoteOps.PackageUi.ps1'))){continue}
+                    if($Name -eq 'MessageBox on remote' -and $F.FullName -in @((Join-Path $Root 'RemoteOps.App\RemoteOps.App.ps1'),(Join-Path $Root 'RemoteOps.App\RemoteOps.PackageUi.ps1'),(Join-Path $Root 'RemoteOps.App\RemoteOps.HistoryUi.ps1'),(Join-Path $Root 'RemoteOps.App\RemoteOps.TargetGroupsUi.ps1'),(Join-Path $Root 'RemoteOps.App\RemoteOps.RecipeUi.ps1'))){continue}
                     # Reports.ps1 only opens finished reports locally; comments/strings describing forbidden calls are allowed in this test file only
                     $Hits+=("{0}:{1} [{2}] {3}" -f $F.Name,($i+1),$Name,$L.Trim().Substring(0,[Math]::Min(100,$L.Trim().Length)))
                 }

@@ -1,0 +1,40 @@
+{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261015-234100-862FCF",
+    "SnapshotHash":  "EA6EDD4357CA18A0061B616AA4651B1BF9270F05382F62EDCC5D4B5289546D06",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "start",
+                     "OldState":  "Stopped",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "",
+                     "Status":  "Success",
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "3b5d9693-0a39-4105-abad-65ad04ce2870",
+                     "ParentRunId":  "GUI-20261015-234100-862FCF",
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234100-862FCF",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 14-oracle-negative-controls",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "865345dc-a237-42e3-b657-2e81620e960e",
+                     "StepOperationID":  "GUI-20261015-234100-862FCF-0001-S01",
+                     "Operation":  "ServiceControl"
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Completed",
+                    "CompletedAt":  "2026-10-15T23:41:03.6636498+03:00",
+                    "Detail":  "Bütün adımlar tamamlandı.",
+                    "RecipeName":  "Offline 14-oracle-negative-controls",
+                    "RecipeId":  "865345dc-a237-42e3-b657-2e81620e960e",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:41:03.6636498+03:00"
+}

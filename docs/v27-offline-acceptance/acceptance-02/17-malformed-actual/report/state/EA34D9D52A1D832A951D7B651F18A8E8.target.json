@@ -1,0 +1,60 @@
+{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261015-234124-653246",
+    "SnapshotHash":  "EC3EF4F276970DFBB306A08F9CC15FC885863FFC9C851AC1593A5FBDE0A2CDD6",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "Status":  "Error",
+                     "CheckIndex":  1,
+                     "Kind":  "RegistryValue",
+                     "Path":  "HKLM\\SOFTWARE\\Fixture",
+                     "Name":  "Version",
+                     "Operator":  "Equals",
+                     "Expected":  "1",
+                     "ExpectedType":  "Auto",
+                     "Observed":  "",
+                     "Exists":  null,
+                     "ValueType":  "",
+                     "Value":  "",
+                     "State":  "",
+                     "Startup":  "",
+                     "Matched":  null,
+                     "ErrorDetail":  "Registry integer must be unsigned decimal or 0x hexadecimal.",
+                     "RecipeRevision":  1,
+                     "StepId":  "3e021da2-9e04-475a-8cc4-ba6b1d5c9034",
+                     "ParentRunId":  "GUI-20261015-234124-653246",
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234124-653246",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 17-malformed-actual",
+                     "OriginalOperationID":  "GUI-20261015-234124-653246-0001-S01",
+                     "RecipeId":  "2fd2d48a-ad45-4551-ab67-2ad8026569e0",
+                     "StepOperationID":  "GUI-20261015-234124-653246-0001-S01",
+                     "Operation":  "RecipeCondition"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234124-653246",
+                     "ParentRunId":  "GUI-20261015-234124-653246",
+                     "StepOperationID":  "GUI-20261015-234124-653246-0001-S02",
+                     "StepId":  "c1a03509-bc96-4680-ad99-966c262ca6c9",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Koşul kontrol edilemedi; bu hedef durduruldu."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Error",
+                    "CompletedAt":  "2026-10-15T23:41:27.8459870+03:00",
+                    "Detail":  "Koşul kontrol edilemedi; bu hedef durduruldu.",
+                    "RecipeName":  "Offline 17-malformed-actual",
+                    "RecipeId":  "2fd2d48a-ad45-4551-ab67-2ad8026569e0",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:41:27.8459870+03:00"
+}

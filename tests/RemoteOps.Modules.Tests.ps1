@@ -1,4 +1,4 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 . (Join-Path $Root 'RemoteOps.App\RemoteOps.Reports.ps1')
@@ -15,6 +15,7 @@ function Remove-CimSession {param($CimSession)}
 $script:Return=@{};$script:RegValue='';$script:Services=@{};$script:Terminated=@()
 function Invoke-CimMethod {
     param($CimSession,$Namespace,$ClassName,$InputObject,$MethodName,$Arguments)
+    if($MethodName -eq 'EnumValues'){return [pscustomobject]@{ReturnValue=0;sNames=@('Val');Types=@(1)}}
     if($MethodName -eq 'GetStringValue'){if($script:RegValue -eq '<missing>'){return [PSCustomObject]@{ReturnValue=[uint32]2;sValue=$null}};return [PSCustomObject]@{ReturnValue=[uint32]0;sValue=$script:RegValue}}
     if($MethodName -eq 'Terminate'){$script:Terminated+=$InputObject.Name}
     $Code=if($script:Return.ContainsKey($MethodName)){$script:Return[$MethodName]}else{0}
@@ -80,6 +81,8 @@ try{
     [void](Invoke-ServiceTaskOperationsMenu @C)
     $Rows=@(Import-Csv -LiteralPath (Join-Path $Temp 'Logs\ServiceTask\OP-1_ServiceControl.csv') -Delimiter ';')
     if($Rows[0].Status -ne 'Success' -or $Rows[0].Action -ne 'restart'){throw 'Restart must succeed after waiting for the stopped state.'}
+    $ServiceManifest=@(Import-Csv -LiteralPath (Join-Path $Temp 'ServiceTaskRollbacks\OP-1_Services.csv') -Delimiter ';')
+    if($ServiceManifest[0].OldState -ne 'Stopped' -or $ServiceManifest[0].NewState -ne 'Running'){throw 'Service manifest must record previous and requested states.'}
     Add-Answers '2','NoSuchSvc','start','START','0'
     [void](Invoke-ServiceTaskOperationsMenu @C)
     $Rows=@(Import-Csv -LiteralPath (Join-Path $Temp 'Logs\ServiceTask\OP-1_ServiceControl.csv') -Delimiter ';')

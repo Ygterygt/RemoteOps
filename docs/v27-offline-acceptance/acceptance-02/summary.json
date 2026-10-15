@@ -1,0 +1,362 @@
+{
+    "SubjectVersion":  26,
+    "DeliveryVersion":  27,
+    "Total":  17,
+    "Passed":  17,
+    "Failed":  0,
+    "UnexpectedBoundaryBlocks":  0,
+    "Seconds":  148.88,
+    "SampledPeakCombinedWorkingSetMiB":  699.8,
+    "Sandbox":  "<LOCAL_TEMP>\\RemoteOps-Lightweight-a67c2fb8d091444abec9b7c83ac6601d",
+    "OutputRoot":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02",
+    "Cases":  [
+                  {
+                      "Id":  "01-stateful-chain",
+                      "Title":  "Registry + service condition, start, later state read, stop, startup and list",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  15.73
+                  },
+                  {
+                      "Id":  "02-target-scope",
+                      "Title":  "Match, nonmatch and missing value across three independent targets",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  16.65
+                  },
+                  {
+                      "Id":  "03-automatic-types",
+                      "Title":  "Automatic number and string registry comparison",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  12.37
+                  },
+                  {
+                      "Id":  "04-missing-not-equal",
+                      "Title":  "Missing registry value never satisfies NotEquals",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  7.99
+                  },
+                  {
+                      "Id":  "05-all-false",
+                      "Title":  "All requires every check",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  4.65
+                  },
+                  {
+                      "Id":  "06-any-true",
+                      "Title":  "Any permits one true check",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  6.8
+                  },
+                  {
+                      "Id":  "07-any-error",
+                      "Title":  "Any true never overrides a failed service read",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  4.99
+                  },
+                  {
+                      "Id":  "08-onfalse-stop",
+                      "Title":  "False Stop halts only that target",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  11.1
+                  },
+                  {
+                      "Id":  "09-action-error",
+                      "Title":  "Mutation failure halts chain and next target continues",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.03
+                  },
+                  {
+                      "Id":  "10-restart",
+                      "Title":  "Restart performs stop, observes stopped, then starts",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  7.27
+                  },
+                  {
+                      "Id":  "11-cancellation",
+                      "Title":  "Real cancellation request after first mutation prevents later work",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  5.88
+                  },
+                  {
+                      "Id":  "12-legacy-shared",
+                      "Title":  "Existing common condition evaluated once despite changed state",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.01
+                  },
+                  {
+                      "Id":  "13-approval-stale-cancel",
+                      "Title":  "Approval, stale snapshot and preview cancel never launch",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  1.66
+                  },
+                  {
+                      "Id":  "14-oracle-negative-controls",
+                      "Title":  "Real CSV success with suppressed mutation is rejected by independent checker",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  5.11
+                  },
+                  {
+                      "Id":  "15-service-startup",
+                      "Title":  "Startup change is observed by later startup and service existence condition",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.46
+                  },
+                  {
+                      "Id":  "16-key-and-service-existence",
+                      "Title":  "Registry key and service existence gate the correct target",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.34
+                  },
+                  {
+                      "Id":  "17-malformed-actual",
+                      "Title":  "Malformed observed numeric registry data stops target instead of matching",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.03
+                  }
+              ],
+    "Runs":  [
+                 {
+                     "Case":  "01-stateful-chain",
+                     "RunId":  "GUI-20261015-233907-ADF175",
+                     "CoordinatorPid":  7864,
+                     "WorkerPids":  [
+                                        7864,
+                                        22304,
+                                        1972,
+                                        7836,
+                                        32212,
+                                        32052,
+                                        32584
+                                    ],
+                     "Seconds":  13.64,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\01-stateful-chain"
+                 },
+                 {
+                     "Case":  "02-target-scope",
+                     "RunId":  "GUI-20261015-233922-AB1A85",
+                     "CoordinatorPid":  37960,
+                     "WorkerPids":  [
+                                        37960,
+                                        6044,
+                                        13856,
+                                        3232,
+                                        6284,
+                                        15132,
+                                        8512,
+                                        16960
+                                    ],
+                     "Seconds":  15.55,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\02-target-scope"
+                 },
+                 {
+                     "Case":  "03-automatic-types",
+                     "RunId":  "GUI-20261015-233939-0FED3F",
+                     "CoordinatorPid":  44892,
+                     "WorkerPids":  [
+                                        44892,
+                                        9820,
+                                        5304,
+                                        18696,
+                                        15732,
+                                        41152
+                                    ],
+                     "Seconds":  11.58,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\03-automatic-types"
+                 },
+                 {
+                     "Case":  "04-missing-not-equal",
+                     "RunId":  "GUI-20261015-233951-8ED2F3",
+                     "CoordinatorPid":  23820,
+                     "WorkerPids":  [
+                                        23820,
+                                        15700,
+                                        11748,
+                                        30300
+                                    ],
+                     "Seconds":  7.23,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\04-missing-not-equal"
+                 },
+                 {
+                     "Case":  "05-all-false",
+                     "RunId":  "GUI-20261015-233959-D48289",
+                     "CoordinatorPid":  31876,
+                     "WorkerPids":  [
+                                        31876,
+                                        5172
+                                    ],
+                     "Seconds":  3.87,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\05-all-false"
+                 },
+                 {
+                     "Case":  "06-any-true",
+                     "RunId":  "GUI-20261015-234004-E7315F",
+                     "CoordinatorPid":  41856,
+                     "WorkerPids":  [
+                                        41856,
+                                        25348,
+                                        7500
+                                    ],
+                     "Seconds":  5.74,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\06-any-true"
+                 },
+                 {
+                     "Case":  "07-any-error",
+                     "RunId":  "GUI-20261015-234011-BAA056",
+                     "CoordinatorPid":  14384,
+                     "WorkerPids":  [
+                                        14384,
+                                        1804
+                                    ],
+                     "Seconds":  4.03,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\07-any-error"
+                 },
+                 {
+                     "Case":  "08-onfalse-stop",
+                     "RunId":  "GUI-20261015-234016-46294A",
+                     "CoordinatorPid":  16844,
+                     "WorkerPids":  [
+                                        16844,
+                                        9832,
+                                        22524,
+                                        31992,
+                                        29680
+                                    ],
+                     "Seconds":  9.86,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\08-onfalse-stop"
+                 },
+                 {
+                     "Case":  "09-action-error",
+                     "RunId":  "GUI-20261015-234027-CB53A5",
+                     "CoordinatorPid":  8556,
+                     "WorkerPids":  [
+                                        8556,
+                                        15652,
+                                        31088,
+                                        42624
+                                    ],
+                     "Seconds":  7.87,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\09-action-error"
+                 },
+                 {
+                     "Case":  "10-restart",
+                     "RunId":  "GUI-20261015-234036-FAF150",
+                     "CoordinatorPid":  7420,
+                     "WorkerPids":  [
+                                        7420,
+                                        25404,
+                                        17340
+                                    ],
+                     "Seconds":  6.26,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\10-restart"
+                 },
+                 {
+                     "Case":  "11-cancellation",
+                     "RunId":  "GUI-20261015-234043-5D66F8",
+                     "CoordinatorPid":  10388,
+                     "WorkerPids":  [
+                                        10388,
+                                        44432
+                                    ],
+                     "Seconds":  4.56,
+                     "Cancelled":  true,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\11-cancellation"
+                 },
+                 {
+                     "Case":  "12-legacy-shared",
+                     "RunId":  "GUI-20261015-234049-E442CC",
+                     "CoordinatorPid":  38904,
+                     "WorkerPids":  [
+                                        38904,
+                                        13492,
+                                        24036,
+                                        26588
+                                    ],
+                     "Seconds":  8.03,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\12-legacy-shared"
+                 },
+                 {
+                     "Case":  "14-oracle-negative-controls",
+                     "RunId":  "GUI-20261015-234100-862FCF",
+                     "CoordinatorPid":  9180,
+                     "WorkerPids":  [
+                                        9180,
+                                        6608
+                                    ],
+                     "Seconds":  3.69,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\14-oracle-negative-controls"
+                 },
+                 {
+                     "Case":  "15-service-startup",
+                     "RunId":  "GUI-20261015-234105-598B49",
+                     "CoordinatorPid":  7808,
+                     "WorkerPids":  [
+                                        7808,
+                                        32932,
+                                        26992,
+                                        9468
+                                    ],
+                     "Seconds":  7.96,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\15-service-startup"
+                 },
+                 {
+                     "Case":  "16-key-and-service-existence",
+                     "RunId":  "GUI-20261015-234115-18A447",
+                     "CoordinatorPid":  2720,
+                     "WorkerPids":  [
+                                        2720,
+                                        1800,
+                                        40528,
+                                        14416
+                                    ],
+                     "Seconds":  7.6,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\16-key-and-service-existence"
+                 },
+                 {
+                     "Case":  "17-malformed-actual",
+                     "RunId":  "GUI-20261015-234124-653246",
+                     "CoordinatorPid":  42796,
+                     "WorkerPids":  [
+                                        42796,
+                                        47348,
+                                        40912,
+                                        46076
+                                    ],
+                     "Seconds":  7.37,
+                     "Cancelled":  false,
+                     "Report":  "<V27_DISTRIBUTION>/docs\\v27-offline-acceptance\\acceptance-02\\17-malformed-actual"
+                 }
+             ],
+    "LiveEndpointTests":  false,
+    "ActualTransportTested":  false,
+    "CancellationButtonDialogTested":  false
+}

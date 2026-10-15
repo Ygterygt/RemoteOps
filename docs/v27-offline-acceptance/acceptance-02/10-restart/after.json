@@ -1,0 +1,466 @@
+{
+    "Targets":  {
+                    "SIM-PC1":  {
+                                    "Service":  {
+                                                    "Exists":  true,
+                                                    "Name":  "OfflineDemo",
+                                                    "State":  "Running",
+                                                    "Startup":  "Automatic"
+                                                },
+                                    "Registry":  {
+                                                     "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                             "Exists":  true,
+                                                                                             "ValueType":  "REG_SZ",
+                                                                                             "Value":  "16.0.444"
+                                                                                         }
+                                                 }
+                                }
+                },
+    "Events":  [
+                   {
+                       "PID":  7420,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "ValidateTarget",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:37.1033668Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "ValidateTarget",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:38.5068959Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Access",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:38.9109946Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Session",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:39.0735646Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "GetService",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:39.1056570Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "StopService",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:39.1504607Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "GetService",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Stopped",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:39.1800259Z"
+                   },
+                   {
+                       "PID":  25404,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "StartService",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Stopped",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:39.2159449Z"
+                   },
+                   {
+                       "PID":  17340,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "ValidateTarget",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:40.7293652Z"
+                   },
+                   {
+                       "PID":  17340,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Access",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:41.2080605Z"
+                   },
+                   {
+                       "PID":  17340,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "Session",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:41.3443339Z"
+                   },
+                   {
+                       "PID":  17340,
+                       "Target":  "SIM-PC1",
+                       "Operation":  "GetService",
+                       "Before":  {
+                                      "Service":  {
+                                                      "Exists":  true,
+                                                      "Name":  "OfflineDemo",
+                                                      "State":  "Running",
+                                                      "Startup":  "Automatic"
+                                                  },
+                                      "Registry":  {
+                                                       "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                               "Exists":  true,
+                                                                                               "ValueType":  "REG_SZ",
+                                                                                               "Value":  "16.0.444"
+                                                                                           }
+                                                   }
+                                  },
+                       "After":  {
+                                     "Service":  {
+                                                     "Exists":  true,
+                                                     "Name":  "OfflineDemo",
+                                                     "State":  "Running",
+                                                     "Startup":  "Automatic"
+                                                 },
+                                     "Registry":  {
+                                                      "HKLM\\SOFTWARE\\Fixture|Version":  {
+                                                                                              "Exists":  true,
+                                                                                              "ValueType":  "REG_SZ",
+                                                                                              "Value":  "16.0.444"
+                                                                                          }
+                                                  }
+                                 },
+                       "Error":  "",
+                       "Time":  "2026-10-15T20:40:41.3776425Z"
+                   }
+               ],
+    "PauseAfterMutationMs":  0
+}

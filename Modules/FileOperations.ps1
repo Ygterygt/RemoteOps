@@ -766,7 +766,9 @@ function Invoke-AORemoteFileBrowseOperations {
 # DOSYA ROLLBACK (menu 7): secilen FileRollbacks calismasinin manifest'ine gore
 # tasinan dosyayi geri tasir, silinen/degistirilen dosyayi yedekten geri kopyalar.
 function Invoke-AORemoteFileRollback {
-    param([string]$BasePath)
+    param([string]$BasePath,[object[]]$RecoveryEntries,[string]$RecoveryConfirm,[scriptblock]$RecoveryValidate)
+    $Direct=$PSBoundParameters.ContainsKey('RecoveryEntries')
+    if($Direct){if($RecoveryConfirm -cne 'ROLLBACK' -or -not $RecoveryEntries.Count -or $null -eq $RecoveryValidate){throw 'Recovery approval/validation required.'};$RowsToRestore=@($RecoveryEntries)}else{
     $Runs = @(Get-ChildItem -LiteralPath (Join-Path $BasePath 'FileRollbacks') -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
     if ($Runs.Count -eq 0) { Write-Host 'File rollback yedegi bulunamadi.' -ForegroundColor Yellow; return }
     for ($Index=0;$Index -lt $Runs.Count;$Index++) { Write-Host ("{0} - {1}" -f ($Index+1),$Runs[$Index].Name) }
@@ -786,8 +788,12 @@ function Invoke-AORemoteFileRollback {
     if((Read-Host 'Rollback icin ROLLBACK yazin').Trim().ToUpperInvariant() -ne 'ROLLBACK'){
         return
     }
-    foreach($Row in @(Import-Csv -LiteralPath $Manifest -Delimiter ';')){
+    $RowsToRestore=@(Import-Csv -LiteralPath $Manifest -Delimiter ';')
+    }
+    $RecoveryRows=@()
+    foreach($Row in $RowsToRestore){
         try{
+            if($Direct){& $RecoveryValidate}
             if($Row.Action -eq 'Move'){
                 if(-not(Test-Path -LiteralPath $Row.ChangedPath -PathType Leaf)){
                     throw "Moved file is missing: $($Row.ChangedPath)"
@@ -803,11 +809,14 @@ function Invoke-AORemoteFileRollback {
                 }
                 Copy-Item -LiteralPath $Row.BackupPath -Destination $Row.OriginalPath -Force -ErrorAction Stop
             }
+            if($Direct){$RecoveryRows += [pscustomobject]@{ComputerName=$Row.ComputerName;ObjectName=$Row.OriginalPath;Status='Success';ErrorDetail=''}}
             Write-Host "$($Row.ComputerName) : ROLLBACK OK" -ForegroundColor Green
         }catch{
+            if($Direct){$RecoveryRows += [pscustomobject]@{ComputerName=$Row.ComputerName;ObjectName=$Row.OriginalPath;Status='Failed';ErrorDetail=$_.Exception.Message}}
             Write-Host "$($Row.ComputerName) : ROLLBACK HATA | $($_.Exception.Message)" -ForegroundColor Red
         }
     }
+    if($Direct){return $RecoveryRows}
 }
 
 # ====================================================================
@@ -1579,12 +1588,19 @@ function Restore-AODeleteBackup {
         [Parameter(Mandatory = $true)][string]$OperationDate,
         [Parameter(Mandatory = $true)][string]$OperationTime,
         [scriptblock]$TechnicalLogWriter,
-        [scriptblock]$OperationHistoryWriter
+        [scriptblock]$OperationHistoryWriter,
+        [string]$BackupRunId,[object[]]$RecoveryEntries,[string]$RecoveryConfirm,[scriptblock]$RecoveryValidate
     )
 
+    $Direct=$PSBoundParameters.ContainsKey('RecoveryEntries')
+    if($Direct){
+        if($RecoveryConfirm -cne 'RESTORE' -or -not $RecoveryEntries.Count -or $null -eq $RecoveryValidate){throw 'Recovery approval/validation required.'}
+        $Entries=@($RecoveryEntries);$SourceOperationID=$BackupRunId
+    }else{
     $BackupRoot = Join-Path $BasePath 'DeleteBackups'
     $Runs = @(Get-ChildItem -LiteralPath $BackupRoot -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
     if ($Runs.Count -eq 0) {
+        if(-not [string]::IsNullOrWhiteSpace($BackupRunId)){throw 'Secilen yedek artik mevcut degil. Yedek listesini yenileyin.'}
         Write-Host 'Restore edilebilir delete yedegi bulunamadi.' -ForegroundColor Yellow
         return
     }
@@ -1597,8 +1613,16 @@ function Restore-AODeleteBackup {
     Write-Host ''
 
     $SelectedRun = $null
+    if(-not [string]::IsNullOrWhiteSpace($BackupRunId)){
+        $Matches=@($Runs|Where-Object{$_.Name -eq $BackupRunId})
+        if($Matches.Count -ne 1){throw 'Secilen yedek artik mevcut degil. Yedek listesini yenileyin.'}
+        $SelectedRun=$Matches[0]
+    }
     while ($null -eq $SelectedRun) {
         $Raw = (Read-Host 'Restore edilecek yedek numarasi (iptal icin 0)').Trim()
+        $Matches=@($Runs|Where-Object{$_.Name -eq $Raw})
+        if($Matches.Count -eq 1){$SelectedRun=$Matches[0];continue}
+        if($Raw -notmatch '^\d+$'){throw 'Secilen yedek artik mevcut degil. Yedek listesini yenileyin.'}
         [int]$Index = -1
         if ([int]::TryParse($Raw, [ref]$Index)) {
             if ($Index -eq 0) { return }
@@ -1622,6 +1646,7 @@ function Restore-AODeleteBackup {
     }
 
     $SourceOperationID = $SelectedRun.Name -replace '_Delete$',''
+    }
     $Rows = @()
 
     foreach ($Entry in $Entries) {
@@ -1633,6 +1658,7 @@ function Restore-AODeleteBackup {
         }
 
         try {
+            if($Direct){& $RecoveryValidate}
             $RemoteTarget = ConvertTo-AORemoteAdminPath -ComputerName $ComputerName -LocalPath ([string]$Entry.OriginalPath)
             $BackupPath = [string]$Entry.BackupPath
             if (-not (Test-Path -LiteralPath $BackupPath)) { throw "Backup verisi bulunamadi: $BackupPath" }
@@ -1670,7 +1696,7 @@ function Restore-AODeleteBackup {
         Write-Host "Restore sonucu CSV: $ResultCsv" -ForegroundColor Cyan
     }
 
-    return [PSCustomObject]@{ Completed=$true; ResultCsv=$ResultCsv; Message='Restore tamamlandi.' }
+    return [PSCustomObject]@{ Completed=$true; ResultCsv=$ResultCsv; Rows=$Rows; Message='Restore tamamlandi.' }
 }
 
 # ====================================================================

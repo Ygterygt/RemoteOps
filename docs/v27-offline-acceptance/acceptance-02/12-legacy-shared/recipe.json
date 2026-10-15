@@ -1,0 +1,50 @@
+{
+    "Schema":  "RemoteOps.Recipe/2",
+    "Id":  "00d85943-fddf-463d-8932-c60b3b2b1ebb",
+    "Revision":  1,
+    "Name":  "Offline shared legacy",
+    "Description":  "",
+    "CreatedAt":  "2026-10-15T23:40:48.4960921+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:48.5591848+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "504dd06b-2a33-434f-8679-6439c5854747",
+                      "Name":  "Legacy stopped",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "State",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  "Stopped"
+                                                    }
+                                                ],
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip"
+                                 }
+                  },
+                  {
+                      "Id":  "ab8ffec2-46ce-438e-b060-38def6c3cd79",
+                      "Name":  "Legacy custom Start",
+                      "Operation":  "ServiceControl",
+                      "ConditionId":  "504dd06b-2a33-434f-8679-6439c5854747",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 }
+                  },
+                  {
+                      "Id":  "45566392-5dea-4c8b-9cc3-1f3f649899fd",
+                      "Name":  "Legacy custom Stop",
+                      "Operation":  "ServiceControl",
+                      "ConditionId":  "504dd06b-2a33-434f-8679-6439c5854747",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Stop"
+                                 }
+                  }
+              ]
+}

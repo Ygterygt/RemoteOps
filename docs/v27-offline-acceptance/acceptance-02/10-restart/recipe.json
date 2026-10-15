@@ -1,0 +1,30 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "aaae0107-6dd7-4459-9dfb-8735cb02dac6",
+    "Revision":  1,
+    "Name":  "Offline 10-restart",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:40:35.3237390+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:35.5435529+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "895da4ad-9092-46de-b978-fb1ecd9ae598",
+                      "Name":  "Servisi yeniden başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Restart"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "804362fc-64ca-4963-88f9-98f610b47e9a",
+                      "Name":  "Servisleri listele · OfflineDemo",
+                      "Operation":  "ServiceList",
+                      "Values":  {
+                                     "Filter":  "OfflineDemo"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

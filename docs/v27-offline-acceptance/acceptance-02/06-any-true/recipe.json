@@ -1,0 +1,49 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "d1291509-ef68-43e1-9f16-bb06fdd9229a",
+    "Revision":  1,
+    "Name":  "Offline 06-any-true",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:40:03.4008354+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:03.7328846+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "d7c76eb0-a0be-4d67-811d-4528005bbdc8",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "Any",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "Equals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "16.0.444"
+                                                    },
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "State",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  "Stopped"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "33906148-c7e0-426c-a6c6-4ad7d9aecc6b",
+                      "Name":  "Servisi durdur · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Stop"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "d7c76eb0-a0be-4d67-811d-4528005bbdc8"
+                  }
+              ]
+}

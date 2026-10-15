@@ -1,0 +1,224 @@
+{
+  "subject_version": 26,
+  "delivery_version": 27,
+  "files": 36,
+  "all_equal": true,
+  "records": [
+    {
+      "file": "RemoteOps.App/README.md",
+      "sha256": "4bc171f02e78826439e050a2e04ed968a5b5192d956d814158654f9c19389162",
+      "v26_sha256": "4bc171f02e78826439e050a2e04ed968a5b5192d956d814158654f9c19389162",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.App.bat",
+      "sha256": "334974bc20a294b9609afaa240a25e44edcf9d2b72a2c67cfe10b930c3cfbd0b",
+      "v26_sha256": "334974bc20a294b9609afaa240a25e44edcf9d2b72a2c67cfe10b930c3cfbd0b",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.App.ps1",
+      "sha256": "df23875babf2f7ecd432503dccbb6559911f33cbe52cd754f303c92428e04fc4",
+      "v26_sha256": "df23875babf2f7ecd432503dccbb6559911f33cbe52cd754f303c92428e04fc4",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Backups.ps1",
+      "sha256": "176b592a7e66c98c2cc77c115ba1baf4c2c8ad731375290d64fbcc0528306d36",
+      "v26_sha256": "176b592a7e66c98c2cc77c115ba1baf4c2c8ad731375290d64fbcc0528306d36",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Conditions.ps1",
+      "sha256": "be52cb43767ddc1f635b1eab3cf077b4808035db22cea4da9c1d27ecc08215c0",
+      "v26_sha256": "be52cb43767ddc1f635b1eab3cf077b4808035db22cea4da9c1d27ecc08215c0",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.ConditionUi.ps1",
+      "sha256": "cbacf15ef8711791a1b14afea3d6de07adb80f396e13e55983930fa5a8408b79",
+      "v26_sha256": "cbacf15ef8711791a1b14afea3d6de07adb80f396e13e55983930fa5a8408b79",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Deployment.ps1",
+      "sha256": "d6620ceefd9c2264e7cb68c266442d50b7133dbd92a39c0549c94500ca7dfecb",
+      "v26_sha256": "d6620ceefd9c2264e7cb68c266442d50b7133dbd92a39c0549c94500ca7dfecb",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Diagnostics.ps1",
+      "sha256": "a693090b6faa37643ba0650d8cb9d1a99b56fbe74013ea61b9aad8efd271590f",
+      "v26_sha256": "a693090b6faa37643ba0650d8cb9d1a99b56fbe74013ea61b9aad8efd271590f",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.History.ps1",
+      "sha256": "99733a2fa557ecc1c5129a58f8113d1fdbb32d47a058e2abdfb5fe7bf467c941",
+      "v26_sha256": "99733a2fa557ecc1c5129a58f8113d1fdbb32d47a058e2abdfb5fe7bf467c941",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.HistoryUi.ps1",
+      "sha256": "6f34d017864859ce04a324f1d17ac867ba23fc80605dccd38e064955121b2699",
+      "v26_sha256": "6f34d017864859ce04a324f1d17ac867ba23fc80605dccd38e064955121b2699",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Packages.ps1",
+      "sha256": "6bc576d0f096152c5cb5c24daea73882f0ecf21c9d6c6b525252020dee998007",
+      "v26_sha256": "6bc576d0f096152c5cb5c24daea73882f0ecf21c9d6c6b525252020dee998007",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.PackageUi.ps1",
+      "sha256": "c2f1df95e51d68ade2309b99593be70517fce6388ee7ceb63d0894732b974419",
+      "v26_sha256": "c2f1df95e51d68ade2309b99593be70517fce6388ee7ceb63d0894732b974419",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Preview.ps1",
+      "sha256": "e8cdd5b9959fb74d4d295f9c0140a977af3bb3ea63c82ee7f5e713d930890140",
+      "v26_sha256": "e8cdd5b9959fb74d4d295f9c0140a977af3bb3ea63c82ee7f5e713d930890140",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.PreviewUi.ps1",
+      "sha256": "e6eb69d9eb572c6c5ab7222ede88f0f4432f172b107fa95c81788343216f3f78",
+      "v26_sha256": "e6eb69d9eb572c6c5ab7222ede88f0f4432f172b107fa95c81788343216f3f78",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RecipeExecution.ps1",
+      "sha256": "bd983151035deca53d7574797c03c8570e47011a8682bdeb64a7808446efd98e",
+      "v26_sha256": "bd983151035deca53d7574797c03c8570e47011a8682bdeb64a7808446efd98e",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RecipeFocusedUi.ps1",
+      "sha256": "a96e54e2c3d43b462c3b6e07f84cbc17f8784ee3c37aa36657b771cc6fd8c191",
+      "v26_sha256": "a96e54e2c3d43b462c3b6e07f84cbc17f8784ee3c37aa36657b771cc6fd8c191",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RecipeResults.ps1",
+      "sha256": "cfa968010c276296f008c27e0123a365e2736cb399417c49f1821e3542002d16",
+      "v26_sha256": "cfa968010c276296f008c27e0123a365e2736cb399417c49f1821e3542002d16",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Recipes.ps1",
+      "sha256": "01d6c1705ca9806076434b00f67dc7c183a9aac91fe0fb9df99603fa3f5823dd",
+      "v26_sha256": "01d6c1705ca9806076434b00f67dc7c183a9aac91fe0fb9df99603fa3f5823dd",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RecipeUi.ps1",
+      "sha256": "d5722edddf7ca3e66757d038852ee4eba9f99a392cb3f65b48d779843aba268f",
+      "v26_sha256": "d5722edddf7ca3e66757d038852ee4eba9f99a392cb3f65b48d779843aba268f",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Recovery.ps1",
+      "sha256": "181914d1c6cafcdc82ba347210e4486804773b3ef2708785458bdbd3b019ec10",
+      "v26_sha256": "181914d1c6cafcdc82ba347210e4486804773b3ef2708785458bdbd3b019ec10",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RecoveryUi.ps1",
+      "sha256": "77f7fe92542584b3ce942f12ed81f799285f3abc81bdba4c95051d6fa6036058",
+      "v26_sha256": "77f7fe92542584b3ce942f12ed81f799285f3abc81bdba4c95051d6fa6036058",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Reports.ps1",
+      "sha256": "9f7da75de48ff831aa2665c7328bc8b46223c3edf59d50d3655de16b21a375da",
+      "v26_sha256": "9f7da75de48ff831aa2665c7328bc8b46223c3edf59d50d3655de16b21a375da",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.Runner.ps1",
+      "sha256": "ebbb0eb90449e172e11307289a01ef1eda3507db99de1febe6178fccf2668b90",
+      "v26_sha256": "ebbb0eb90449e172e11307289a01ef1eda3507db99de1febe6178fccf2668b90",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.RunState.ps1",
+      "sha256": "283d95cfd2ba151f8fc2bdcaef28cf6f2fde73e9de2cd0242efa9d65b76c4842",
+      "v26_sha256": "283d95cfd2ba151f8fc2bdcaef28cf6f2fde73e9de2cd0242efa9d65b76c4842",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.TargetGroups.ps1",
+      "sha256": "41486aadf1545e74bb5e954d8b372aec3472ea2876662e86ae391dd125dbdd70",
+      "v26_sha256": "41486aadf1545e74bb5e954d8b372aec3472ea2876662e86ae391dd125dbdd70",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.TargetGroupsUi.ps1",
+      "sha256": "7ffe63249e749dc15d8bbb19e5084e980febdd9b3b1ed044a5a090a17caf429b",
+      "v26_sha256": "7ffe63249e749dc15d8bbb19e5084e980febdd9b3b1ed044a5a090a17caf429b",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.WorkflowUi.ps1",
+      "sha256": "47d8b74fdce4f6c18b7d0d33fcbf09c07ceac31ae638ff6d7f4daf3b55eb09e2",
+      "v26_sha256": "47d8b74fdce4f6c18b7d0d33fcbf09c07ceac31ae638ff6d7f4daf3b55eb09e2",
+      "same": true
+    },
+    {
+      "file": "RemoteOps.App/RemoteOps.WorkspaceUi.ps1",
+      "sha256": "01a2f5ae3dc04f620fe258870f47a2ad75f8c03367b32e29a71af40830755ba4",
+      "v26_sha256": "01a2f5ae3dc04f620fe258870f47a2ad75f8c03367b32e29a71af40830755ba4",
+      "same": true
+    },
+    {
+      "file": "Modules/ApplicationWorkers.ps1",
+      "sha256": "3545b6ecb54225776feef8e221d7f374a31d0b4a08415145e2381506d0867e72",
+      "v26_sha256": "3545b6ecb54225776feef8e221d7f374a31d0b4a08415145e2381506d0867e72",
+      "same": true
+    },
+    {
+      "file": "Modules/FileOperations.ps1",
+      "sha256": "66f35a42e020243f66307f5fe648411ec18bb91df753477f5cb54778c40d0cca",
+      "v26_sha256": "66f35a42e020243f66307f5fe648411ec18bb91df753477f5cb54778c40d0cca",
+      "same": true
+    },
+    {
+      "file": "Modules/HealthOperations.ps1",
+      "sha256": "9a5ccda1d8c47376b69a0d30ab16c4d59a0b23e8fb06dc35d97f43ce99e3cdf5",
+      "v26_sha256": "9a5ccda1d8c47376b69a0d30ab16c4d59a0b23e8fb06dc35d97f43ce99e3cdf5",
+      "same": true
+    },
+    {
+      "file": "Modules/InventoryOperations.ps1",
+      "sha256": "684aa995201a8d5383a45a0820c15d3b0c0f380269e26b5301c1350c20398574",
+      "v26_sha256": "684aa995201a8d5383a45a0820c15d3b0c0f380269e26b5301c1350c20398574",
+      "same": true
+    },
+    {
+      "file": "Modules/RegistryOperations.ps1",
+      "sha256": "f9f415c92fe9b300ad43d8b7e85fd5b5ef377a5dccdb200330fe67d7a49a350a",
+      "v26_sha256": "f9f415c92fe9b300ad43d8b7e85fd5b5ef377a5dccdb200330fe67d7a49a350a",
+      "same": true
+    },
+    {
+      "file": "Modules/RegistryPaths.ps1",
+      "sha256": "8715fd933e2c487e184ae54a40b3da9feff8ea399e624a9a10c22624ade42088",
+      "v26_sha256": "8715fd933e2c487e184ae54a40b3da9feff8ea399e624a9a10c22624ade42088",
+      "same": true
+    },
+    {
+      "file": "Modules/RegistryValues.ps1",
+      "sha256": "684e97c0535b5d8efe7f88dcae47838aa5aac00cbaa6f6940c42f666527c13e1",
+      "v26_sha256": "684e97c0535b5d8efe7f88dcae47838aa5aac00cbaa6f6940c42f666527c13e1",
+      "same": true
+    },
+    {
+      "file": "Modules/ServiceTaskOperations.ps1",
+      "sha256": "7c1b7079c06f115dcee133f50a803d8eebccc2e57f4fa6e2e46addb634e8df1d",
+      "v26_sha256": "7c1b7079c06f115dcee133f50a803d8eebccc2e57f4fa6e2e46addb634e8df1d",
+      "same": true
+    }
+  ]
+}

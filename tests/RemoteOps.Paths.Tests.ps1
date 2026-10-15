@@ -1,7 +1,8 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 $ExpectedBase='C:\Temp\YD_RemoteOps.App'
+$IsRecipeWorker=$false
 $Tokens=$null;$Errors=$null
 foreach($Relative in @('RemoteOps.App\RemoteOps.Runner.ps1')){
     $Ast=[System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Root $Relative),[ref]$Tokens,[ref]$Errors)

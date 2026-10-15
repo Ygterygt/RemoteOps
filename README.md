@@ -1,23 +1,36 @@
 # RemoteOps
 
-[![Regression: 50 passing](https://img.shields.io/badge/regression-50%20passing-17855A)](docs/KAPSAMLI_TEST_SONUCLARI.csv)
+![Version: 27](https://img.shields.io/badge/version-v27-0A8C83)
 ![Platform: Windows](https://img.shields.io/badge/platform-Windows-0078D4)
 ![PowerShell: 5.1](https://img.shields.io/badge/PowerShell-5.1-5391FE)
-![Version: 11](https://img.shields.io/badge/version-v11-0A8C83)
 
-Şirket içi yazılım dağıtımı ve uzak bilgisayar operasyonları için Windows PowerShell 5.1 / WPF uygulaması. Tekrarlanan paket tanımlarını kaydeder; işlem, sonuç ve log takibini aynı arayüzde toplar.
+Tek operatörün yazılım dağıtımı ve uzak bilgisayar operasyonları için Windows PowerShell 5.1 / WPF uygulaması. **Güncel kabul edilen sürüm v27'dir.**
 
-![RemoteOps günlük rapor](docs/rapor.png)
+![Operasyon reçeteleri](docs/screenshots-v26/recete-ana.png)
 
-## Neler yapar?
+## Güncel sürüm
 
-- **Paketlerim:** UNC üzerindeki hazır scriptleri kurulum, kaldırma ve bağımsız eski sürüme dönüş tanımlarıyla kaydeder ve çağırır.
-- **Paket Oluştur:** kategori, uygulama kimliği, hedef sürüm ve işlem kaynaklarını tanımlar. Kontrolsüz tetikleme ile sürüm/uygulama kimliği olmadan kişisel scriptler çalıştırılabilir.
-- **Operasyon:** dosya, registry, servis, zamanlanmış görev, süreç ve envanter işlemlerini yürütür. Giriş alanlarında kısa örnekler bulunur.
-- **Rapor:** çalıştırma ve istemci bazında sonuç, HTML/CSV çıktı, toplanan loglar ve çekilen dosyalar için kısayollar sunar.
-- **Erişim kontrolü:** her hedefte işlem başlamadan gerekli SMB veya WMI/DCOM bağlantısını sınar. Erişilemeyenler sarı **Atlandı — Erişilemedi**; yetki ve gerçek işlem hataları kırmızı gösterilir. Ping zorunlu değildir.
+v27, v26 uygulama kodunu korur ve hafif operasyon kabul testini ekler. İşlem adları otomatik oluşur; koşullar ilgili adımın içinde düzenlenir. Registry türü seçmek gerekmez. Reçete ekranında Adımlar ve Hedefler ayrı sekmelerdedir; işlem ve çalışma koşulu ayrı düzenleme penceresinde açılır.
 
-Uygulama MSI/EXE veya kurulum scripti üretmez; önceden hazırlanmış `.bat`, `.cmd`, `.ps1`, `.vbs` dosyalarını çalıştırır.
+- Servis/registry koşulları; Tümü / Herhangi biri; koşul sağlanmazsa adımı atlama veya hedefi durdurma.
+- Önceki reçetelerin özel adları ve ortak koşullarının tek değerlendirme davranışı korunur.
+- Ortak hedef düzenleme, sonuç filtreleri ve seçili sonuçtan teşhis/geri almaya geçiş.
+- Kayıtlı paketler; dosya, registry, servis/görev, süreç ve envanter işlemleri; HTML/CSV raporlama.
+
+## Doğrulama
+
+| Kontrol | Sonuç |
+|---|---|
+| Durumu değişen yerel hedef modeliyle operasyon senaryoları | 17/17 geçti |
+| Güvenli yerel regresyon dosyaları | 12/12 geçti |
+| Model sınırı negatif kontrolleri | 5/5 geçti |
+| Bağımsız CSV/ledger/checkpoint incelemesi | 16 çalışma doğrulandı |
+
+Gerçek WPF denetimleri, gerçek istek oluşturma, koordinatör ve 48 çocuk süreç kullanıldı. Yanıltıcı Success raporu hedef durumu ayrıca kontrol edilerek yakalandı. Kabul koşusu yaklaşık 149 saniye sürdü; örneklenen toplam çalışma belleği yaklaşık 700 MiB idi. Sanal makine kullanılmadı.
+
+Bu sonuçlar gerçek ağ, Windows registry sağlayıcısı, domain yetkileri, SMB/PsExec veya güvenlik yazılımlarının doğrulandığı anlamına gelmez. Uzak erişim sınırları yalnızca geçici test kopyasında yerel modele yönlendirilir. İptal mekanizması sınanır; onay iletişim kutusunun fareyle tıklanması sınanmaz.
+
+[Kabul raporu](docs/V27_HAFIF_TEST_RAPORU.md) · [Özet kayıt](docs/V27_TEST_SUMMARY.json) · [Bağımsız inceleme](docs/V27_INDEPENDENT_REVIEW.json)
 
 ## Hızlı başlangıç
 
@@ -28,56 +41,30 @@ Uygulama MSI/EXE veya kurulum scripti üretmez; önceden hazırlanmış `.bat`, 
    cd RemoteOps
    ```
 
-2. **Windows PowerShell 5.1**, WPF ve `FullLanguage` çalışma ortamını kullanın. Hedef operasyon için gerekli yönetim izinleri ve SMB/RPC/DCOM erişimi bulunmalıdır.
-3. Paket çalıştırma için [Microsoft Sysinternals PsExec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) indirin. `PsExec.exe` dosyasını repo köküne yerleştirin veya PATH üzerinden erişilebilir yapın. Üçüncü taraf ikili bu repoda dağıtılmaz.
-4. Kökteki `YD_RemoteOps.App.bat` dosyasını başlatın.
-5. Çalışma hesabını seçin, paket veya operasyon tanımını doldurun ve hedef bilgisayarları girin.
+2. Windows PowerShell 5.1, WPF ve FullLanguage çalışma ortamını kullanın.
+3. Paket çalıştırmak için [Microsoft Sysinternals PsExec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) indirin ve `PsExec.exe` dosyasını köke yerleştirin veya PATH üzerinden erişilebilir yapın. Üçüncü taraf ikili bu repoda dağıtılmaz.
+4. `YD_RemoteOps.App.bat` dosyasını açın, çalışma hesabını ve hedefleri seçin.
 
-Paketler mevcut uzak çalışma mekanizmasıyla **SYSTEM** hesabında yürütülür. Kaynak UNC paylaşımının hedef SYSTEM bağlamından okunabilmesi gerekir. Ayrıntılar [kullanım kılavuzundadır](docs/KULLANIM_KILAVUZU.md).
+Gerçek operasyonlarda uygun yönetim yetkileri ve operasyonun gerektirdiği ağ erişimi bulunmalıdır. Uygulama verileri `C:\Temp\YD_RemoteOps.App`, kişisel kataloglar/profiller `%APPDATA%\MDRemoteOps` altında kalır.
 
-## Sonuçları okuma
+## Canlı hedef kullanmadan test
 
-![Erişilemeyen tek hedefin HTML raporu: sarı yüzde 100, hata sıfır](docs/paket-ui-preview/sonuc-dagilimi-v11.png)
+Reçete kabul testi için kökteki **HAFIF_TEST_CALISTIR.bat** dosyasını açın. PsExec, sanal makine veya yönetici yetkisi gerekmez. Yeni sonuçlar `docs/v27-offline-acceptance/Run-*` altında oluşur.
 
-Erişilemeyen hedef atlanır ve sonuç listesinden kaybolmaz. CSV'de teknik `Unreachable` durumu korunur; ekran, grafik ve günlük rapor bunu sarı grupta toplar. İşlem başladıktan sonra sonucu belirsiz kalan dağıtımlar ayrıca değerlendirilir; otomatik başarı kabul edilmez.
-
-## Dosya yapısı
-
-```text
-RemoteOps/
-├── YD_RemoteOps.App.bat       # Başlatıcı
-├── VERSION.json              # Uygulama sürümü
-├── RemoteOps.App/            # WPF, Runner, paket motoru ve raporlar
-├── Modules/                  # Dosya, registry, servis/görev, envanter worker'ları
-├── tests/                    # Otomatik regresyon ve ayrı canlı test araçları
-└── docs/                     # Kılavuzlar, ekranlar ve doğrulama özetleri
-```
-
-Çalışma verileri `C:\Temp\YD_RemoteOps.App`; kişisel profiller, ayarlar ve paket kataloğu `%APPDATA%\MDRemoteOps` altındadır. Repo klasörünü yeniden adlandırmak bu yolları değiştirmez. İşletim çıktıları ve kullanıcı profilleri Git'e eklenmez.
-
-## Dokümanlar
-
-| Doküman | İçerik |
-| --- | --- |
-| [Kullanım kılavuzu](docs/KULLANIM_KILAVUZU.md) · [PDF](KULLANIM_KILAVUZU.pdf) | Kurulum, ekranlar ve günlük kullanım |
-| [Teknik el kitabı](docs/TEKNIK_EL_KITABI.md) | Bileşenler, uzak yöntemler, veri yolları ve sınırlar |
-| [Çalışma mantığı](docs/CALISMA_MANTIGI.md) | İstekten hedef sonucuna akış |
-| [Doğrulama raporu](docs/INCELEME_RAPORU.md) | Test kapsamı ve düzeltilen sorunlar |
-| [Pilot kontrolü](docs/PAKET_YONETIMI_PILOT_KONTROLU.md) | Şirket ortamında kabul senaryoları |
-| [Değişiklikler](CHANGELOG.md) | Sürüm özeti |
-
-## Testler
-
-Windows PowerShell 5.1 üzerinden:
+12 regresyon ve 17 kabul senaryosunu birlikte çalıştırmak için:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\Invoke-RegressionTests.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Invoke-OfflineValidation.ps1
 ```
 
-v11 yerel doğrulaması: **50/50 otomatik test dosyası** ve **26/26 salt okunur yerel erişim kontrolü**. Önceki v10'da 18/18 geçici kaynaklı operasyon/geri alma senaryosu doğrulandı. Bunlar şirket ağı kabul testinden ayrıdır.
+Diğer test dosyalarının kapsamı farklı olabilir; canlı test araçlarını normal çevrimdışı doğrulama turuna dahil etmeyin. GitHub'daki kabul kanıtları sentetik hedefler içerir ve çalışma bilgisayarına ait dosya yolları temizlenmiştir.
 
-Normal regresyon turu `Invoke-RemoteOpsLocalLiveTest.ps1` ve `Invoke-RemoteOpsAccessLiveTest.ps1` araçlarını çağırmaz. Canlı araçlar açık `-RunLive` ve yönetici token ister. Public test özetlerinden bilgisayar adı, yerel kullanıcı yolları ve ham operasyon logları çıkarılmıştır.
+## Belgeler
 
-## Geliştirme
+- [Kullanım kılavuzu](docs/KULLANIM_KILAVUZU.md) · [PDF](KULLANIM_KILAVUZU.pdf)
+- [Teknik el kitabı](docs/TEKNIK_EL_KITABI.md)
+- [Çalışma mantığı](docs/CALISMA_MANTIGI.md)
+- [Değişiklikler](CHANGELOG.md)
+- [Üçüncü taraf bağımlılıklar](THIRD_PARTY_NOTICES.md)
 
-[Katkı rehberi](CONTRIBUTING.md), [teslim kuralları](AGENTS.md) ve [üçüncü taraf notları](THIRD_PARTY_NOTICES.md) değişiklik öncesinde okunmalıdır. Uygulamanın kaynak sürümü **v11**'dir; bu ilk GitHub yayını çalışma davranışını değiştirmez.
+Eski sürümler Git geçmişinde korunur. Kaynak arşivi PsExec içermez.

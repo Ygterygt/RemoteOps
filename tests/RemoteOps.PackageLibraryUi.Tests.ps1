@@ -2,6 +2,7 @@
 $ErrorActionPreference='Stop';Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 . (Join-Path $Root 'RemoteOps.App\RemoteOps.Packages.ps1')
+foreach($Module in @('TargetGroups','TargetGroupsUi','Preview','PreviewUi')){. (Join-Path $Root ('RemoteOps.App\RemoteOps.'+$Module+'.ps1'))}
 $Library=Join-Path $Root 'RemoteOps.App\RemoteOps.PackageUi.ps1'
 if(-not(Test-Path $Library)){throw 'Saved package screens are missing.'}
 . $Library
@@ -24,7 +25,7 @@ function Write-AppLog {param($Message)}
 $script:Started=@()
 function Start-RemoteOpsRequest {param($Operation,$Values)$script:Started+=,[PSCustomObject]@{Operation=$Operation;Values=$Values}}
 try{
-    Initialize-RemoteOpsPackageUi -Window $script:Window -CatalogRoot $Temp
+    Initialize-RemoteOpsPackageUi -Window $script:Window -CatalogRoot $Temp -TargetGroupRoot (Join-Path $Temp 'groups')
     if($script:MainTabs.Items.Count -ne 4 -or $script:MainTabs.SelectedItem -ne $script:Window.FindName('PackagesTab')){throw 'Package tabs or default selection missing.'}
     $script:OperationPicker.SelectedItem=@($script:OperationCatalog|Where-Object Name -eq PackageTrigger)[0]
     Show-OperationFields

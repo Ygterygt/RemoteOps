@@ -65,12 +65,13 @@ $script:RemoteOpsInv = [System.Globalization.CultureInfo]::InvariantCulture
 
 # Operation name -> category and display title (same titles as the GUI catalog).
 $script:RemoteOpsOperationMeta = @{
+    RecipeRun='Recipes|Operasyon reçetesi'
     ApplicationCheck='Applications|Application presence check'; ApplicationInventory='Applications|List installed applications'; PackageTrigger='Applications|Install or uninstall package'
     PackageDeployment='Applications|Saved package deployment'
     FilePull='Files|Pull files'; FileDelete='Files|Backup and delete'; FilePush='Files|Push files'; FileCompare='Files|Compare file'
     FileBrowser='Files|Browse file: pull / move / replace'; FileRestore='Files|Restore file backup'; FileRollback='Files|Rollback file operation'
     EndpointInventory='Inventory|Endpoint inventory'; HealthCheck='Inventory|PC health check (detailed)'
-    RegistryRead='Registry|Read registry value'; RegistryEdit='Registry|Edit registry string'; RegistryDelete='Registry|Delete registry value'; RegistryRollback='Registry|Rollback registry change'
+    RegistryRead='Registry|Read registry value'; RegistryEdit='Registry|Edit registry value'; RegistryDelete='Registry|Delete registry value'; RegistryRollback='Registry|Rollback registry change'
     ServiceList='Services|List services'; ServiceControl='Services|Control service'; ServiceStartup='Services|Change service startup'; ServiceTaskRollback='Services|Rollback service/task change'
     ScheduledTaskList='Tasks|List scheduled tasks'; ScheduledTaskDelete='Tasks|Delete scheduled task (backup)'; ScheduledTaskAction='Tasks|Run / enable / disable task'
     ProcessQuery='Processes|Query processes'; ProcessKill='Processes|Kill process'
@@ -181,7 +182,7 @@ function Write-RemoteOpsLedger {
                 CompletedAt=$When.ToString('yyyy-MM-dd HH:mm:ss',$script:RemoteOpsInv)
                 OperationID=$OperationID;Operation=$Operation;Category=$Category
                 ComputerName=[string]$Entry.ComputerName;Outcome=[string]$Entry.Outcome;Identity=$Identity
-                PackageName=(Get-RemoteOpsRowValue $Entry @('PackageName'));PackageId=(Get-RemoteOpsRowValue $Entry @('PackageId'));PackageRevision=(Get-RemoteOpsRowValue $Entry @('PackageRevision'));Action=(Get-RemoteOpsRowValue $Entry @('Action'));Detail=(Get-RemoteOpsRowValue $Entry @('Detail'))
+                RecipeName=(Get-RemoteOpsRowValue $Entry @('RecipeName'));RecipeId=(Get-RemoteOpsRowValue $Entry @('RecipeId'));RecipeRevision=(Get-RemoteOpsRowValue $Entry @('RecipeRevision'));PackageName=(Get-RemoteOpsRowValue $Entry @('PackageName'));PackageId=(Get-RemoteOpsRowValue $Entry @('PackageId'));PackageRevision=(Get-RemoteOpsRowValue $Entry @('PackageRevision'));Action=(Get-RemoteOpsRowValue $Entry @('Action'));Detail=(Get-RemoteOpsRowValue $Entry @('Detail'))
             }
         })
         $SafeName=($OperationID -creplace '[^A-Za-z0-9_-]','_')
@@ -327,7 +328,7 @@ body{margin:0;color:var(--ink);background:var(--bg);font:14px/1.45 'Segoe UI',sy
 .top{background:linear-gradient(120deg,#073f73,#0b64a8 55%,#0a8c83);color:#fff;padding:26px 32px 22px}
 .brand{font-size:12px;font-weight:600;letter-spacing:.14em;opacity:.85}
 .top h1{margin:6px 0 10px;font-size:26px;font-weight:600;letter-spacing:-.01em}
-.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px;font-size:12px;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px;font-size:12px;overflow-wrap:break-word;word-break:normal}
 main{max-width:1500px;margin:0 auto;padding:22px 32px 40px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);border-top:4px solid var(--brand)}
@@ -351,6 +352,15 @@ th{position:sticky;top:0;background:var(--head);z-index:1;text-align:left;white-
 th button{border:0;background:transparent;font:inherit;font-weight:600;padding:11px 12px;cursor:pointer;color:var(--ink);width:100%;text-align:left}
 th[aria-sort=ascending] button::after{content:" \25B2";font-size:9px}th[aria-sort=descending] button::after{content:" \25BC";font-size:9px}
 td{border-top:1px solid var(--line);padding:8px 12px;vertical-align:top;max-width:460px;overflow-wrap:anywhere}
+.results-table{width:max-content;min-width:100%}
+.results-table td{min-width:140px;word-break:normal;overflow-wrap:break-word}
+.results-table td:first-child{min-width:190px}
+.results-table td.report-message{min-width:300px}
+.results-table .cell{max-width:460px}
+.technical-details summary{cursor:pointer;white-space:nowrap;color:var(--brand)}
+.technical-details[open]{width:380px;max-width:70vw}
+.technical-details dl{margin:10px 0}.technical-details dt{font-weight:600;margin-top:8px}
+.technical-details dd{margin:2px 0 0;overflow-wrap:anywhere;user-select:text}
 td.long{cursor:pointer}td.long:not(.open){max-height:3.2em}td.long:not(.open) .cell{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparent)}tbody tr:hover{background:color-mix(in srgb,var(--brand) 9%,transparent)}
 .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
@@ -366,7 +376,7 @@ footer{max-width:1500px;margin:0 auto;padding:0 32px 28px;color:var(--muted);fon
 .hours-x{display:flex;gap:3px;font-size:10px;color:var(--muted);margin-top:3px}.hours-x span{flex:1;text-align:center}
 table.mini td,table.mini th{padding:6px 8px;position:static;max-width:none}
 @media(max-width:640px){.top,main,footer{padding-left:16px;padding-right:16px}input{width:100%}.filters label{width:100%}.visible{margin-left:0}.top h1{font-size:21px}}
-@media print{.filters,.noprint{display:none!important}.table-wrap{max-height:none;overflow:visible;box-shadow:none}th{position:static}body{background:#fff}.top{background:#fff;color:#000;border-bottom:3px solid #0b64a8;padding:12px}.chip{background:#eee;color:#000}main{padding:10px}}
+@media print{.results-table{width:100%;min-width:0}.results-table td{min-width:0!important}.results-table th,.results-table th button{white-space:normal}.filters,.noprint{display:none!important}.table-wrap{max-height:none;overflow:visible;box-shadow:none}th{position:static}body{background:#fff}.top{background:#fff;color:#000;border-bottom:3px solid #0b64a8;padding:12px}.chip{background:#eee;color:#000}main{padding:10px}}
 '@
 }
 
@@ -394,6 +404,22 @@ function Get-RemoteOpsOutcomeBar {
 
 # SONUC HTML'I: satirlari aranabilir/filtrelenebilir/siralanabilir tablo olarak yazar.
 # Her satira Get-RemoteOpsRowCategory ile durum etiketi (pill) eklenir.
+function Test-RemoteOpsReportTechnicalColumn {
+    param([string]$Name)
+    foreach($Suffix in @('Id','Guid','Hash')){if($Name.EndsWith($Suffix,[StringComparison]::OrdinalIgnoreCase)){return $true}}
+    return $Name -in @('RecipeRevision','PackageRevision')
+}
+function ConvertTo-RemoteOpsReportTechnicalDetails {
+    param($Entry,[string[]]$Headers)
+    $Parts=@(foreach($Column in $Headers){$Value=Get-RemoteOpsRowValue $Entry @($Column);if(-not [string]::IsNullOrWhiteSpace($Value)){'<dt>'+(ConvertTo-RemoteOpsHtml $Column)+'</dt><dd>'+(ConvertTo-RemoteOpsHtml $Value)+'</dd>'}})
+    if(-not $Parts.Count){return '<span aria-label="Teknik kimlik yok">—</span>'}
+    return '<details class="technical-details"><summary>Teknik kimlikler</summary><dl>'+($Parts -join '')+'</dl></details>'
+}
+function Get-RemoteOpsReportDisplayValue {
+    param([string]$Column,$Value)
+    if($Column -in @('Status','ExecutionStatus','Durum','Outcome') -and [string]$Value -ceq 'NotRun'){return 'Çalıştırılmadı'}
+    return [string]$Value
+}
 function Write-RemoteOpsResultHtml {
     [CmdletBinding()]
     param(
@@ -443,12 +469,16 @@ function Write-RemoteOpsResultHtml {
     }
     $StepHtml=''
     if($StepRows.Count){
-        $StepHeaders=@($StepRows|ForEach-Object{$_.PSObject.Properties.Name}|Select-Object -Unique)
+        $StepAllHeaders=@($StepRows|ForEach-Object{$_.PSObject.Properties.Name}|Select-Object -Unique)
+        $StepTechnical=@($StepAllHeaders|Where-Object{Test-RemoteOpsReportTechnicalColumn $_});$StepHeaders=@($StepAllHeaders|Where-Object{-not(Test-RemoteOpsReportTechnicalColumn $_)})
         $StepHead=(@(foreach($Column in $StepHeaders){'<th>'+(ConvertTo-RemoteOpsHtml $Column)+'</th>'}) -join '')
-        $StepBody=(@(foreach($Entry in $StepRows){'<tr>'+(@(foreach($Column in $StepHeaders){'<td>'+(ConvertTo-RemoteOpsHtml (Get-RemoteOpsRowValue $Entry @($Column)))+'</td>'}) -join '')+'</tr>'}) -join '')
-        $StepHtml='<details class="panel"><summary>Adim ayrintilari ('+$StepRows.Count+')</summary><p>Asagidaki satirlar ayni hedefin ayri yurutme/dogrulama adimlaridir; hedef sayisina eklenmez.</p><div class="table-wrap"><table><thead><tr>'+$StepHead+'</tr></thead><tbody>'+$StepBody+'</tbody></table></div></details>'
+        $StepBody=(@(foreach($Entry in $StepRows){'<tr>'+(@(foreach($Column in $StepHeaders){'<td>'+(ConvertTo-RemoteOpsHtml (Get-RemoteOpsReportDisplayValue $Column (Get-RemoteOpsRowValue $Entry @($Column))))+'</td>'}) -join '')+$(if($StepTechnical.Count){'<td>'+(ConvertTo-RemoteOpsReportTechnicalDetails $Entry $StepTechnical)+'</td>'}else{''})+'</tr>'}) -join '')
+        if($StepTechnical.Count){$StepHead+='<th>Ayrıntı</th>'}
+        $StepHtml='<details class="panel"><summary>Adim ayrintilari ('+$StepRows.Count+')</summary><p>Asagidaki satirlar ayni hedefin ayri yurutme/dogrulama adimlaridir; hedef sayisina eklenmez.</p><div class="table-wrap"><table class="results-table"><thead><tr>'+$StepHead+'</tr></thead><tbody>'+$StepBody+'</tbody></table></div></details>'
     }
-    $Headers=@($Rows|ForEach-Object{$_.PSObject.Properties.Name}|Select-Object -Unique)
+    $AllHeaders=@($Rows|ForEach-Object{$_.PSObject.Properties.Name}|Select-Object -Unique)
+    $TechnicalHeaders=@($AllHeaders|Where-Object{Test-RemoteOpsReportTechnicalColumn $_})
+    $Headers=@($AllHeaders|Where-Object{-not(Test-RemoteOpsReportTechnicalColumn $_)})
     $Clients=@($Rows|ForEach-Object{Get-RemoteOpsRowValue -Row $_ -Names @('ComputerName','IstemciAdi','ClientName')}|Where-Object{-not [string]::IsNullOrWhiteSpace($_)}|Sort-Object -Unique)
     $Counts=@{success=0;neutral=0;issue=0;other=0}
     $SummaryRows=$Rows
@@ -460,16 +490,21 @@ function Write-RemoteOpsResultHtml {
         $Cells=@(foreach($Header in $Headers){
             $Property=$Row.PSObject.Properties[$Header]
             $Value=if($null -ne $Property){$Property.Value}else{''}
+            $Value=Get-RemoteOpsReportDisplayValue $Header $Value
+            $CellClass=if($Header -in @('ErrorDetail','HataDetayi','Detail','ExecutionDetail','Reason')){'report-message'}else{'report-value'}
             $Text=[string]$Value
             if($Text.Length -gt 140){
-                '<td class="long" title="Detay i'+[char]0x00E7+'in t'+[char]0x0131+'klay'+[char]0x0131+'n"><div class="cell">'+(ConvertTo-RemoteOpsHtml $Value)+'</div></td>'
+                '<td class="long '+$CellClass+'" title="Detay i'+[char]0x00E7+'in t'+[char]0x0131+'klay'+[char]0x0131+'n"><div class="cell">'+(ConvertTo-RemoteOpsHtml $Value)+'</div></td>'
             }
-            else{'<td>'+(ConvertTo-RemoteOpsHtml $Value)+'</td>'}
+            else{'<td class="'+$CellClass+'">'+(ConvertTo-RemoteOpsHtml $Value)+'</td>'}
         }) -join ''
+        if($TechnicalHeaders.Count){$Cells+='<td>'+(ConvertTo-RemoteOpsReportTechnicalDetails $Row $TechnicalHeaders)+'</td>'}
         $Outcome=Get-RemoteOpsRowValue $Row @('Status','Outcome')
-        '<tr data-client="'+(ConvertTo-RemoteOpsHtml $Client)+'" data-status="'+$Category+'" data-outcome="'+(ConvertTo-RemoteOpsHtml $Outcome)+'"><td><span class="pill '+$Category+'">'+$PillText[$Category]+'</span></td>'+$Cells+'</tr>'
+        $RowPill=if($Outcome -eq 'NotRun'){'Çalıştırılmadı'}else{$PillText[$Category]}
+        '<tr data-client="'+(ConvertTo-RemoteOpsHtml $Client)+'" data-status="'+$Category+'" data-outcome="'+(ConvertTo-RemoteOpsHtml $Outcome)+'"><td><span class="pill '+$Category+'">'+$RowPill+'</span></td>'+$Cells+'</tr>'
     }) -join "`n"
     $HeaderHtml='<th scope="col"><button type="button" title="S'+[char]0x0131+'rala">Durum</button></th>'+(@(foreach($Header in $Headers){'<th scope="col"><button type="button" title="S'+[char]0x0131+'rala">'+(ConvertTo-RemoteOpsHtml $Header)+'</button></th>'}) -join '')
+    if($TechnicalHeaders.Count){$HeaderHtml+='<th scope="col">Ayrıntı</th>'}
     $Options=@(foreach($Client in $Clients){'<option value="'+(ConvertTo-RemoteOpsHtml $Client)+'">'+(ConvertTo-RemoteOpsHtml $Client)+'</option>'}) -join ''
     $CsvLink=''
     if(-not [string]::IsNullOrWhiteSpace($CsvPath)){
@@ -477,7 +512,7 @@ function Write-RemoteOpsResultHtml {
         $CsvLink='<a class="btn csv" href="'+(ConvertTo-RemoteOpsHtml $CsvUri.AbsoluteUri)+'" download>CSV indir</a>'
     }
     if($Rows.Count -eq 0){
-        $Body='<tr><td colspan="'+[Math]::Max(1,$Headers.Count+1)+'" class="empty">Sonu'+[char]0x00E7+' kayd'+[char]0x0131+' '+[char]0x00FC+'retilmedi.</td></tr>'
+        $Body='<tr><td colspan="'+[Math]::Max(1,$Headers.Count+1+[int]($TechnicalHeaders.Count -gt 0))+'" class="empty">Sonu'+[char]0x00E7+' kayd'+[char]0x0131+' '+[char]0x00FC+'retilmedi.</td></tr>'
     }
     $DisplayTitle=Get-RemoteOpsOperationTitle -Name $Title
     $SafeTitle=ConvertTo-RemoteOpsHtml $DisplayTitle
@@ -504,7 +539,7 @@ $Style
 <main><section class="cards" aria-label="Sonu&ccedil; &ouml;zeti">$CardHtml</section>
 <section class="panel" aria-label="Sonu&ccedil; da&#287;&#305;l&#305;m&#305;"><h2>Sonu&ccedil; da&#287;&#305;l&#305;m&#305;</h2>$Bar</section>
 <div class="filters"><label>Ara<input id="query" type="search" placeholder="Sonu&ccedil;larda ara"></label><label>Bilgisayar<select id="client"><option value="">T&uuml;m bilgisayarlar</option>$Options</select></label><label>Durum<select id="status"><option value="">T&uuml;m durumlar</option><option value="success">Ba&#351;ar&#305;l&#305; / Bulundu</option><option value="neutral">Atlanan / Yok / Eri&#351;ilemedi</option><option value="issue">Hata</option><option value="other">Di&#287;er</option></select></label><label>Hedef sonucu<select id="outcome"><option value="">T&uuml;m sonu&ccedil;lar</option><option>Success</option><option>Skipped</option><option>Error</option><option>Unreachable</option><option>Cancelled</option><option>Indeterminate</option><option>RebootRequired</option></select></label><button type="button" class="btn alt noprint" id="reset">Temizle</button>$CsvLink<button type="button" class="btn alt noprint" onclick="window.print()">Yazd&#305;r</button><span id="visible" class="visible"></span></div>
-<div class="table-wrap"><table id="results"><thead><tr>$HeaderHtml</tr></thead><tbody>$Body</tbody></table></div>$StepHtml</main>
+<div class="table-wrap"><table id="results" class="results-table"><thead><tr>$HeaderHtml</tr></thead><tbody>$Body</tbody></table></div>$StepHtml</main>
 <footer>Remote Ops taraf&#305;ndan olu&#351;turuldu &middot; $Created</footer>
 <script>
 const body=document.querySelector('#results tbody');
@@ -743,3 +778,6 @@ function Write-RemoteOpsPackageSummary {
     Write-Host ("Skipped : {0}" -f $Skipped)
     Write-Host ("Error : {0}" -f $Errors)
 }
+
+$script:RemoteOpsOutcomeTitles.Completed='Tamamlandı'
+$script:RemoteOpsCategoryTitles.Recipes='Reçeteler'

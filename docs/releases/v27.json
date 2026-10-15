@@ -1,0 +1,11 @@
+{
+  "version": 27,
+  "status": "latest accepted release",
+  "source_distribution": "YD_RemoteOps.App_v27",
+  "zip_bytes": 26349100,
+  "zip_sha256": "c254986b4b43f366f11d014dba5cf256d59ea55e3f68998488feeff16daf0067",
+  "runtime_root": "C:\\Temp\\YD_RemoteOps.App",
+  "appdata_root": "%APPDATA%\\MDRemoteOps",
+  "validation": "docs/V27_TEST_SUMMARY.json",
+  "release_contains_no_new_application_behavior": true
+}

@@ -1,0 +1,61 @@
+{
+    "ComputerName":  "SIM-PC3",
+    "OperationID":  "GUI-20261015-233939-0FED3F",
+    "SnapshotHash":  "E57FEB5166A6A25C6E7CCC64A9B5C49E3C83CE72C8B709E68C133A94A2A27F76",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  2,
+    "Rows":  [
+                 {
+                     "Status":  "Success",
+                     "CheckIndex":  1,
+                     "Kind":  "RegistryValue",
+                     "Path":  "HKLM\\SOFTWARE\\Fixture",
+                     "Name":  "Version",
+                     "Operator":  "Equals",
+                     "Expected":  "1",
+                     "ExpectedType":  "Auto",
+                     "Observed":  "REG_DWORD: 2",
+                     "Exists":  true,
+                     "ValueType":  "REG_DWORD",
+                     "Value":  "2",
+                     "State":  "",
+                     "Startup":  "",
+                     "Matched":  false,
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "8c348e7f-97a8-4908-bf9c-44a4493e0978",
+                     "ParentRunId":  "GUI-20261015-233939-0FED3F",
+                     "ComputerName":  "SIM-PC3",
+                     "OperationID":  "GUI-20261015-233939-0FED3F",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 03-automatic-types",
+                     "OriginalOperationID":  "GUI-20261015-233939-0FED3F-0003-S01",
+                     "RecipeId":  "6e1d447e-7585-4262-be5a-6fb2e46fe6b5",
+                     "StepOperationID":  "GUI-20261015-233939-0FED3F-0003-S01",
+                     "Operation":  "RecipeCondition"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC3",
+                     "OperationID":  "GUI-20261015-233939-0FED3F",
+                     "ParentRunId":  "GUI-20261015-233939-0FED3F",
+                     "StepOperationID":  "GUI-20261015-233939-0FED3F-0003-S02",
+                     "StepId":  "6965612c-1554-4b69-9ae4-02b1d7022880",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "ConditionId":  "8c348e7f-97a8-4908-bf9c-44a4493e0978",
+                     "Status":  "Skipped",
+                     "ErrorDetail":  "Koşul sağlanmadığı için bu adım çalıştırılmadı."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC3",
+                    "Outcome":  "Completed",
+                    "CompletedAt":  "2026-10-15T23:39:50.0452147+03:00",
+                    "Detail":  "Reçete tamamlandı; koşul nedeniyle 1 adım atlandı.",
+                    "RecipeName":  "Offline 03-automatic-types",
+                    "RecipeId":  "6e1d447e-7585-4262-be5a-6fb2e46fe6b5",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:39:50.0462139+03:00"
+}

@@ -49,7 +49,23 @@ $script:ParallelSafeOperations = @('ApplicationCheck','ApplicationInventory','Pa
 . (Join-Path $script:AppRoot 'RemoteOps.Reports.ps1')
 . (Join-Path $script:AppRoot 'RemoteOps.Packages.ps1')
 . (Join-Path $script:AppRoot 'RemoteOps.RunState.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.Backups.ps1')
 . (Join-Path $script:AppRoot 'RemoteOps.PackageUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.History.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.Diagnostics.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.HistoryUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.WorkspaceUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.WorkflowUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.TargetGroups.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.TargetGroupsUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.Preview.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.PreviewUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.Recovery.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.RecoveryUi.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.RecipeExecution.ps1')
+. (Join-Path $script:AppRoot 'RemoteOps.RecipeUi.ps1')
+$script:RecipeCatalogRoot=Join-Path $env:APPDATA 'MDRemoteOps\Recipes'
+$script:TargetGroupCatalogRoot=Join-Path $env:APPDATA 'MDRemoteOps\TargetGroups'
 $script:PackageCatalogRoot=Join-Path $env:APPDATA 'MDRemoteOps\Packages'
 # FileOperations modulu yalnizca Test-AOLogCleanupUserName (log temizleme kullanici
 # adi dogrulamasi) icin yuklenir; yuklenemezse arayuz yine acilir.
@@ -66,6 +82,7 @@ try{. (Join-Path (Split-Path -Parent $script:AppRoot) 'Modules\FileOperations.ps
 # RemoteOpsOperationMeta + (gerekirse) Assert-OperationInputs birlikte guncellenir.
 # ====================================================================
 $script:OperationCatalog = @(
+    [pscustomobject]@{Category='Recipes';Name='RecipeRun';Title='Operasyon reçetesi';Fields=@(@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='RECETE';Type='Text'})},
     [PSCustomObject]@{Category='Applications';Name='PackageDeployment';Title='Saved package deployment';Fields=@(@{Key='Action';Label='Action';Type='Choice';Options=@('Install','Uninstall','Downgrade')},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type TRIGGER or DOWNGRADE';Type='Text'})},
     [PSCustomObject]@{ Category='Applications'; Name='ApplicationCheck'; Title='Application presence check'; Fields=@(@{Key='SearchType';Label='Search by';Type='Choice';Options=@('DisplayName exact','DisplayName contains','ProductID')},@{Key='SearchValue';Label='Application name or ProductID';Type='Text'},@{Key='RegistryKey';Label='Exact registry key (optional)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Applications'; Name='ApplicationInventory'; Title='List installed applications'; Fields=@(@{Key='Targets';Label='Target computers';Type='Targets'}) },
@@ -75,18 +92,18 @@ $script:OperationCatalog = @(
     [PSCustomObject]@{ Category='Files'; Name='FilePush'; Title='Push files'; Fields=@(@{Key='LocalPath';Label='Local source path';Type='Text'},@{Key='Path';Label='Remote destination folder';Type='Text'},@{Key='Overwrite';Label='Overwrite existing files';Type='Boolean'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Files'; Name='FileCompare'; Title='Compare file'; Fields=@(@{Key='LocalPath';Label='Reference file';Type='Text'},@{Key='Path';Label='Remote file';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Files'; Name='FileBrowser'; Title='Browse file: pull / move / replace'; Fields=@(@{Key='BrowsePath';Label='Remote folder to browse';Type='Text'},@{Key='SelectedPath';Label='Exact remote file path';Type='Text'},@{Key='Action';Label='Action';Type='Choice';Options=@('Pull','Move','Replace')},@{Key='MoveTarget';Label='Move destination folder';Type='Text'},@{Key='ReplaceSource';Label='Replacement source file';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type MOVE or REPLACE';Type='Text'}) },
-    [PSCustomObject]@{ Category='Files'; Name='FileRestore'; Title='Restore file backup'; Fields=@(@{Key='BackupPath';Label='Backup number (blank for latest)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type RESTORE to confirm';Type='Text'}) },
+    [PSCustomObject]@{ Category='Files'; Name='FileRestore'; Title='Restore file backup'; Fields=@(@{Key='BackupPath';Label='Backup (date / computer / file path)';Type='BackupChoice'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type RESTORE to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Files'; Name='FileRollback'; Title='Rollback file operation'; Fields=@(@{Key='BackupPath';Label='Rollback run number (blank for latest)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type ROLLBACK to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Inventory'; Name='EndpointInventory'; Title='Endpoint inventory'; Fields=@(@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Inventory'; Name='HealthCheck'; Title='PC health check (detailed)'; Fields=@(@{Key='SkipApps';Label='Skip application scan (faster)';Type='Boolean'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
-    [PSCustomObject]@{ Category='Registry'; Name='RegistryRead'; Title='Read registry value'; Fields=@(@{Key='RegistryPath';Label='HKLM subkey';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
-    [PSCustomObject]@{ Category='Registry'; Name='RegistryEdit'; Title='Edit registry string'; Fields=@(@{Key='RegistryPath';Label='HKLM subkey';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='Value';Label='New string value';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type EDIT to confirm';Type='Text'}) },
-    [PSCustomObject]@{ Category='Registry'; Name='RegistryDelete'; Title='Delete registry value'; Fields=@(@{Key='RegistryPath';Label='HKLM subkey';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type DELETE to confirm';Type='Text'}) },
-    [PSCustomObject]@{ Category='Registry'; Name='RegistryRollback'; Title='Rollback registry change'; Fields=@(@{Key='ManifestPath';Label='Manifest path (blank for latest)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type ROLLBACK to confirm';Type='Text'}) },
+    [PSCustomObject]@{ Category='Registry'; Name='RegistryRead'; Title='Read registry value'; Fields=@(@{Key='RegistryPath';Label='Registry path';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
+    [PSCustomObject]@{ Category='Registry'; Name='RegistryEdit'; Title='Edit registry value'; Fields=@(@{Key='RegistryPath';Label='Registry path';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='ValueType';Label='Value type';Type='Choice';Options=@('Auto','REG_SZ','REG_DWORD','REG_QWORD','REG_MULTI_SZ','REG_EXPAND_SZ')},@{Key='Value';Label='New value';Type='RegistryData'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type EDIT to confirm';Type='Text'}) },
+    [PSCustomObject]@{ Category='Registry'; Name='RegistryDelete'; Title='Delete registry value'; Fields=@(@{Key='RegistryPath';Label='Registry path';Type='Text'},@{Key='ValueName';Label='Value name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type DELETE to confirm';Type='Text'}) },
+    [PSCustomObject]@{ Category='Registry'; Name='RegistryRollback'; Title='Rollback registry change'; Fields=@(@{Key='ManifestPath';Label='Rollback (date / computer / change)';Type='RollbackChoice'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type ROLLBACK to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Services'; Name='ServiceList'; Title='List services'; Fields=@(@{Key='Filter';Label='Service name/display filter';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Services'; Name='ServiceControl'; Title='Control service'; Fields=@(@{Key='Action';Label='Action';Type='Choice';Options=@('Start','Stop','Restart')},@{Key='ServiceName';Label='Service name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type the action to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Services'; Name='ServiceStartup'; Title='Change service startup'; Fields=@(@{Key='ServiceName';Label='Service name';Type='Text'},@{Key='StartupType';Label='Startup type';Type='Choice';Options=@('Automatic','Manual','Disabled')},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type EDIT to confirm';Type='Text'}) },
-    [PSCustomObject]@{ Category='Services'; Name='ServiceTaskRollback'; Title='Rollback service/task change'; Fields=@(@{Key='ManifestPath';Label='Manifest path (blank for latest)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type ROLLBACK to confirm';Type='Text'}) },
+    [PSCustomObject]@{ Category='Services'; Name='ServiceTaskRollback'; Title='Rollback service/task change'; Fields=@(@{Key='ManifestPath';Label='Rollback (date / computer / change)';Type='RollbackChoice'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type ROLLBACK to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Tasks'; Name='ScheduledTaskList'; Title='List scheduled tasks'; Fields=@(@{Key='TaskFilter';Label='Task name filter';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'}) },
     [PSCustomObject]@{ Category='Tasks'; Name='ScheduledTaskDelete'; Title='Delete scheduled task (backup)'; Fields=@(@{Key='TaskName';Label='Exact task name';Type='Text'},@{Key='TaskPath';Label='Task folder (optional)';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type DELETE to confirm';Type='Text'}) },
     [PSCustomObject]@{ Category='Tasks'; Name='ScheduledTaskAction'; Title='Run / enable / disable task'; Fields=@(@{Key='Action';Label='Action';Type='Choice';Options=@('Run','Enable','Disable')},@{Key='TaskName';Label='Task name';Type='Text'},@{Key='Targets';Label='Target computers';Type='Targets'},@{Key='Confirm';Label='Type the action to confirm';Type='Text'}) },
@@ -116,17 +133,18 @@ $script:WindowXaml = @'
       <Setter Property="BorderBrush" Value="#C3D0DB" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="Padding" Value="12,6" />
-      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Cursor" Value="Hand" /><Setter Property="HorizontalContentAlignment" Value="Center" />
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
             <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="Bd" Property="Opacity" Value="0.85" />
               </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#0B64A8"/><Setter TargetName="Bd" Property="BorderThickness" Value="2"/></Trigger>
               <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
               </Trigger>
@@ -176,18 +194,23 @@ $script:WindowXaml = @'
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="TabControl">
-            <DockPanel>
-              <Border DockPanel.Dock="Top" BorderBrush="#C9D5DF" BorderThickness="0,0,0,1" Margin="0,0,0,12">
-                <TabPanel IsItemsHost="True" />
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="194"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Border Background="White" BorderBrush="#D3DDE6" BorderThickness="1" CornerRadius="10" Padding="8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="WorkspaceNavigationHost"/></ScrollViewer>
               </Border>
-              <ContentPresenter ContentSource="SelectedContent" />
-            </DockPanel>
+              <TabPanel IsItemsHost="True" Visibility="Collapsed"/>
+              <DockPanel Grid.Column="2">
+                <Border DockPanel.Dock="Top" Padding="2,0,2,9" Margin="0,0,0,8" BorderBrush="#D3DDE6" BorderThickness="0,0,0,1"><TextBlock x:Name="WorkspaceCurrentPage" Foreground="#62778A" FontSize="12"/></Border>
+                <ContentPresenter ContentSource="SelectedContent"/>
+              </DockPanel>
+            </Grid>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
     </Style>
     <Style TargetType="TabItem">
-      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Cursor" Value="Hand" /><Setter Property="HorizontalContentAlignment" Value="Center" />
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="TabItem">
@@ -216,7 +239,7 @@ $script:WindowXaml = @'
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <Border Grid.Row="0" CornerRadius="10" Padding="20,12" Margin="0,0,0,12">
+    <Border Grid.Row="0" CornerRadius="10" Padding="16,8" Margin="0,0,0,8">
       <Border.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
           <GradientStop Color="#073F73" Offset="0" />
@@ -229,8 +252,8 @@ $script:WindowXaml = @'
           <TextBlock x:Name="ActiveIdentity" Foreground="White" FontSize="12.5" />
         </Border>
         <StackPanel>
-          <TextBlock Text="REMOTE OPS" Foreground="White" FontSize="22" FontWeight="Bold" />
-          <TextBlock Text="Uzak bilgisayar operasyon paneli" Foreground="#CFE6F5" FontSize="12" />
+          <TextBlock Text="REMOTE OPS" Foreground="White" FontSize="19" FontWeight="Bold" />
+          <TextBlock x:Name="WorkspaceVersion" Text="YD RemoteOps · Tek operatör" Foreground="#CFE6F5" FontSize="12" />
         </StackPanel>
       </DockPanel>
     </Border>
@@ -238,7 +261,7 @@ $script:WindowXaml = @'
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="300" />
+          <ColumnDefinition Width="230" />
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="Auto" />
@@ -304,6 +327,7 @@ $script:WindowXaml = @'
                 </DockPanel>
               </Border>
               <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button x:Name="PreviewOperation" Content="Önizle" Padding="18,10" Margin="0,0,8,0" FontSize="14" />
                 <Button x:Name="RunOperation" Content="Operasyonu çalıştır" Style="{StaticResource PrimaryButton}" Padding="22,10" FontSize="14" />
               </StackPanel>
             </Grid>
@@ -680,11 +704,10 @@ function Get-RemoteOpsOperationExample {
         'SelectedPath' {return 'Örn: C:\Temp\Ornek\rapor.txt (listeden seçilen dosyanın tam yolu).'}
         'MoveTarget' {return 'Örn: C:\Temp\Ornek\Arsiv. Yalnızca Move için doldurun.'}
         'ReplaceSource' {return 'Örn: C:\Paketler\yeni.txt. Yalnızca Replace için yerel kaynak.'}
-        'BackupPath' {return 'Örn: 1 (listelenen yedek/çalışma numarası). Boş bırakmak en son uygun kaydı seçer.'}
-        'RegistryPath' {return 'Örn: SOFTWARE\OrnekFirma\OrnekUygulama (HKLM alt anahtarı; değer adı ayrı girilir).'}
+        'BackupPath' {if($Operation.Name -eq 'FileRestore'){return 'Tarih, bilgisayar ve dosya yoluna gore yedek secin. Listeyi yenilemek icin Refresh modules kullanin.'};return 'Örn: 1 (listelenen yedek/çalışma numarası). Boş bırakmak en son uygun kaydı seçer.'}
+        'RegistryPath' {return 'HKLM\Software\Firma, HKEY_LOCAL_MACHINE\Software\Firma, HKCU\Software\Firma veya HKU\<SID>\Software\Firma. On eksiz yol HKLM sayilir. HKCU hedefte oturum acmis tek kullanicidir.'}
         'ValueName' {return 'Örn: InstallPath (registry değerinin adı).'}
-        'Value' {return 'Örn: C:\Program Files\OrnekUygulama. Yalnızca REG_SZ metin değerleri desteklenir.'}
-        'ManifestPath' {return 'Örn: ilgili işlemin manifest CSV dosyasının tam yolu. Boş: en son uygun manifest.'}
+        'ManifestPath' {return 'Kayitli islem sonrasi deger -> geri yuklenecek eski deger. Bu ozet canli sorgu degildir. Tarih ve bilgisayara gore secin; Refresh modules listeyi yeniler.'}
         'ServiceName' {return 'Örn: OrnekUygulamaSvc. Görünen başlığı değil, servis listesindeki Name alanını girin.'}
         'Filter' {return 'Örn: OrnekUygulama. Boş bırakılırsa bütün servisler listelenir.'}
         'TaskFilter' {return 'Örn: OrnekBakim. Boş bırakılırsa bütün görevler listelenir.'}
@@ -692,6 +715,8 @@ function Get-RemoteOpsOperationExample {
         'TaskPath' {return 'Örn: \OrnekFirma\ (görev zamanlayıcı klasörü; son ters eğik çizgi dahil).'}
         'ProcessFilter' {if($Operation.Name -eq 'ProcessKill'){return 'Örn: 12345 (PID) veya ornek.exe (tam ad). Önce süreç sorgusuyla doğru hedefi doğrulayın.'};return 'Örn: ornek veya 12345 (PID). Boş: bütün süreçler.'}
         'StartupType' {return 'Manual: elle başlatma; Automatic: otomatik; Disabled: devre dışı.'}
+        'ValueType' {return 'Auto: mevcut tur korunur, yeni deger REG_SZ olur. Acik tur secimi yeni deger icindir; mevcut turle uyusmazsa islem reddedilir.'}
+        'Value' {if($Operation.Name -eq 'RegistryEdit'){return 'DWORD/QWORD: 42 veya 0x2A. REG_MULTI_SZ: ["one","two"] (bos dizi: []). REG_EXPAND_SZ: %SystemRoot%\Temp ham olarak saklanir. Bos metin REG_SZ/REG_EXPAND_SZ icin gecerlidir.'}}
         'Confirm' {return 'İlgili işlemde istenen onay sözcüğünü büyük harflerle girin; örnekler otomatik doldurulmaz.'}
     }
     return ''
@@ -722,10 +747,30 @@ function Add-OperationField {
             $Control.SelectedIndex=0
         }
     }
+    elseif ($Field.Type -in @('BackupChoice','RollbackChoice')) {
+        $Control=New-Object System.Windows.Controls.ComboBox
+        $Control.SelectedValuePath='Id'
+        $Control.IsEditable=$false
+        $Control.MinHeight=32
+        $Control.MaxDropDownHeight=360
+        $Control.ItemTemplate=[System.Windows.Markup.XamlReader]::Parse('<DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><TextBlock Text="{Binding Display}" TextWrapping="Wrap" MaxWidth="760" Padding="4" ToolTip="{Binding Display}" /></DataTemplate>')
+        $Choices=if($Field.Type -eq 'RollbackChoice'){@(Get-RemoteOpsRollbackChoices -BasePath $script:DataRoot -OperationName $script:OperationPicker.SelectedItem.Name)}else{@(Get-RemoteOpsBackupChoices -BasePath $script:DataRoot)}
+        foreach($Backup in $Choices){[void]$Control.Items.Add($Backup)}
+        if($Control.Items.Count -gt 0){$Control.SelectedIndex=0}else{
+            [void]$Control.Items.Add([pscustomobject]@{Id='';Display='No restorable backups found. / Geri yuklenebilir yedek yok.'})
+            $Control.SelectedIndex=0
+            $Control.IsEnabled=$false
+        }
+        $Control.ToolTip='Date | computer: original file path | backup ID. Refresh modules to reload backups.'
+    }
     elseif ($Field.Type -eq 'Boolean') {
         $Control=New-Object System.Windows.Controls.CheckBox
         $Control.Content=$Field.Label
         $Control.IsChecked=$false
+    }
+    elseif ($Field.Type -eq 'RegistryData') {
+        $Control=New-Object System.Windows.Controls.TextBox
+        $Control.AcceptsReturn=$true;$Control.Height=80;$Control.TextWrapping='Wrap';$Control.VerticalScrollBarVisibility='Auto'
     }
     elseif ($Field.Type -eq 'Targets') {
         $Control=New-Object System.Windows.Controls.TextBox
@@ -766,6 +811,12 @@ function Add-OperationField {
         [Windows.Controls.Grid]::SetColumn($ExampleText,1);[Windows.Controls.Grid]::SetRow($ExampleText,$ExampleRow);[void]$Row.Children.Add($ExampleText)
         $Control.ToolTip=$Example
     }
+    if($Field.Type -eq 'Targets' -and (Get-Command Add-RemoteOpsTargetGroupPicker -ErrorAction SilentlyContinue) -and (Get-Variable TargetGroupCatalogRoot -Scope Script -ErrorAction SilentlyContinue)){
+        $HostPanel=New-Object Windows.Controls.StackPanel
+        $PickerRow=$Row.RowDefinitions.Count;[void]$Row.RowDefinitions.Add((New-Object Windows.Controls.RowDefinition))
+        [Windows.Controls.Grid]::SetColumn($HostPanel,1);[Windows.Controls.Grid]::SetRow($HostPanel,$PickerRow);[void]$Row.Children.Add($HostPanel)
+        $script:OperationGroupPicker=Add-RemoteOpsTargetGroupPicker $HostPanel $Control $script:TargetGroupCatalogRoot
+    }
     # Paket operasyonunda "Application" alani bos birakilabilir: kontrolsuz tetikleme ipucu.
     if($Field.Key -eq 'Application' -and $script:OperationPicker.SelectedItem.Name -eq 'PackageTrigger'){
         [void]$Row.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition))
@@ -785,6 +836,7 @@ function Add-OperationField {
 # Plugin operasyonlarinda manifest'teki Description kullanilir.
 function Get-OperationDescription {
     param($Operation)
+    if($Operation.Name -eq 'RecipeRun'){return 'Kayıtlı reçetenin izin verilen adımları hedef başına sırayla uygulanır. Reçeteler sekmesinden hazırlayın.'}
     $Description=switch($Operation.Name){
         'PackageDeployment' {'Kayitli paketi secerek kurulum, kaldirma veya dogrulanan eski surume donus calistirir.'}
         'ApplicationCheck' {'Uygulamayi Display Name veya Product ID ile arar; varlik, surum ve registry bilgilerini raporlar.'}
@@ -800,7 +852,7 @@ function Get-OperationDescription {
         'EndpointInventory' {'Isletim sistemi, donanim, ag ve yeniden baslatma gereksinimini toplar.'}
         'HealthCheck' {'Her bilgisayar icin reboot durumu, son acilis, imaj tarihi, yama/uygulama, IP/subnet, model, build, SCCM servisi/cache/log, disk, CPU ve RAM bilgisini toplar. Tum liste icin tek HTML rapor uretir; bilgisayar adina tiklayinca detaylari gorursunuz.'}
         'RegistryRead' {'HKLM altindaki belirtilen registry degerini okur.'}
-        'RegistryEdit' {'Registry string degerini degistirir; onceki degeri rollback icin kaydeder.'}
+        'RegistryEdit' {'Registry degerini mevcut turunu koruyarak degistirir; tur ve onceki veri rollback icin kaydedilir.'}
         'RegistryDelete' {'Registry degerini siler; onceki degeri rollback icin kaydeder.'}
         'RegistryRollback' {'Secilen bilgisayarlarin kayitli registry degisikliklerini geri alir.'}
         'ServiceList' {'Servislerin durumunu ve baslangic tipini listeler.'}
@@ -837,6 +889,8 @@ function Get-OperationValues {
         }
         if($Control.Tag -eq 'SavedPackage'){
             if($null -ne $Control.SelectedItem){$Values.PackageDefinition=Copy-RemoteOpsPackageDefinition $Control.SelectedItem}
+        }elseif($Control -is [System.Windows.Controls.ComboBox] -and $Control.Tag -in @('BackupPath','ManifestPath') -and $Control.SelectedValuePath -eq 'Id'){
+            $Values[[string]$Control.Tag]=[string]$Control.SelectedValue
         }elseif($Control -is [System.Windows.Controls.ComboBox]){
             $Values[[string]$Control.Tag]=[string]$Control.SelectedItem
         }elseif($Control -is [System.Windows.Controls.CheckBox]){
@@ -859,6 +913,7 @@ function Get-OptionalPropertyValue {
 # Move/Replace aksiyonlarinda hedef/kaynak alanlari.
 function Assert-OperationInputs {
     param([Parameter(Mandatory=$true)]$Operation,[Parameter(Mandatory=$true)][hashtable]$Values)
+    if($Operation.Name -eq 'RecipeRun'){if(-not $Values.ContainsKey('Snapshot')){throw 'Reçeteyi Operasyon Reçeteleri sekmesinden hazırlayın.'};Assert-RemoteOpsRecipeRunSnapshot $Values.Snapshot}
     $RequiredKeys=switch($Operation.Name){
         'ApplicationCheck' {@('SearchValue')}
         'PackageTrigger' {@('Action','CheckMode','SearchType','PackagePath','PackageFile')}
@@ -867,9 +922,12 @@ function Assert-OperationInputs {
         'FileDelete' {@('Path')}
         'FilePush' {@('LocalPath','Path')}
         'FileCompare' {@('LocalPath','Path')}
+        'FileRestore' {@('BackupPath')}
         'FileBrowser' {@('BrowsePath','SelectedPath','Action')}
+        'RegistryRollback' {@('ManifestPath')}
+        'ServiceTaskRollback' {@('ManifestPath')}
         'RegistryRead' {@('RegistryPath','ValueName')}
-        'RegistryEdit' {@('RegistryPath','ValueName','Value')}
+        'RegistryEdit' {@('RegistryPath','ValueName')}
         'RegistryDelete' {@('RegistryPath','ValueName')}
         'ServiceControl' {@('ServiceName','Action')}
         'ServiceStartup' {@('ServiceName','StartupType')}
@@ -892,6 +950,7 @@ function Assert-OperationInputs {
             throw "Required input is empty: $Key"
         }
     }
+    if($Operation.Name -in @('RegistryRead','RegistryEdit','RegistryDelete')){[void](ConvertTo-RemoteOpsRegistryPath ([string]$Values.RegistryPath))}
     if($Operation.Name -eq 'PackageDeployment'){
         if(-not $Values.ContainsKey('PackageDefinition')){throw 'Choose a saved package.'}
         Assert-RemoteOpsPackageDefinition $Values.PackageDefinition ([string]$Values.Action)
@@ -1014,16 +1073,25 @@ function Get-RemoteOpsSelectedReport {
 }
 function Update-RemoteOpsRunSelection {
     if(-not $script:RunPicker.SelectedItem){return}
+    $SelectedRow=$null
+    if($script:DeploymentTargets -is [Windows.Controls.DataGrid]){$SelectedRow=$script:DeploymentTargets.SelectedItem}
     $Id=[string]$script:RunPicker.SelectedItem.Id
     $Rows=@(foreach($Key in $script:RunTargetRows.Keys){if($Id -eq '*' -or $Id -eq $Key){foreach($Item in $script:RunTargetRows[$Key]){$Item}}})
+    $TotalRows=$Rows.Count
+    if(Get-Variable WorkflowUi -Scope Script -ErrorAction SilentlyContinue){$Rows=@(Get-RemoteOpsFilteredTargets $Rows $script:WorkflowUi.Search.Text ([string]$script:WorkflowUi.Outcome.SelectedItem.Value))}
     $script:DeploymentTargets.ItemsSource=$Rows
+    if($null -ne $SelectedRow){
+        $SelectedRunId=[string](Get-OptionalPropertyValue $SelectedRow 'MonitorRunId')
+        $Matches=@($Rows|Where-Object {([string](Get-OptionalPropertyValue $_ 'MonitorRunId')) -ceq $SelectedRunId -and $_.ComputerName -ieq $SelectedRow.ComputerName})
+        if($Matches.Count -eq 1){$script:DeploymentTargets.SelectedItem=$Matches[0]}
+    }
     if($script:DeploymentTargets -is [Windows.Controls.DataGrid]){
         $View=[Windows.Data.CollectionViewSource]::GetDefaultView($script:DeploymentTargets.ItemsSource)
         $View.GroupDescriptions.Clear()
         if($Id -eq '*'){[void]$View.GroupDescriptions.Add((New-Object Windows.Data.PropertyGroupDescription 'RunLabel'))}
     }
     $Counts=@($Rows|Group-Object Outcome|ForEach-Object{[string]$_.Name+': '+$_.Count}) -join ' | '
-    $script:SelectedRunSummary.Text=(T 'Hedef: ')+$Rows.Count+' | '+$Counts
+    $script:SelectedRunSummary.Text=(T 'Hedef: ')+$Rows.Count+' / '+$TotalRows+' | '+$Counts
     $script:OpenRunReport.IsEnabled=([bool](Get-RemoteOpsSelectedReport))
     if($null -ne (Get-Variable OpenCollectedLogs -Scope Script -ErrorAction SilentlyContinue) -and $script:OpenCollectedLogs){
         $LogInfo=if($Id -ne '*'){Get-RemoteOpsRunLogInfo $script:MonitorRuns[$Id]}else{$null}
@@ -1048,6 +1116,7 @@ function Set-RemoteOpsRunTargetRows {
     $TargetLabel=[string](Get-OptionalPropertyValue $Run 'TargetLabel');if(-not $TargetLabel){$TargetLabel=$Run.Title}
     $Label=([datetime]$Run.StartedAt).ToString('HH:mm:ss')+' | '+$TargetLabel+' | '+@($Run.Targets).Count+(T ' bilgisayar')+' | '+($script:MonitorRuns.Keys.IndexOf($Id)+1)
     foreach($Item in $Items){
+        Add-Member -InputObject $Item -NotePropertyName MonitorRunId -NotePropertyValue $Id -Force
         Add-Member -InputObject $Item -NotePropertyName RunLabel -NotePropertyValue $Label -Force
         if(Get-Command Get-RemoteOpsRunLogInfo -ErrorAction SilentlyContinue){
             $LogInfo=Get-RemoteOpsRunLogInfo $Run ([string]$Item.ComputerName) ([string](Get-OptionalPropertyValue $Item 'LogStatusRaw'))
@@ -1190,7 +1259,7 @@ function Start-RemoteOpsRequest {
     }
     # Degisiklik yapan operasyonlarda kullanicinin yazmasi gereken onay kelimesi.
     # Runner ayni kontrolu tekrar yapar (iki katmanli guvenlik).
-    $Expected=if($Operation.Name -eq 'PackageDeployment'){if($Values.Action -eq 'Downgrade'){'DOWNGRADE'}else{'TRIGGER'}}elseif($Operation.Name -match 'Delete'){'DELETE'}elseif($Operation.Name -eq 'ProcessKill'){'KILL'}elseif($Operation.Name -eq 'PackageTrigger'){'TRIGGER'}elseif($Operation.Name -eq 'FileRestore'){'RESTORE'}elseif($Operation.Name -match 'Rollback'){'ROLLBACK'}elseif($Operation.Name -match 'Edit|Startup'){'EDIT'}elseif($Operation.Name -eq 'FileBrowser' -and $Values.Action -ne 'Pull'){([string]$Values.Action).ToUpperInvariant()}elseif($Operation.Name -in @('ServiceControl','ScheduledTaskAction')){([string]$Values.Action).ToUpperInvariant()}else{''}
+    $Expected=if($Operation.Name -eq 'RecipeRun'){'RECETE'}elseif($Operation.Name -eq 'PackageDeployment'){if($Values.Action -eq 'Downgrade'){'DOWNGRADE'}else{'TRIGGER'}}elseif($Operation.Name -match 'Delete'){'DELETE'}elseif($Operation.Name -eq 'ProcessKill'){'KILL'}elseif($Operation.Name -eq 'PackageTrigger'){'TRIGGER'}elseif($Operation.Name -eq 'FileRestore'){'RESTORE'}elseif($Operation.Name -match 'Rollback'){'ROLLBACK'}elseif($Operation.Name -match 'Edit|Startup'){'EDIT'}elseif($Operation.Name -eq 'FileBrowser' -and $Values.Action -ne 'Pull'){([string]$Values.Action).ToUpperInvariant()}elseif($Operation.Name -in @('ServiceControl','ScheduledTaskAction')){([string]$Values.Action).ToUpperInvariant()}else{''}
     if($Expected -and $Values.Confirm -cne $Expected){throw "Type $Expected in the confirmation field."}
     if($Operation.Name -eq 'RegistryRollback' -and $Values.Confirm -cne 'ROLLBACK'){
         throw 'Type ROLLBACK in the confirmation field.'
@@ -1223,7 +1292,17 @@ function Start-RemoteOpsRequest {
         Add-Member -InputObject $Request -NotePropertyName CancelPath -NotePropertyValue ($ProgressPath+'.cancel')
         Add-Member -InputObject $Request -NotePropertyName CheckpointRoot -NotePropertyValue ($ProgressPath+'.state')
     }
-    $RequestJson=ConvertTo-Json -InputObject $Request -Depth 12 -Compress
+    if($Operation.Name -eq 'RecipeRun'){
+        $FreshSnapshot=New-RemoteOpsRecipeRunSnapshot $Values.Snapshot.Definition $Targets $Profile ([bool]$script:SettingCleanupLogs.IsChecked)
+        if($FreshSnapshot.Hash -cne $Values.Snapshot.Hash){throw 'Recipe snapshot/account mismatch.'}
+        $RecipeRunId='GUI-{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),([guid]::NewGuid().ToString('N').Substring(0,6).ToUpperInvariant())
+        $RecipeRoot=Get-RemoteOpsRecipeRunRoot $script:DataRoot $RecipeRunId
+        Add-Member -InputObject $Request -NotePropertyName RecipeRunId -NotePropertyValue $RecipeRunId
+        Add-Member -InputObject $Request -NotePropertyName CancelPath -NotePropertyValue (Join-Path $RecipeRoot 'cancel.json')
+        Add-Member -InputObject $Request -NotePropertyName CheckpointRoot -NotePropertyValue (Join-Path $RecipeRoot 'state')
+        [void](ConvertTo-RemoteOpsRecipeRequestBase64 $Request)
+    }
+    $RequestJson=ConvertTo-Json -InputObject $Request -Depth 20 -Compress
     $RequestBase64=[Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($RequestJson))
     # Windows komut satiri limiti (~32K) asilmasin diye ust sinir; hedef listesi bolunmeli.
     if($RequestBase64.Length -gt 22000){
@@ -1491,7 +1570,7 @@ function Stop-ActiveRuns {
     foreach($Run in @($script:ActiveRuns)){
         try{
             if($Run.Process.HasExited){continue}
-            if($Run.OperationName -eq 'PackageDeployment' -and -not $Force){
+            if($Run.OperationName -in @('PackageDeployment','RecipeRun') -and -not $Force){
                 Request-RemoteOpsRunCancellation $Run.CancelPath;$Run.CancelRequested=$true
                 Write-AppLog (T 'Paket iptal iste\u011Fi g\u00F6nderildi; aktif ad\u0131m\u0131n bitmesi bekleniyor.')
                 continue
@@ -1852,11 +1931,17 @@ $WorkArea=[System.Windows.SystemParameters]::WorkArea
 $script:Window.Width=[math]::Min(1380,[math]::Max(960,$WorkArea.Width-32))
 $script:Window.Height=[math]::Min(900,[math]::Max(550,$WorkArea.Height-40))
 # XAML'daki her x:Name'i ayni isimli $script: degiskenine bagla (orn. $script:RunOperation).
-foreach($Name in @('ActiveIdentity','ToggleProfiles','ProfileEditor','ProfileList','DomainInput','UsernameInput','PasswordInput','MainProfileInput','AddProfile','RemoveProfile','OperationPicker','RefreshModules','OperationDescription','OperationFields','RunModeLabel','RunOperation','RunProgressPanel','ActivityLog','MainTabs','StopOperation','ParallelismPicker','SettingCleanupLogs','CleanupExplain','CleanupPreview','OpenSettings','SettingsOverlay','CloseSettings','PasswordState','TestProfile','OpenLogs','ClearActivity','ReportPrev','ReportNext','ReportToday','ReportRefresh','ReportExport','ReportDate','ReportSubtitle','CardTotal','CardTotalSub','CardComputers','CardComputersSub','CardSuccess','CardSuccessSub','CardSkipped','CardSkippedSub','CardProblem','CardProblemSub','OutcomeBar','OutcomeLegend','CategoryPanel','ReportEmpty','HourPanel','HourLabels','ComputerPanel','PackagesTab','PackageEditorTab','OperationTab','ReportTab','PackageLibraryHost','PackageEditorHost','SharedParallelHost','ProfileToolsHost','SharedRuns','SharedStopHost','CommonRunSummary','RunPicker','SelectedRunSummary','OpenRunReport','OpenCollectedLogs','OpenPulledFiles','DeploymentTargets','ForceStopOperation','ProfileOverlay','CloseProfileEditor','ProfileEditorHost')){Set-Variable -Scope Script -Name $Name -Value $script:Window.FindName($Name)}
+foreach($Name in @('ActiveIdentity','ToggleProfiles','ProfileEditor','ProfileList','DomainInput','UsernameInput','PasswordInput','MainProfileInput','AddProfile','RemoveProfile','OperationPicker','RefreshModules','OperationDescription','OperationFields','RunModeLabel','RunOperation','PreviewOperation','RunProgressPanel','ActivityLog','MainTabs','StopOperation','ParallelismPicker','SettingCleanupLogs','CleanupExplain','CleanupPreview','OpenSettings','SettingsOverlay','CloseSettings','PasswordState','TestProfile','OpenLogs','ClearActivity','ReportPrev','ReportNext','ReportToday','ReportRefresh','ReportExport','ReportDate','ReportSubtitle','CardTotal','CardTotalSub','CardComputers','CardComputersSub','CardSuccess','CardSuccessSub','CardSkipped','CardSkippedSub','CardProblem','CardProblemSub','OutcomeBar','OutcomeLegend','CategoryPanel','ReportEmpty','HourPanel','HourLabels','ComputerPanel','PackagesTab','PackageEditorTab','OperationTab','ReportTab','PackageLibraryHost','PackageEditorHost','SharedParallelHost','ProfileToolsHost','SharedRuns','SharedStopHost','CommonRunSummary','RunPicker','SelectedRunSummary','OpenRunReport','OpenCollectedLogs','OpenPulledFiles','DeploymentTargets','ForceStopOperation','ProfileOverlay','CloseProfileEditor','ProfileEditorHost')){Set-Variable -Scope Script -Name $Name -Value $script:Window.FindName($Name)}
 # Kayitli profilleri ve plugin operasyonlarini yukle, ilk operasyonun formunu ciz.
 Load-ProfileStore
 Refresh-ProfileList
 Initialize-RemoteOpsPackageUi -Window $script:Window -CatalogRoot $script:PackageCatalogRoot
+$script:HistoryUi=Initialize-RemoteOpsHistoryUi -Tabs $script:MainTabs -BasePath $script:DataRoot
+$script:TargetGroupsUi=Initialize-RemoteOpsTargetGroupsUi -Tabs $script:MainTabs -CatalogRoot $script:TargetGroupCatalogRoot
+$script:RecoveryUi=Initialize-RemoteOpsRecoveryUi -Tabs $script:MainTabs -BasePath $script:DataRoot
+$script:RecipeUi=Initialize-RemoteOpsRecipeUi -Tabs $script:MainTabs -CatalogRoot $script:RecipeCatalogRoot
+Initialize-RemoteOpsWorkspaceNavigation -Window $script:Window -Tabs $script:MainTabs
+Initialize-RemoteOpsWorkflowUi
 Import-RemoteOpsPlugins
 Show-OperationFields
 Write-AppLog 'Application shell ready.'
@@ -1928,7 +2013,7 @@ $script:RemoveProfile.Add_Click({
     Write-AppLog "Removed profile $($Removed.Domain)\$($Removed.UserName)."
 })
 # Profil secilince form alanlarini doldur ve log temizleme onizlemesini guncelle.
-$script:ProfileList.Add_SelectionChanged({Update-CleanupPreview;if($null -ne $script:ProfileList.SelectedItem){$Selected=$script:ProfileList.SelectedItem;$script:DomainInput.Text=$Selected.Domain;$script:UsernameInput.Text=$Selected.UserName;$script:MainProfileInput.IsChecked=[bool]$Selected.IsMain;$script:PasswordInput.Clear();Update-PasswordState;if($Selected.IsMain){$script:ActiveIdentity.Text="Main: $($Selected.Domain)\$($Selected.UserName)";$script:RunModeLabel.Text='Current Windows session'}else{$script:ActiveIdentity.Text="Selected: $($Selected.Domain)\$($Selected.UserName)";$script:RunModeLabel.Text='Launch cmd.exe as selected account'}}})
+$script:ProfileList.Add_SelectionChanged({Update-CleanupPreview;if($null -ne $script:ProfileList.SelectedItem){$Selected=$script:ProfileList.SelectedItem;$script:DomainInput.Text=$Selected.Domain;$script:UsernameInput.Text=$Selected.UserName;$script:MainProfileInput.IsChecked=[bool]$Selected.IsMain;$script:PasswordInput.Clear();Update-PasswordState;if($Selected.IsMain){$script:ActiveIdentity.Text="Main: $($Selected.Domain)\$($Selected.UserName)";$script:RunModeLabel.Text='Mevcut Windows oturumu'}else{$script:ActiveIdentity.Text="Selected: $($Selected.Domain)\$($Selected.UserName)";$script:RunModeLabel.Text='Launch cmd.exe as selected account'}}})
 # the Main profile is pre-selected before this handler exists; re-select it so the form fields are filled
 $InitialProfile=$script:ProfileList.SelectedItem
 if($null -ne $InitialProfile){
@@ -1939,7 +2024,8 @@ if($null -ne $InitialProfile){
 $script:RefreshModules.Add_Click({Import-RemoteOpsPlugins;Show-OperationFields;Write-AppLog 'Operation list refreshed.'})
 # RUN OPERATION: secili operasyonu ve form degerlerini Start-RemoteOpsRequest'e verir.
 # Hata olursa kullaniciya mesaj kutusu ile gosterilir.
-$script:RunOperation.Add_Click({try{$Operation=$script:OperationPicker.SelectedItem;if($null -eq $Operation){throw 'Choose an operation.'};Start-RemoteOpsRequest -Operation $Operation -Values (Get-OperationValues)}catch{[System.Windows.MessageBox]::Show($_.Exception.Message,'Cannot start operation','OK','Warning')|Out-Null;Write-AppLog "Not started: $($_.Exception.Message)"}})
+$script:RunOperation.Add_Click({try{$Operation=$script:OperationPicker.SelectedItem;if($null -eq $Operation){throw 'Choose an operation.'};Show-RemoteOpsOperationPreview -Operation $Operation -Values (Get-OperationValues)}catch{[System.Windows.MessageBox]::Show($_.Exception.Message,'Cannot start operation','OK','Warning')|Out-Null;Write-AppLog "Not started: $($_.Exception.Message)"}})
+$script:PreviewOperation.Add_Click({$script:RunOperation.RaiseEvent((New-Object Windows.RoutedEventArgs ([Windows.Controls.Button]::ClickEvent)))})
 # Rapor sekmesi: tarih secimi, onceki/sonraki gun, bugun, yenile ve HTML disa aktar.
 $script:ReportDate.SelectedDate=(Get-Date).Date
 $script:ReportDate.Add_SelectedDateChanged({Update-ReportView})
@@ -2003,6 +2089,9 @@ $script:OutputTimer.Add_Tick({
             Update-RunProgress $Run
             $RunExitCode=$null
             try{$Run.Process.WaitForExit();$RunExitCode=$Run.Process.ExitCode}catch{ }
+            if($Run.OperationName -eq 'RecipeRun' -and ($Run.Stopped -or ($null -ne $RunExitCode -and $RunExitCode -ne 0) -or $Run.Completed -lt $Run.Total)){
+                try{[void](Complete-RemoteOpsInterruptedRecipe -BasePath $script:DataRoot -CheckpointRoot $Run.CheckpointRoot -MissingOutcome $(if($Run.Stopped){'Cancelled'}else{'Error'}))}catch{Write-AppLog ('Recipe partial report: '+$_.Exception.Message)}
+            }
             if($Run.Stopped){
                 if($Run.OperationName -eq 'PackageDeployment'){
                     try{[void](Complete-RemoteOpsInterruptedDeployment -BasePath $script:DataRoot -CheckpointRoot $Run.CheckpointRoot);Write-AppLog (T 'K\u0131smi paket raporu kaydedildi.')}catch{Write-AppLog ('Partial report: '+$_.Exception.Message)}

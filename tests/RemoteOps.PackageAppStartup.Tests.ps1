@@ -7,7 +7,12 @@ try{
     $App=Join-Path $Temp 'RemoteOps.App\RemoteOps.App.ps1';$Text=Get-Content $App -Raw -Encoding UTF8
     $Text=$Text.Replace("'C:\Temp\YD_RemoteOps.App'","'$Temp\data'")
     $End=@'
-if($script:Window.FindName('MainTabs').Items.Count -ne 4){throw 'Full app startup lost tabs.'}
+if($script:Window.FindName('MainTabs').Items.Count -ne 9){throw 'Full app startup lost tabs.'}
+if($null -eq $script:TargetGroupsUi.Tab -or $null -eq $script:Window.FindName('PreviewOperation')){throw 'Target groups or preview action missing.'}
+if(@($script:MainTabs.Items|Where-Object Header -eq 'Geçmiş').Count -ne 1 -or @($script:MainTabs.Items|Where-Object Header -eq 'Hata Teşhisi').Count -ne 1){throw 'History/diagnostics tabs missing.'}
+$script:MainTabs.SelectedItem=$script:HistoryUi.HistoryTab
+if($null -eq $script:HistoryState.Index){throw 'History did not load on first tab entry.'}
+$script:MainTabs.SelectedItem=$script:PackagesTab
 if($script:MainTabs.SelectedItem -ne $script:PackagesTab){throw 'Full app did not start on Paketlerim.'}
 if($script:ActiveRuns.Count -ne 0){throw 'Startup dispatched operations.'}
 if(@($script:OperationPicker.Items|Where-Object Name -eq PackageDeployment).Count){throw 'Saved package deployment must not appear in the Operation selector.'}

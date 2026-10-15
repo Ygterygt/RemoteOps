@@ -1,0 +1,47 @@
+{
+  "Status": "PASS",
+  "ReviewedAt": "2026-10-15T23:42:45.5680227+03:00",
+  "Reviewer": "Independent offline_review agent",
+  "ProductionComparison": {
+    "PreviousVersion": 26,
+    "CurrentVersion": 27,
+    "Files": 36,
+    "RelativePathSetsEqual": true,
+    "AllSHA256Equal": true
+  },
+  "Acceptance": {
+    "Total": 17,
+    "Passed": 17,
+    "UnexpectedBoundaryBlocks": 0,
+    "PersistedRunArtifactsChecked": 16,
+    "RestartStoppedObservationBetweenStopStartVerified": true,
+    "RealChainEvidenceNegativeControlsRejected": 2
+  },
+  "BoundaryProof": {
+    "SelfTestPassed": true,
+    "SelfTestEvents": 5,
+    "SelfTestBlocks": 5,
+    "IndependentPreflightDenied": true,
+    "PreflightExitCode": 1,
+    "PreflightMessage": "OFFLINE_BOUNDARY_BLOCKED: Preflight",
+    "ProofFixture": "<LOCAL_TEMP>\\RemoteOpsModel-2625dd05b79543a690534bcd62fca371"
+  },
+  "ResolvedReviewFindings": [
+    "Fixture preflight bypass rejected before execution modes.",
+    "Error events persisted before rethrow.",
+    "Real negative acceptance controls use shared operational effect checker.",
+    "Restart report assertion independently proved intermediate stopped GetService observation.",
+    "Reader atomic replacement sharing and eager log-read harness issues corrected.",
+    "Failure cleanup now tracks coordinator until exited before clearing records."
+  ],
+  "Limits": [
+    "No live endpoint or network transport validation.",
+    "Registry provider retrieval and type decoding replaced by model probe; real comparison and branching exercised.",
+    "Service state transition timing, remote authorization, SMB/PsExec/EDR behavior not validated.",
+    "WPF controls invoked programmatically; cancellation request tested, confirmation-dialog click path not tested.",
+    "Boundaries protect audited known fixture paths; no OS network firewall claim.",
+    "Cleanup failure path cooperative wait correction reviewed statically; full successful acceptance did not exercise it."
+  ],
+  "Evidence": "docs/v27-offline-acceptance/acceptance-02",
+  "ChecksLog": "docs/V27_INDEPENDENT_CHECKS.log"
+}

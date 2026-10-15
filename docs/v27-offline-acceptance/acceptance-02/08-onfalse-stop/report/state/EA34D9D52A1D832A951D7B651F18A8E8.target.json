@@ -1,0 +1,71 @@
+{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261015-234016-46294A",
+    "SnapshotHash":  "BD15AFCFFFCCB014B208C407DF3A0452B9C21D4C1144378A2E0A01CEC42F8F7C",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "Status":  "Success",
+                     "CheckIndex":  1,
+                     "Kind":  "RegistryValue",
+                     "Path":  "HKLM\\SOFTWARE\\Fixture",
+                     "Name":  "Version",
+                     "Operator":  "Equals",
+                     "Expected":  "16.0.444",
+                     "ExpectedType":  "Auto",
+                     "Observed":  "REG_SZ: wrong",
+                     "Exists":  true,
+                     "ValueType":  "REG_SZ",
+                     "Value":  "wrong",
+                     "State":  "",
+                     "Startup":  "",
+                     "Matched":  false,
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "9828af64-2d30-4fa6-8b10-c170d52b0251",
+                     "ParentRunId":  "GUI-20261015-234016-46294A",
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234016-46294A",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 08-onfalse-stop",
+                     "OriginalOperationID":  "GUI-20261015-234016-46294A-0001-S01",
+                     "RecipeId":  "e4fe9d2b-f875-44a3-918f-44a469a1e83f",
+                     "StepOperationID":  "GUI-20261015-234016-46294A-0001-S01",
+                     "Operation":  "RecipeCondition"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234016-46294A",
+                     "ParentRunId":  "GUI-20261015-234016-46294A",
+                     "StepOperationID":  "GUI-20261015-234016-46294A-0001-S02",
+                     "StepId":  "fc968b5d-bbe8-44ab-9b41-45eed6827482",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Koşul sağlanmadı; bu hedefin reçetesi durduruldu."
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261015-234016-46294A",
+                     "ParentRunId":  "GUI-20261015-234016-46294A",
+                     "StepOperationID":  "GUI-20261015-234016-46294A-0001-S03",
+                     "StepId":  "da5fdcd4-881f-4e9b-99e0-712fcd0891f8",
+                     "StepIndex":  3,
+                     "Operation":  "ServiceStartup",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Koşul sağlanmadı; bu hedefin reçetesi durduruldu."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Skipped",
+                    "CompletedAt":  "2026-10-15T23:40:19.9604044+03:00",
+                    "Detail":  "Koşul sağlanmadı; bu hedefin reçetesi durduruldu.",
+                    "RecipeName":  "Offline 08-onfalse-stop",
+                    "RecipeId":  "e4fe9d2b-f875-44a3-918f-44a469a1e83f",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:40:19.9604044+03:00"
+}

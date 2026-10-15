@@ -27,7 +27,7 @@ DOCSETS = [
     ('TEKNIK_EL_KITABI.md', DOCS / 'RemoteOps_Teknik_El_Kitabi.pdf', 'Teknik el kitabı'),
     ('CALISMA_MANTIGI.md', DOCS / 'RemoteOps_Calisma_Mantigi.pdf', 'Çalışma mantığı'),
     ('INCELEME_RAPORU.md', DOCS / 'RemoteOps_Inceleme_Raporu.pdf', 'İnceleme raporu'),
-    ('GELECEK_OPERASYON_OLUSTUR.md', DOCS / 'RemoteOps_Operasyon_Olustur_Tasarim.pdf', 'Gelecek operasyon tasarımı'),
+    ('GELECEK_OPERASYON_OLUSTUR.md', DOCS / 'RemoteOps_Operasyon_Olustur_Tasarim.pdf', 'Reçeteler ve gelecek geliştirmeler'),
 ]
 FONTDIR = Path('C:/Windows/Fonts')
 for name, filename in [('UI', 'segoeui.ttf'), ('UIBold', 'segoeuib.ttf'), ('Code', 'consola.ttf')]:
@@ -149,7 +149,7 @@ def page(canvas, doc):
     canvas.setStrokeColor(colors.HexColor('#D8E2E9'))
     canvas.line(18*mm, 16*mm, 192*mm, 16*mm)
     canvas.setFont('UI', 7.5); canvas.setFillColor(colors.HexColor('#556B7B'))
-    canvas.drawString(18*mm, 11*mm, 'v11 · 14 Ekim 2026 · Pilot geri bildirimi işlendi; kabul testleri sürüyor')
+    canvas.drawString(18*mm, 11*mm, 'v21 · 15 Ekim 2026 · Anlaşılır teşhis ve geri alma')
     canvas.drawRightString(192*mm, 11*mm, str(doc.page))
     canvas.restoreState()
 
@@ -159,17 +159,17 @@ def build(source, output, title):
                             leftMargin=18*mm, rightMargin=18*mm,
                             topMargin=19*mm, bottomMargin=19*mm,
                             title='RemoteOps — '+title, author='YD RemoteOps',
-                            subject='YD_RemoteOps.App_v11 teknik ve operatör belgeleri')
+                            subject='YD_RemoteOps.App_v27 teknik ve operatör belgeleri')
     doc.short_title = title
     story = [Spacer(1, 28), para('YD REMOTEOPS APP', 'small'),
-             para(title, 'title'), para('14 Ekim 2026 · YD_RemoteOps.App_v11', 'small'),
+             para(title, 'title'), para('15 Ekim 2026 · YD_RemoteOps.App_v27', 'small'),
              para('Güncel kaynak yapısına göre hazırlanmıştır. Şirket kabul testleri operatör tarafından tamamlanacaktır. Ekran görüntüleri örnek veriler içerir.'),
              Spacer(1, 16), para('Bu belgede', 'h2')]
     for line in lines:
         if line.startswith('## '): story.append(para(line[3:], 'small'))
     story.append(PageBreak())
     # Date line is on the cover, omit its duplicate in the body.
-    body = [l for l in lines if not l.startswith('14 Ekim 2026 ·')]
+    body = [l for l in lines if not l.startswith('15 Ekim 2026 ·')]
     story.extend(parse_body(body))
     doc.build(story, onFirstPage=page, onLaterPages=page)
 

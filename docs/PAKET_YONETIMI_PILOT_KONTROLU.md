@@ -1,6 +1,6 @@
 ﻿# RemoteOps paket yönetimi pilot kontrolü
 
-14 Ekim 2026 · YD_RemoteOps.App_v11. İlk pilot geri bildirimi alındı; gerçek OperationID/rapor bilgileri paylaşılmadığından kayıt alanları operatörün doldurması için boştur. [Kullanım kılavuzu](KULLANIM_KILAVUZU.md), [teknik el kitabı](TEKNIK_EL_KITABI.md) ve [yerel doğrulama raporu](INCELEME_RAPORU.md) test öncesi okunmalıdır. İlk senaryolar tek hedef ve paralellik 1 ile yapılır; log temizleme başlangıçta kapalı tutulabilir.
+15 Ekim 2026 · YD_RemoteOps.App_v16. İlk pilot geri bildirimi alındı; gerçek OperationID/rapor bilgileri paylaşılmadığından kayıt alanları operatörün doldurması için boştur. [Kullanım kılavuzu](KULLANIM_KILAVUZU.md), [teknik el kitabı](TEKNIK_EL_KITABI.md) ve [yerel doğrulama raporu](INCELEME_RAPORU.md) test öncesi okunmalıdır. İlk senaryolar tek hedef ve paralellik 1 ile yapılır; log temizleme başlangıçta kapalı tutulabilir.
 
 Pilot, şirketin belirlediği test bilgisayarlarında ve gerçek dağıtım paketleriyle yapılır. Yerel mock testleri, şirket ağındaki hesap ve SYSTEM erişimini doğrulamaz. Başlamadan test bilgisayarı ve paketlerin sorumlu ekip tarafından belirlenmesi gerekir.
 

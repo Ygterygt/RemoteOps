@@ -1,0 +1,50 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "8876107d-72c7-4d3e-bcbc-6ef423cb2bfc",
+    "Revision":  1,
+    "Name":  "Offline 02-target-scope",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:39:21.7267266+03:00",
+    "UpdatedAt":  "2026-10-15T23:39:22.0419414+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "1952b54c-cce6-4366-a012-763cad3c37d7",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "Equals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "16.0.444"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "1cb0ece8-e80d-4a95-9885-89a58aa497fc",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "1952b54c-cce6-4366-a012-763cad3c37d7"
+                  },
+                  {
+                      "Id":  "935c3724-78ed-45b9-9b01-137f5e748bdf",
+                      "Name":  "Servisleri listele · OfflineDemo",
+                      "Operation":  "ServiceList",
+                      "Values":  {
+                                     "Filter":  "OfflineDemo"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

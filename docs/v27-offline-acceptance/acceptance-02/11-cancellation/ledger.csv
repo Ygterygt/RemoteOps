@@ -1,0 +1,3 @@
+"CompletedAt";"OperationID";"Operation";"Category";"ComputerName";"Outcome";"Identity";"RecipeName";"RecipeId";"RecipeRevision";"PackageName";"PackageId";"PackageRevision";"Action";"Detail"
+"2026-10-15 23:40:47";"GUI-20261015-234043-5D66F8";"RecipeRun";"Recipes";"SIM-PC1";"Cancelled";"OFFLINE\operator";"Offline 11-cancellation";"007a4a65-a86b-45a2-87ef-b29c7a927527";"1";"";"";"";"";"Yeni adımlar kullanıcı isteğiyle durduruldu."
+"2026-10-15 23:40:47";"GUI-20261015-234043-5D66F8";"RecipeRun";"Recipes";"SIM-PC2";"Cancelled";"OFFLINE\operator";"Offline 11-cancellation";"007a4a65-a86b-45a2-87ef-b29c7a927527";"1";"";"";"";"";"Yeni adımlar kullanıcı isteğiyle durduruldu."

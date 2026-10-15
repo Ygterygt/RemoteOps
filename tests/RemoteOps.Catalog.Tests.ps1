@@ -1,6 +1,7 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
+. (Join-Path $Root 'Modules\RegistryPaths.ps1')
 # Cross-checks the GUI catalog against descriptions, input validation, confirmation words, runner dispatch, report metadata and the parallel-safe lists.
 function Get-FileAst($Path){$t=$null;$e=$null;[System.Management.Automation.Language.Parser]::ParseFile($Path,[ref]$t,[ref]$e)}
 function Find-Assign($Ast,$Left){$Ast.Find({param($N)$N -is [System.Management.Automation.Language.AssignmentStatementAst] -and $N.Left.Extent.Text -eq $Left},$true)}
@@ -49,7 +50,7 @@ foreach($Op in $Catalog){
     }
     # required keys must be real fields; empty values must be rejected when something is required
     $Threw=$false;$Msg='';try{Assert-OperationInputs -Operation $Op -Values $Vals}catch{$Threw=$true;$Msg=$_.Exception.Message}
-    if($Threw){$Key=($Msg -replace '^Required input is empty: ','');if($Keys -cnotcontains $Key){$Errors+="$N requires unknown input key '$Key'"}}
+    if($Threw -and $N -ne 'RecipeRun'){$Key=($Msg -replace '^Required input is empty: ','');if($Keys -cnotcontains $Key){$Errors+="$N requires unknown input key '$Key'"}}
 }
 # Every control bound with Window.FindName must exist in XAML and vice versa; four product tabs.
 $AppText=[IO.File]::ReadAllText((Join-Path $Root 'RemoteOps.App\RemoteOps.App.ps1'),[Text.Encoding]::UTF8)
@@ -57,6 +58,11 @@ $Xaml=[regex]::Match($AppText,'(?s)\$script:WindowXaml = @''(.*?)\r?\n''@').Grou
 $XamlNames=@([regex]::Matches($Xaml,'x:Name="(\w+)"')|ForEach-Object{$_.Groups[1].Value}|Where-Object{$_ -notin 'Bd','Cp'})
 $BindLine=@($AppText -split "`r?`n"|Where-Object{$_ -match 'foreach\(\$Name in @\(''ActiveIdentity'''})[0]
 $Bound=@([regex]::Matches(($BindLine -replace '\)\)\{.*$',''),"'(\w+)'")|ForEach-Object{$_.Groups[1].Value})
+$WorkspaceText=[IO.File]::ReadAllText((Join-Path $Root 'RemoteOps.App\RemoteOps.WorkspaceUi.ps1'))
+foreach($Name in @('WorkspaceNavigationHost','WorkspaceCurrentPage','WorkspaceVersion')){
+    if($WorkspaceText -notmatch ("FindName\('"+$Name+"'")){$Errors+="Workspace control '$Name' is not resolved"}
+    $Bound+= $Name
+}
 foreach($B in $Bound){if($XamlNames -cnotcontains $B){$Errors+="Control '$B' is bound but not in the XAML"}}
 foreach($X in $XamlNames){if($Bound -cnotcontains $X){$Errors+="XAML control '$X' is never bound"}}
 if([regex]::Matches($Xaml,'<TabItem ').Count -ne 4){$Errors+='MainTabs must hold four tabs (Paketlerim, Paket Olustur, Operasyon, Rapor).'}

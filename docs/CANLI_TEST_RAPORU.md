@@ -44,4 +44,4 @@ CleanupErrors boş. GUID klasörü, registry alt anahtarı, test servisi, görev
 2. DCOM CimSession ile görev silerken `-Confirm:$false` bağlamak desteklenmiyordu. Kullanıcı onayı, XML yedeği ve manifest korundu; silme çağrısında açık Confirm parametresi kaldırıldı ve ConfirmPreference yalnızca alt kapsamda None yapıldı.
 3. Test düzeneğinin registry temizliğinde provider hatası görülmesine rağmen yaprak kayıt silinmişti. Kesin test anahtarları için .NET registry API ile temizleme ve boş üst anahtar kontrolü kullanıldı; ikinci turda temizlik hatası kalmadı.
 
-Public repoda nihai sonuçların kişisel alanları çıkarılmış özeti `live-test/LOCAL_LIVE_TEST.json` ve `.csv` dosyalarındadır. Ham ilk tur ve hedef çıktı dosyaları yalnızca yerel dağıtımda tutulur. Bunlar şirket ağı, başka Windows sürümleri veya gerçek dağıtım paketleri için kabul testi yerine geçmez.
+İlk başarısız turun kaydı `live-test/first-run` altında saklanır; nihai sonuçlar `live-test/LOCAL_LIVE_TEST.json` ve `.csv` dosyalarıdır. Bunlar şirket ağı, başka Windows sürümleri veya gerçek dağıtım paketleri için kabul testi yerine geçmez.

@@ -1,4 +1,4 @@
-<#
+﻿<#
 AO Service and Scheduled Task Operations module.
 Provides CLM-compatible service/task inventory, control, edit and rollback.
 The module only defines functions and registers its operation when loaded.
@@ -357,7 +357,7 @@ function Invoke-ServiceTaskOperationsMenu {
                     if($null -eq $Service){throw "Servis bulunamadi: $ServiceName"}
                     $OldState=[string]$Service.State
                     $OldStartMode=[string]$Service.StartMode
-                    $ManifestEntry=New-ServiceTaskObject @{ComputerName=$ComputerName;ObjectType='Service';ObjectName=$ServiceName;Action=$(if($Selection -eq '2'){'StartStop'}else{'StartupType'});OldState=$Service.State;OldStartMode=$Service.StartMode;NewStartMode=$NewStartMode;OperationID=$OperationID}
+                    $ManifestEntry=New-ServiceTaskObject @{ComputerName=$ComputerName;ObjectType='Service';ObjectName=$ServiceName;Action=$(if($Selection -eq '2'){'StartStop'}else{'StartupType'});OldState=$Service.State;OldStartMode=$Service.StartMode;NewStartMode=$NewStartMode;NewState=$(if($Selection -eq '3'){[string]$Service.State}elseif($Action -eq 'stop'){'Stopped'}else{'Running'});OperationID=$OperationID}
                     $CandidateRows=@($ManifestRows)+@($ManifestEntry)
                     $ManifestPath=Join-Path $RollbackRoot ("{0}_Services.csv" -f $OperationID)
                     Write-ServiceTaskManifest -Path $ManifestPath -Rows $CandidateRows

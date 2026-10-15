@@ -1,6 +1,6 @@
-<#
+﻿<#
 Registry Operations module for AO.
-Supports CLM-safe string value read, edit, delete, and rollback.
+Supports typed registry value read, edit, delete, and rollback.
 The module is loaded by the host and performs no operation during load.
 #>
 
@@ -9,13 +9,15 @@ The module is loaded by the host and performs no operation during load.
 # - Konsol menusu mantigiyla yazilmistir (Read-Host). GUI'den calisirken Runner
 #   Read-Host'u golgeleyip cevaplari sirayla verir, ornek RegistryEdit icin:
 #   '2', <key>, <value adi>, <yeni deger>, 'EDIT', '0'
-# - Menu: 1=Oku  2=Duzenle (REG_SZ)  3=Sil  4=Rollback  0=Bitir
-# - Sadece HKLM ve sadece string (REG_SZ) degerler. Uzak erisim: CIM/DCOM + StdRegProv.
+# - Menu: 1=Oku  2=Duzenle (tur korunur)  3=Sil  4=Rollback  0=Bitir
+# - HKLM/HKCU/HKU/HKCR/HKCC; REG_SZ/REG_DWORD/REG_QWORD/REG_MULTI_SZ/REG_EXPAND_SZ degerler. Uzak erisim: CIM/DCOM + StdRegProv.
 # - Duzenle/Sil oncesi eski deger okunur ve RegistryRollback\<ID>_Edit|Delete.csv
 #   manifest'ine yazilir; rollback bu manifest'ten eski degeri geri koyar.
 # - Menuden cikista (0) sonuc satirlari Logs\RemoteOps\<ID>_RegistryOperations.csv'ye yazilir.
 # ====================================================================
 Set-StrictMode -Version 2.0
+. (Join-Path $PSScriptRoot 'RegistryPaths.ps1')
+. (Join-Path $PSScriptRoot 'RegistryValues.ps1')
 
 # Hashtable'dan nesne uretir (CLM uyumlu yazim).
 function New-RegistryOperationsObject {
@@ -26,28 +28,16 @@ function New-RegistryOperationsObject {
 # "HKLM\..." veya "HKEY_LOCAL_MACHINE\..." on ekini atip sadece alt anahtar yolunu dondurur.
 function Get-RegistryOperationsRemotePath {
     param([string]$ComputerName, [string]$RegistryKey)
-    $Value = $RegistryKey.Trim().Trim('\')
-    $Value = $Value -replace '(?i)^(HKEY_LOCAL_MACHINE|HKLM):?\\?', ''
-    if ([string]::IsNullOrWhiteSpace($Value)) { throw 'Registry key alt yolu bos olamaz.' }
-    return $Value.Trim('\')
+    return (ConvertTo-RemoteOpsRegistryPath $RegistryKey).SubKey
 }
 
 # Mevcut string degeri okur. Exists=$false ise ReturnValue nedeni gosterir
 # Yalnizca 2 (ERROR_FILE_NOT_FOUND) bulunamadi sayilir; diger kodlar okuma hatasidir.
 function Get-RegistryOperationsValue {
-    param($Session, [string]$RegistryKey, [string]$ValueName)
+    param($Session, [string]$RegistryKey, [string]$ValueName, [uint32]$Hive=2147483650)
 
-    $Result = Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName GetStringValue -Arguments @{
-        hDefKey = [uint32]2147483650
-        sSubKeyName = $RegistryKey
-        sValueName = $ValueName
-    } -ErrorAction Stop
+    return Get-RemoteOpsRegistryValue -Session $Session -Hive $Hive -RegistryKey $RegistryKey -ValueName $ValueName
 
-    if ([uint32]$Result.ReturnValue -eq 0) {
-        return New-RegistryOperationsObject @{ Exists=$true; Value=[string]$Result.sValue; ReturnValue=0 }
-    }
-
-    return New-RegistryOperationsObject @{ Exists=$false; Value=''; ReturnValue=[uint32]$Result.ReturnValue }
 }
 
 # Rollback manifest'ini (';' ayracli CSV) yazar.
@@ -76,7 +66,8 @@ function Invoke-RegistryOperationsMenu {
         [string]$OperationDate,
         [string]$OperationTime,
         [scriptblock]$TechnicalLogWriter,
-        [scriptblock]$OperationHistoryWriter
+        [scriptblock]$OperationHistoryWriter,
+        [ValidateSet('Auto','REG_SZ','REG_DWORD','REG_QWORD','REG_MULTI_SZ','REG_EXPAND_SZ')][string]$ValueType='Auto'
     )
 
     $RollbackRoot = Join-Path $BasePath 'RegistryRollback'
@@ -129,14 +120,8 @@ function Invoke-RegistryOperationsMenu {
                 try {
                     $Session = New-CimSession -ComputerName $Row.ComputerName -SessionOption (New-CimSessionOption -Protocol Dcom) -OperationTimeoutSec 10 -ErrorAction Stop
                     try {
-                        $Arguments = @{ hDefKey=[uint32]2147483650; sSubKeyName=$Row.RegistryKey; sValueName=$Row.ValueName }
-                        if ([string]$Row.OldExists -eq 'True') {
-                            $Arguments['sValue'] = [string]$Row.OldValue
-                            $Restore = Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName SetStringValue -Arguments $Arguments -ErrorAction Stop
-                        }
-                        else {
-                            $Restore = Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName DeleteValue -Arguments $Arguments -ErrorAction Stop
-                        }
+                        $Restore=Restore-RemoteOpsRegistryEntry -Session $Session -Entry $Row
+                        if([uint32]$Restore.ReturnValue -ne 0){throw "Registry rollback failed (ReturnValue=$($Restore.ReturnValue))."}
                         Write-Host "$($Row.ComputerName) : ROLLBACK ReturnValue=$($Restore.ReturnValue)" -ForegroundColor Green
                     }
                     finally { Remove-CimSession -CimSession $Session -ErrorAction SilentlyContinue }
@@ -154,7 +139,9 @@ function Invoke-RegistryOperationsMenu {
         }
 
         # 1/2/3 icin ortak girdiler: anahtar, deger adi, (2 ise) yeni deger ve onay kelimesi.
-        $RegistryKey = Get-RegistryOperationsRemotePath -ComputerName '' -RegistryKey (Read-Host 'Registry key (HKLM veya HKEY_LOCAL_MACHINE tam yolu)')
+        $RequestedRegistryPath = (Read-Host 'Registry key (HKLM/HKCU/HKU veya uzun HKEY adi)').Trim()
+        $ParsedPath=ConvertTo-RemoteOpsRegistryPath $RequestedRegistryPath
+        $RegistryKey=$ParsedPath.SubKey
         $ValueName = (Read-Host 'Value adi').Trim()
         if ([string]::IsNullOrWhiteSpace($RegistryKey) -or [string]::IsNullOrWhiteSpace($ValueName)) {
             Write-Host 'Registry key ve value adi bos olamaz.' -ForegroundColor Red
@@ -162,7 +149,7 @@ function Invoke-RegistryOperationsMenu {
         }
 
         $NewValue = ''
-        if ($Selection -eq '2') { $NewValue = Read-Host 'Yeni string deger' }
+        if ($Selection -eq '2') { $NewValue = Read-Host 'Yeni deger (sayilar: ondalik/0x; MULTI_SZ: JSON string dizisi)' }
         if ($Selection -in @('2','3')) {
             $ConfirmWord = if ($Selection -eq '2') { 'EDIT' } else { 'DELETE' }
             if ((Read-Host "Devam etmek icin $ConfirmWord yazin").Trim().ToUpperInvariant() -ne $ConfirmWord) {
@@ -177,43 +164,48 @@ function Invoke-RegistryOperationsMenu {
             try {
                 $Session = New-CimSession -ComputerName $ComputerName -SessionOption (New-CimSessionOption -Protocol Dcom) -OperationTimeoutSec 10 -ErrorAction Stop
                 try {
-                    $Old = Get-RegistryOperationsValue -Session $Session -RegistryKey $RegistryKey -ValueName $ValueName
+                    $ResolvedPath=Resolve-RemoteOpsRegistryPath -Session $Session -RegistryKey $RequestedRegistryPath
+                    $RegistryKey=$ResolvedPath.SubKey
+                    $Hive=$ResolvedPath.Hive
+                    $Old = Get-RegistryOperationsValue -Session $Session -RegistryKey $RegistryKey -ValueName $ValueName -Hive $Hive
                     if ($Selection -eq '1') {
                         if ($Old.Exists) {
-                            Write-Host "$ComputerName : $RegistryKey\$ValueName = $($Old.Value)" -ForegroundColor Green
+                            Write-Host "$ComputerName : $RegistryKey\$ValueName = $($Old.Value) [$($Old.Type)]" -ForegroundColor Green
                         }
                         elseif ([uint32]$Old.ReturnValue -eq 2) {
                             Write-Host "$ComputerName : VALUE YOK | ReturnValue=$($Old.ReturnValue)" -ForegroundColor Yellow
                         }
                         else { Write-Host "$ComputerName : READ FAILED | ReturnValue=$($Old.ReturnValue)" -ForegroundColor Red }
-                        $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; ValueName=$ValueName; Action='Read'; Status=$(if ($Old.Exists) { 'Success' } elseif ([uint32]$Old.ReturnValue -eq 2) { 'NotFound' } else { 'Failed' }); Value=$Old.Value; NewValue=''; ReturnValue=$Old.ReturnValue; ErrorDetail=$(if ($Old.Exists) { '' } elseif ([uint32]$Old.ReturnValue -eq 2) { 'Value not found.' } else { "Registry read failed (ReturnValue=$($Old.ReturnValue))." }) }
+                        $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; RegistryPath=$RequestedRegistryPath; ValueName=$ValueName; Action='Read'; Status=$(if ($Old.Exists) { 'Success' } elseif ([uint32]$Old.ReturnValue -eq 2) { 'NotFound' } else { 'Failed' }); Value=$Old.Value; ValueType=$Old.Type; NewValue=''; ReturnValue=$Old.ReturnValue; ErrorDetail=$(if ($Old.Exists) { '' } elseif ([uint32]$Old.ReturnValue -eq 2) { 'Value not found.' } else { "Registry read failed (ReturnValue=$($Old.ReturnValue))." }) }
                         continue
                     }
 
-                    # A value that exists but is not REG_SZ (e.g. DWORD) cannot be read as a string, so it could neither be backed up nor rolled back: never overwrite or delete it.
+                    # Never mutate a value whose type/data could not be backed up.
                     if (-not $Old.Exists -and [uint32]$Old.ReturnValue -ne 2) {
                         $BlockedAction = if ($Selection -eq '2') { 'Edit' } else { 'Delete' }
-                        $BlockedDetail = "Current value could not be read as a string (ReturnValue=$($Old.ReturnValue); not a REG_SZ value or access denied). Nothing was changed."
+                        $BlockedDetail = "Current registry type/data could not be backed up (ReturnValue=$($Old.ReturnValue)). Nothing was changed."
                         Write-Host "$ComputerName : $BlockedAction BLOCKED | $BlockedDetail" -ForegroundColor Red
-                        $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; ValueName=$ValueName; Action=$BlockedAction; Status='Failed'; Value=''; NewValue=$NewValue; ReturnValue=[uint32]$Old.ReturnValue; ErrorDetail=$BlockedDetail }
+                        $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; RegistryPath=$RequestedRegistryPath; ValueName=$ValueName; Action=$BlockedAction; Status='Failed'; Value=''; ValueType=$Old.Type; NewValue=$NewValue; ReturnValue=[uint32]$Old.ReturnValue; ErrorDetail=$BlockedDetail }
                         continue
                     }
 
+                    $EffectiveType=if($Old.Exists){$Old.Type}elseif($ValueType -eq 'Auto'){'REG_SZ'}else{$ValueType}
+                    if($Selection -eq '2' -and $Old.Exists -and $ValueType -ne 'Auto' -and $ValueType -ne $Old.Type){throw "Existing value type $($Old.Type) must be preserved. Choose Auto or the matching type."}
+                    $TypedNewValue=if($Selection -eq '2'){ConvertTo-RemoteOpsRegistryData -Type $EffectiveType -Text $NewValue}else{''}
                     # Degisiklik: SetStringValue (Edit) veya DeleteValue (Delete); eski deger manifest satirina eklenir.
-                    $Arguments = @{ hDefKey=[uint32]2147483650; sSubKeyName=$RegistryKey; sValueName=$ValueName }
+                    $Arguments = @{ hDefKey=$Hive; sSubKeyName=$RegistryKey; sValueName=$ValueName }
                     $Action=if($Selection -eq '2'){'Edit'}else{'Delete'}
                     $ManifestPath=Join-Path $RollbackRoot ("{0}_{1}.csv" -f $OperationID,$Action)
                     $ManifestEntry=New-RegistryOperationsObject @{
-                        ComputerName=$ComputerName;RegistryKey=$RegistryKey;ValueName=$ValueName;OldExists=$Old.Exists;OldValue=$Old.Value;NewValue=$NewValue
+                        ComputerName=$ComputerName;RegistryKey=$RegistryKey;RegistryHive=$ResolvedPath.HiveName;RegistryPath=$ResolvedPath.FullPath;ValueName=$ValueName;OldExists=$Old.Exists;OldValue=$Old.Value;OldType=$Old.Type;NewValue=$TypedNewValue;NewType=$(if($Selection -eq '2'){$EffectiveType}else{''});DataEncoding='TypedText-v1'
                         Action=$Action;ReturnValue='Pending';OperationID=$OperationID;OperationDate=$OperationDate;OperationTime=$OperationTime
                     }
                     $CandidateRows=@($ManifestRows)+@($ManifestEntry)
                     Write-RegistryOperationsManifest -Path $ManifestPath -Rows $CandidateRows
                     $ManifestRows=$CandidateRows
                     if ($Selection -eq '2') {
-                        $Arguments['sValue'] = [string]$NewValue
                         $Action = 'Edit'
-                        $OperationResult = Invoke-CimMethod -CimSession $Session -Namespace 'root\default' -ClassName StdRegProv -MethodName SetStringValue -Arguments $Arguments -ErrorAction Stop
+                        $OperationResult = Set-RemoteOpsRegistryValue -Session $Session -Hive $Hive -RegistryKey $RegistryKey -ValueName $ValueName -Type $EffectiveType -Text $TypedNewValue
                     }
                     else {
                         $Action = 'Delete'
@@ -223,13 +215,13 @@ function Invoke-RegistryOperationsMenu {
                     $ManifestEntry.ReturnValue=[uint32]$OperationResult.ReturnValue
                     Write-RegistryOperationsManifest -Path $ManifestPath -Rows $ManifestRows
                     Write-Host "$ComputerName : $Action ReturnValue=$($OperationResult.ReturnValue)" -ForegroundColor $(if ([uint32]$OperationResult.ReturnValue -eq 0) { 'Green' } else { 'Red' })
-                    $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; ValueName=$ValueName; Action=$Action; Status=$(if ([uint32]$OperationResult.ReturnValue -eq 0) { 'Success' } else { 'Failed' }); Value=$Old.Value; NewValue=$NewValue; ReturnValue=[uint32]$OperationResult.ReturnValue; ErrorDetail=$(if ([uint32]$OperationResult.ReturnValue -eq 0) { '' } else { "Registry call returned $($OperationResult.ReturnValue)." }) }
+                    $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; RegistryPath=$RequestedRegistryPath; ValueName=$ValueName; Action=$Action; Status=$(if ([uint32]$OperationResult.ReturnValue -eq 0) { 'Success' } else { 'Failed' }); Value=$Old.Value; ValueType=$EffectiveType; NewValue=$TypedNewValue; ReturnValue=[uint32]$OperationResult.ReturnValue; ErrorDetail=$(if ([uint32]$OperationResult.ReturnValue -eq 0) { '' } else { "Registry call returned $($OperationResult.ReturnValue)." }) }
                 }
                 finally { Remove-CimSession -CimSession $Session -ErrorAction SilentlyContinue }
             }
             catch {
                 Write-Host "$ComputerName : HATA | $($_.Exception.Message)" -ForegroundColor Red
-                $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; ValueName=$ValueName; Action=$(switch ($Selection) { '1' { 'Read' } '2' { 'Edit' } default { 'Delete' } }); Status='Failed'; Value=''; NewValue=$NewValue; ReturnValue=''; ErrorDetail=$_.Exception.Message }
+                $ReportRows += New-RegistryOperationsObject @{ OperationID=$OperationID; ComputerName=$ComputerName; RegistryKey=$RegistryKey; RegistryPath=$RequestedRegistryPath; ValueName=$ValueName; Action=$(switch ($Selection) { '1' { 'Read' } '2' { 'Edit' } default { 'Delete' } }); Status='Failed'; Value=''; ValueType=''; NewValue=$NewValue; ReturnValue=''; ErrorDetail=$_.Exception.Message }
             }
         }
 

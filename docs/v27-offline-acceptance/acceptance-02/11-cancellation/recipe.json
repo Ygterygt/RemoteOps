@@ -1,0 +1,41 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "007a4a65-a86b-45a2-87ef-b29c7a927527",
+    "Revision":  1,
+    "Name":  "Offline 11-cancellation",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:40:42.5960354+03:00",
+    "UpdatedAt":  "2026-10-15T23:40:42.9373115+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "73623cd2-13c9-4a4f-9f70-10dca7c91e39",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "b8331b0e-cb66-4ae5-af0c-d92aaddbf042",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "311e5206-3b26-4c7f-bb8b-e4e8f5bf6f82",
+                      "Name":  "Servisi durdur · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Stop"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

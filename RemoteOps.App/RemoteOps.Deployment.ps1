@@ -160,10 +160,11 @@ function Invoke-RemoteOpsPackageDeployment {
         $Row=[PSCustomObject]@{ComputerName=$ComputerName;Step=$Step;Action=$Action;Status=$Status;PreviousVersion=$State.PreviousVersion;TargetVersion=$TargetVersion;FinalVersion=$State.FinalVersion;ExitCode=$Code;RebootRequired=$Reboot;ErrorDetail=$Detail;OperationID=$OperationID;PackageId=$Definition.Id;PackageRevision=$Definition.Revision;PackageName=$Definition.Name;LogDestination=[string](Get-RemoteOpsPackageValue $Raw LogDestination '');LogCollectionStatus=[string](Get-RemoteOpsPackageValue $Raw LogCollectionStatus '');LogCleanupStatus=[string](Get-RemoteOpsPackageValue $Raw LogCleanupStatus '')}
         $Rows.Add($Row);$State.Step=$Step;& $Save
     }
-    $Finish={param($Outcome,$Detail)
+    $Finish={param($Outcome,$Detail,$DecisionCode='')
         $State.Terminal=$true;$State.SideEffectActive=$false;$State.VerificationPending=$false
-        $State.Outcome=[PSCustomObject]@{ComputerName=$ComputerName;Outcome=$Outcome;CompletedAt=(Get-Date).ToString('o');Detail=$Detail;PackageId=$Definition.Id;PackageRevision=$Definition.Revision;PackageName=$Definition.Name;Action=$Action;PreviousVersion=$State.PreviousVersion;TargetVersion=$TargetVersion;FinalVersion=$State.FinalVersion}
+        $State.Outcome=[PSCustomObject]@{ComputerName=$ComputerName;Outcome=$Outcome;DecisionCode=$DecisionCode;CompletedAt=(Get-Date).ToString('o');Detail=$Detail;PackageId=$Definition.Id;PackageRevision=$Definition.Revision;PackageName=$Definition.Name;Action=$Action;PreviousVersion=$State.PreviousVersion;TargetVersion=$TargetVersion;FinalVersion=$State.FinalVersion}
         & $AddRow 'Result' $Outcome $Detail
+        Add-Member -InputObject $Rows[$Rows.Count-1] -NotePropertyName DecisionCode -NotePropertyValue $DecisionCode -Force; & $Save
         return [PSCustomObject]@{Rows=@($Rows.ToArray());Outcome=$State.Outcome}
     }
     $RunStep={param($Part,$StepAction,$Policy)
@@ -201,7 +202,7 @@ function Invoke-RemoteOpsPackageDeployment {
             $State.PreviousVersion=$Decision.PreviousVersion
             & $AddRow 'Precheck' $(if($Decision.Decision -eq 'DetectionFailed'){'Failed'}else{'Success'}) $Decision.Reason
             if($Decision.Decision -eq 'DetectionFailed'){return (& $Finish 'Error' $Decision.Reason)}
-            if($Decision.Decision -ne 'Downgrade'){return (& $Finish 'Skipped' $Decision.Reason)}
+            if($Decision.Decision -ne 'Downgrade'){return (& $Finish 'Skipped' $Decision.Reason $Decision.Decision)}
             if(-not $CanUninstall){return (& $Finish 'Error' 'A newer application exists, but the configured uninstall identity does not match it. Correct the uninstall identity before downgrading.')}
             # Both sources are checked before the installed application is removed.
             & $ValidateSource $Definition.Downgrade $ComputerName|Out-Null
@@ -236,12 +237,12 @@ function Invoke-RemoteOpsPackageDeployment {
         if(-not $Unchecked){
             $Detected=& $Detect $Part $ComputerName;$State.PreviousVersion=[string](Get-RemoteOpsPackageValue $Detected DisplayVersion '')
             if($Detected.Status -notin @('Var','Yok')){return (& $Finish 'Error' (Get-RemoteOpsDetectionFailureDetail $Detected))}
-            if($Action -eq 'Uninstall' -and $Detected.Status -eq 'Yok'){return (& $Finish 'Skipped' 'Application already absent.')}
+            if($Action -eq 'Uninstall' -and $Detected.Status -eq 'Yok'){return (& $Finish 'Skipped' 'Application already absent.' 'AlreadyAbsent')}
             if($Action -eq 'Install' -and $Detected.Status -eq 'Var'){
-                if($Part.CheckMode -eq 'Presence only'){return (& $Finish 'Skipped' 'Application already present.')}
+                if($Part.CheckMode -eq 'Presence only'){return (& $Finish 'Skipped' 'Application already present.' 'AlreadyPresent')}
                 $Comparison=& $VersionComparer $State.PreviousVersion $Definition.TargetVersion
                 if(-not $Comparison.Comparable){return (& $Finish 'Error' 'Installed version could not be compared.')}
-                if($Comparison.Result -ge 0){return (& $Finish 'Skipped' 'Target or newer version already installed.')}
+                if($Comparison.Result -ge 0){return (& $Finish 'Skipped' 'Target or newer version already installed.' 'AlreadyAtOrAboveTarget')}
             }
         }
         & $ValidateSource $Part $ComputerName|Out-Null

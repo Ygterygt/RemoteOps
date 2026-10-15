@@ -1,0 +1,53 @@
+{
+    "ComputerName":  "SIM-PC2",
+    "OperationID":  "GUI-20261015-234043-5D66F8",
+    "SnapshotHash":  "7D71411E13C2D93F4038938A3DB38C195587B6C14086FBEF18B0C1F7A0E7C82C",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  0,
+    "Rows":  [
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-234043-5D66F8",
+                     "ParentRunId":  "GUI-20261015-234043-5D66F8",
+                     "StepOperationID":  "GUI-20261015-234043-5D66F8-0002-S01",
+                     "StepId":  "73623cd2-13c9-4a4f-9f70-10dca7c91e39",
+                     "StepIndex":  1,
+                     "Operation":  "ServiceControl",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 },
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-234043-5D66F8",
+                     "ParentRunId":  "GUI-20261015-234043-5D66F8",
+                     "StepOperationID":  "GUI-20261015-234043-5D66F8-0002-S02",
+                     "StepId":  "b8331b0e-cb66-4ae5-af0c-d92aaddbf042",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceStartup",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 },
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-234043-5D66F8",
+                     "ParentRunId":  "GUI-20261015-234043-5D66F8",
+                     "StepOperationID":  "GUI-20261015-234043-5D66F8-0002-S03",
+                     "StepId":  "311e5206-3b26-4c7f-bb8b-e4e8f5bf6f82",
+                     "StepIndex":  3,
+                     "Operation":  "ServiceControl",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC2",
+                    "Outcome":  "Cancelled",
+                    "CompletedAt":  "2026-10-15T23:40:47.8901753+03:00",
+                    "Detail":  "Yeni adımlar kullanıcı isteğiyle durduruldu.",
+                    "RecipeName":  "Offline 11-cancellation",
+                    "RecipeId":  "007a4a65-a86b-45a2-87ef-b29c7a927527",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:40:47.8901753+03:00"
+}

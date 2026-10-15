@@ -1,4 +1,4 @@
-$ErrorActionPreference='Stop';Set-StrictMode -Version 2.0
+﻿$ErrorActionPreference='Stop';Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
 function Register-AOModule{param($Name,$Version,$MinimumHostApiVersion,$SourcePath,$Initializer)}
 function Register-AOModuleOperation{param($ModuleName,$Name,$DisplayName,$EntryPointName,$Handler)}
@@ -9,6 +9,7 @@ function Remove-CimSession{param($CimSession)}
 function Get-CimInstance{param($CimSession,$ClassName,$Filter)[PSCustomObject]@{Name='DemoSvc';State='Running';StartMode='Auto'}}
 function Invoke-CimMethod{
     param($CimSession,$Namespace,$ClassName,$InputObject,$MethodName,$Arguments)
+    if($MethodName -eq 'EnumValues'){return [pscustomobject]@{ReturnValue=0;sNames=@('V');Types=@(1)}}
     if($MethodName -eq 'GetStringValue'){return [PSCustomObject]@{ReturnValue=0;sValue='original'}}
     $script:Calls+=@($MethodName);$script:Backups+=@(Test-Path -LiteralPath $script:ExpectedManifest -PathType Leaf)
     if(Test-Path -LiteralPath $script:ExpectedManifest){$script:SavedBeforeChange=@(Import-Csv $script:ExpectedManifest -Delimiter ';')}

@@ -1,0 +1,60 @@
+{
+    "ComputerName":  "SIM-PC2",
+    "OperationID":  "GUI-20261015-234027-CB53A5",
+    "SnapshotHash":  "0272FDA8F8CD5A69FA4FF7D320EF83F246277244FAACC582FD9EE8A63782648E",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  2,
+    "Rows":  [
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "start",
+                     "OldState":  "Stopped",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "",
+                     "Status":  "Success",
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "4756cae9-0f52-4c91-bbb0-614415e1d6a4",
+                     "ParentRunId":  "GUI-20261015-234027-CB53A5",
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-234027-CB53A5",
+                     "StepIndex":  1,
+                     "RecipeName":  "Offline 09-action-error",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "9685888e-662d-4bde-98d6-ed634a261470",
+                     "StepOperationID":  "GUI-20261015-234027-CB53A5-0002-S01",
+                     "Operation":  "ServiceControl"
+                 },
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "StartupType",
+                     "OldState":  "Running",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "demand",
+                     "Status":  "Success",
+                     "ErrorDetail":  "",
+                     "RecipeRevision":  1,
+                     "StepId":  "a0ffcee5-b4bf-49ee-9a36-cc585d41cd14",
+                     "ParentRunId":  "GUI-20261015-234027-CB53A5",
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261015-234027-CB53A5",
+                     "StepIndex":  2,
+                     "RecipeName":  "Offline 09-action-error",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "9685888e-662d-4bde-98d6-ed634a261470",
+                     "StepOperationID":  "GUI-20261015-234027-CB53A5-0002-S02",
+                     "Operation":  "ServiceStartup"
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC2",
+                    "Outcome":  "Completed",
+                    "CompletedAt":  "2026-10-15T23:40:34.7623551+03:00",
+                    "Detail":  "Bütün adımlar tamamlandı.",
+                    "RecipeName":  "Offline 09-action-error",
+                    "RecipeId":  "9685888e-662d-4bde-98d6-ed634a261470",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-15T23:40:34.7623551+03:00"
+}

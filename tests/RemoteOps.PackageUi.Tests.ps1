@@ -2,6 +2,8 @@
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version 2.0
 $Root=Split-Path -Parent $PSScriptRoot
+. (Join-Path $Root 'RemoteOps.App\RemoteOps.Backups.ps1')
+$script:DataRoot=Join-Path $env:TEMP ('RemoteOpsEmptyCatalog-'+[guid]::NewGuid().ToString('N'))
 $Tokens=$null;$Errors=$null
 $Ast=[System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Root 'RemoteOps.App\RemoteOps.App.ps1'),[ref]$Tokens,[ref]$Errors)
 if($Errors.Count){throw ($Errors|Out-String)}

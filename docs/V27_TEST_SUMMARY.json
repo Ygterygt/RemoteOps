@@ -1,0 +1,28 @@
+{
+  "subject_version": 26,
+  "delivery_version": 27,
+  "operational_scenarios": {
+    "total": 17,
+    "passed": 17,
+    "failed": 0
+  },
+  "safe_regression_files": {
+    "total": 12,
+    "passed": 12
+  },
+  "model_guard_negative_checks": 5,
+  "independent_run_artifacts": 16,
+  "independent_negative_controls": 2,
+  "real_coordinator_processes": 16,
+  "real_child_processes": 48,
+  "seconds": 148.88,
+  "sampled_combined_working_set_mib": 699.8,
+  "unexpected_boundary_blocks": 0,
+  "source_code": {
+    "files": 36,
+    "same_as_v26": true
+  },
+  "live_targets": false,
+  "transport_verified": false,
+  "evidence": "v27-offline-acceptance/acceptance-02/summary.json"
+}

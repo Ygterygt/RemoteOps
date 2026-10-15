@@ -1,0 +1,41 @@
+{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "d5c9abdf-0d9f-4ef1-aa1d-0019cfa1e737",
+    "Revision":  1,
+    "Name":  "Offline 04-missing-not-equal",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-15T23:39:50.7430184+03:00",
+    "UpdatedAt":  "2026-10-15T23:39:50.9560475+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "db45f4fc-18ed-4456-bcc0-be95882ac20a",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "NotEquals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "16.0.444"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "177aeedd-cc97-4e13-83d0-37f7284c9dea",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "db45f4fc-18ed-4456-bcc0-be95882ac20a"
+                  }
+              ]
+}
