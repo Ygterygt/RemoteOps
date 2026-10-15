@@ -1,4 +1,5 @@
-﻿####################################################################
+﻿. (Join-Path $PSScriptRoot 'RemoteOps.StepResults.ps1')
+####################################################################
 # REMOTE OPS - RAPOR KUTUPHANESI  -  RemoteOps.Reports.ps1
 #
 # Hem GUI (RemoteOps.App.ps1) hem Runner tarafindan dot-source edilir.
@@ -36,6 +37,7 @@ function Get-RemoteOpsRowValue {
 # Paket "Success" olsa bile son kontrol hatasi varsa 'issue' sayilir.
 function Get-RemoteOpsRowCategory {
     param($Row)
+    if((Get-RemoteOpsRowValue $Row @('VerificationStatus')) -in @('Failed','Unknown')){return 'issue'}
     $Outcome=Get-RemoteOpsRowValue -Row $Row -Names @('Outcome')
     if($Outcome -eq 'Completed'){return 'success'}
     if($Outcome -in @('Skipped','Unreachable')){return 'neutral'}
@@ -476,6 +478,7 @@ function Write-RemoteOpsResultHtml {
         if($StepTechnical.Count){$StepHead+='<th>Ayrıntı</th>'}
         $StepHtml='<details class="panel"><summary>Adim ayrintilari ('+$StepRows.Count+')</summary><p>Asagidaki satirlar ayni hedefin ayri yurutme/dogrulama adimlaridir; hedef sayisina eklenmez.</p><div class="table-wrap"><table class="results-table"><thead><tr>'+$StepHead+'</tr></thead><tbody>'+$StepBody+'</tbody></table></div></details>'
     }
+    if(@($Rows|Where-Object{(Get-RemoteOpsRowValue $_ @('StepIndex','VerificationStatus'))}).Count){$StepHtml=(Get-RemoteOpsStepSummaryHtml $Rows)+$StepHtml}
     $AllHeaders=@($Rows|ForEach-Object{$_.PSObject.Properties.Name}|Select-Object -Unique)
     $TechnicalHeaders=@($AllHeaders|Where-Object{Test-RemoteOpsReportTechnicalColumn $_})
     $Headers=@($AllHeaders|Where-Object{-not(Test-RemoteOpsReportTechnicalColumn $_)})

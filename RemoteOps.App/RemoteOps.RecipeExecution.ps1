@@ -94,15 +94,15 @@ function Invoke-RemoteOpsRecipeRun {
   for($I=1;$I -le $Snapshot.Definition.Steps.Count;$I++){
    $Step=$Snapshot.Definition.Steps[$I-1];$StepOperationID=('{0}-{1:D4}-S{2:D2}' -f $RunId,$T,$I)
    if(-not $Stop -and (Test-RemoteOpsRunCancellation $CancelPath)){$Stop=$true;$Outcome='Cancelled';$Detail='Yeni adımlar kullanıcı isteğiyle durduruldu.'}
-   if($Stop){[void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;Status='NotRun';ErrorDetail=$Detail});continue}
+   if($Stop){[void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;StepName=$Step.Name;Status='NotRun';ErrorDetail=$Detail});continue}
    $ConditionId=[string](Get-RemoteOpsPreviewValue $Step ConditionId '')
    if($ConditionId -and (-not $ConditionResults.ContainsKey($ConditionId) -or -not $ConditionResults[$ConditionId])){
     if(-not $ConditionResults.ContainsKey($ConditionId)){throw 'Condition decision missing; dispatch rejected.'}
-    [void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;ConditionId=$ConditionId;Status='Skipped';ErrorDetail='Koşul sağlanmadığı için bu adım çalıştırılmadı.'})
+    [void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;StepName=$Step.Name;ConditionId=$ConditionId;Status='Skipped';ErrorDetail='Koşul sağlanmadığı için bu adım çalıştırılmadı.'})
     $SkippedCount++;$State.StepIndex=$I;$State.SideEffectActive=$false;$State.Rows=@($TargetRows);$State.UpdatedAt=(Get-Date).ToString('o');Write-RemoteOpsRunCheckpoint $CheckpointRoot $State;continue
    }
    $State.StepIndex=$I;$State.SideEffectActive=$true;$State.Rows=@($TargetRows);$State.UpdatedAt=(Get-Date).ToString('o');Write-RemoteOpsRunCheckpoint $CheckpointRoot $State
-   & $WriteProgress ([pscustomobject]@{ComputerName=$Computer;TargetIndex=$T;StepIndex=$I;StepCount=$Snapshot.Definition.Steps.Count;Stage='Running'})|Out-Null
+   & $WriteProgress ([pscustomobject]@{ComputerName=$Computer;TargetIndex=$T;StepIndex=$I;StepName=$Step.Name;StepCount=$Snapshot.Definition.Steps.Count;Stage='Running'})|Out-Null
    try{
     $Request=New-RemoteOpsRecipeStepRequest $Snapshot $RunId $T $I $BasePath $CancelPath
     $Payload=& $InvokeStep $Request;Assert-RemoteOpsRecipeStepResult $Payload $Request
@@ -110,17 +110,24 @@ function Invoke-RemoteOpsRecipeRun {
     if($Step.Operation -ceq 'RecipeCondition'){$ConditionResults[$Step.Id]=[bool]$Decision.ConditionMatched}
     foreach($SourceRow in $Payload.Rows){$Row=ConvertFrom-Json (ConvertTo-Json -InputObject $SourceRow -Depth 20);$Original=Get-RemoteOpsPreviewValue $Row OperationID ''
      if($ConditionId){Add-Member -InputObject $Row -NotePropertyName ConditionId -NotePropertyValue $ConditionId -Force}
-     foreach($Pair in @{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;OriginalOperationID=$Original;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;RecipeName=$Snapshot.Definition.Name;RecipeId=$Snapshot.Definition.Id;RecipeRevision=$Snapshot.Definition.Revision}.GetEnumerator()){Add-Member -InputObject $Row -NotePropertyName $Pair.Key -NotePropertyValue $Pair.Value -Force};[void]$TargetRows.Add($Row)
+     foreach($Pair in @{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;OriginalOperationID=$Original;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;StepName=$Step.Name;StepResultReason=$Decision.Reason;RecipeName=$Snapshot.Definition.Name;RecipeId=$Snapshot.Definition.Id;RecipeRevision=$Snapshot.Definition.Revision}.GetEnumerator()){Add-Member -InputObject $Row -NotePropertyName $Pair.Key -NotePropertyValue $Pair.Value -Force};[void]$TargetRows.Add($Row)
     }
     if($Decision.Decision -eq 'Stop'){$Stop=$true;$Outcome=$Decision.Outcome;$Detail=$Decision.Reason}
     if((Get-RemoteOpsPreviewValue $Payload StopRun $false) -eq $true){$Halted=$true;$Stop=$true;if($Outcome -eq 'Completed'){$Outcome='Error'};$Detail='Adım bekleme süresini aştı; son sonuç ayrıntıda korundu. Yeni adım/hedef başlatılmadı.'}
    }catch{
     $Stop=$true;if($_.Exception.Data['RecipeStopRun']){$Halted=$true};$Outcome=if($_.Exception.Data['RecipeNotStarted']){'Error'}else{'Indeterminate'};$Detail=$_.Exception.Message
-    [void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;Status=$Outcome;ErrorDetail=$Detail})
+    [void]$TargetRows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepOperationID=$StepOperationID;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;StepName=$Step.Name;Status=$Outcome;ErrorDetail=$Detail})
    }
    $State.SideEffectActive=$false;$State.Rows=@($TargetRows);$State.UpdatedAt=(Get-Date).ToString('o');Write-RemoteOpsRunCheckpoint $CheckpointRoot $State
   }
   if($Outcome -eq 'Completed' -and $SkippedCount -gt 0){$Detail=('Reçete tamamlandı; koşul nedeniyle {0} adım atlandı.' -f $SkippedCount)}
+  foreach($Row in $TargetRows){
+   $N=[int](Get-RemoteOpsPreviewValue $Row StepIndex 0)
+   if($N -ge 1 -and $N -le $Snapshot.Definition.Steps.Count){
+    if(-not $Row.PSObject.Properties['StepName']){Add-Member -InputObject $Row -NotePropertyName StepName -NotePropertyValue $Snapshot.Definition.Steps[$N-1].Name}
+    if(-not $Row.PSObject.Properties['StepResultReason']){Add-Member -InputObject $Row -NotePropertyName StepResultReason -NotePropertyValue ([string](Get-RemoteOpsPreviewValue $Row ErrorDetail ''))}
+   }
+  }
   $Terminal=[pscustomobject]@{ComputerName=$Computer;Outcome=$Outcome;CompletedAt=(Get-Date).ToString('o');Detail=$Detail;RecipeName=$Snapshot.Definition.Name;RecipeId=$Snapshot.Definition.Id;RecipeRevision=$Snapshot.Definition.Revision}
   $State.Terminal=$true;$State.SideEffectActive=$false;$State.Outcome=$Terminal;$State.Rows=@($TargetRows);$State.UpdatedAt=(Get-Date).ToString('o');Write-RemoteOpsRunCheckpoint $CheckpointRoot $State
   foreach($Row in $TargetRows){[void]$Rows.Add($Row)};[void]$Outcomes.Add($Terminal)
@@ -136,10 +143,10 @@ function Get-RemoteOpsPartialRecipeResult {
   $Outcome=if($Matches.Count){'Indeterminate'}else{$MissingOutcome};$Reason=if($Matches.Count){'Çalışma kesildi; son adımın hedef durumu doğrulanmalı.'}else{'Bu hedef başlatılmadan çalışma durdu.'}
   if($Matches.Count -and $Matches[0].SideEffectActive -and [int]$Matches[0].StepIndex -ge 1 -and [int]$Matches[0].StepIndex -le $Snapshot.Definition.Steps.Count){
    $I=[int]$Matches[0].StepIndex;$Step=$Snapshot.Definition.Steps[$I-1];$T=[array]::IndexOf([object[]]$Snapshot.Targets,$Computer)+1
-   [void]$Rows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepId=$Step.Id;StepIndex=$I;StepOperationID=('{0}-{1:D4}-S{2:D2}' -f $RunId,$T,$I);Operation=$Step.Operation;Status='Indeterminate';ErrorDetail=$Reason})
+   [void]$Rows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepId=$Step.Id;StepIndex=$I;StepOperationID=('{0}-{1:D4}-S{2:D2}' -f $RunId,$T,$I);Operation=$Step.Operation;StepName=$Step.Name;Status='Indeterminate';ErrorDetail=$Reason})
   }
   $FirstPending=if($Matches.Count){[int]$Matches[0].StepIndex+1}else{1}
-  for($I=$FirstPending;$I -le $Snapshot.Definition.Steps.Count;$I++){$Step=$Snapshot.Definition.Steps[$I-1];[void]$Rows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;Status='NotRun';ErrorDetail=$Reason})}
+  for($I=$FirstPending;$I -le $Snapshot.Definition.Steps.Count;$I++){$Step=$Snapshot.Definition.Steps[$I-1];[void]$Rows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;ParentRunId=$RunId;StepId=$Step.Id;StepIndex=$I;Operation=$Step.Operation;StepName=$Step.Name;Status='NotRun';ErrorDetail=$Reason})}
   [void]$Rows.Add([pscustomobject]@{ComputerName=$Computer;OperationID=$RunId;Step='Result';Status=$Outcome;ErrorDetail=$Reason})
   [void]$Outcomes.Add([pscustomobject]@{ComputerName=$Computer;Outcome=$Outcome;CompletedAt=(Get-Date).ToString('o');Detail=$Reason;RecipeName=$Snapshot.Definition.Name;RecipeId=$Snapshot.Definition.Id;RecipeRevision=$Snapshot.Definition.Revision})
  }

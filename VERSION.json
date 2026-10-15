@@ -1,7 +1,7 @@
 {
-  "version": 27,
-  "distribution": "YD_RemoteOps.App_v27",
-  "previousVersion": 26,
-  "date": "2026-10-15",
+  "version": 28,
+  "distribution": "YD_RemoteOps.App_v28",
+  "previousVersion": 27,
+  "date": "2026-10-16",
   "releasePolicy": "Increment once per completed delivery; preserve previous versions; create a verified versioned ZIP. Upload to Google Drive only when requested."
 }

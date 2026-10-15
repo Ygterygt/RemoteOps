@@ -1,0 +1,4 @@
+﻿"CompletedAt";"OperationID";"Operation";"Category";"ComputerName";"Outcome";"Identity";"RecipeName";"RecipeId";"RecipeRevision";"PackageName";"PackageId";"PackageRevision";"Action";"Detail"
+"2026-10-16 00:22:06";"GUI-20261016-002158-5885AA";"RecipeRun";"Recipes";"SIM-PC1";"Completed";"OFFLINE\operator";"Offline 02-target-scope";"2d6639e1-6d9e-4777-bcc0-9d68a7564b23";"1";"";"";"";"";"Bütün adımlar tamamlandı."
+"2026-10-16 00:22:10";"GUI-20261016-002158-5885AA";"RecipeRun";"Recipes";"SIM-PC2";"Completed";"OFFLINE\operator";"Offline 02-target-scope";"2d6639e1-6d9e-4777-bcc0-9d68a7564b23";"1";"";"";"";"";"Reçete tamamlandı; koşul nedeniyle 1 adım atlandı."
+"2026-10-16 00:22:14";"GUI-20261016-002158-5885AA";"RecipeRun";"Recipes";"SIM-PC3";"Completed";"OFFLINE\operator";"Offline 02-target-scope";"2d6639e1-6d9e-4777-bcc0-9d68a7564b23";"1";"";"";"";"";"Reçete tamamlandı; koşul nedeniyle 1 adım atlandı."

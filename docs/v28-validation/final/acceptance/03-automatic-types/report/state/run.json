@@ -1,0 +1,64 @@
+﻿{
+    "Schema":  "RemoteOps.RecipeCheckpoint/1",
+    "RunId":  "GUI-20261016-002216-AE35EF",
+    "Snapshot":  {
+                     "Schema":  "RemoteOps.RecipeRun/1",
+                     "Definition":  {
+                                        "Schema":  "RemoteOps.Recipe/4",
+                                        "Id":  "cd598885-0d54-4658-a3a3-a4b82e45073f",
+                                        "Revision":  1,
+                                        "Name":  "Offline 03-automatic-types",
+                                        "Description":  "Stateful offline acceptance fixture",
+                                        "CreatedAt":  "2026-10-16T00:22:15.4072704+03:00",
+                                        "UpdatedAt":  "2026-10-16T00:22:15.6338943+03:00",
+                                        "Steps":  [
+                                                      {
+                                                          "Id":  "376014f7-2ba1-48b4-bf21-a0806d6c3544",
+                                                          "Name":  "İşlem koşulu",
+                                                          "Operation":  "RecipeCondition",
+                                                          "Values":  {
+                                                                         "Match":  "All",
+                                                                         "OnFalse":  "Skip",
+                                                                         "Checks":  [
+                                                                                        {
+                                                                                            "Kind":  "RegistryValue",
+                                                                                            "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                                                            "Name":  "Version",
+                                                                                            "Operator":  "Equals",
+                                                                                            "ExpectedType":  "Auto",
+                                                                                            "Expected":  "1"
+                                                                                        }
+                                                                                    ]
+                                                                     }
+                                                      },
+                                                      {
+                                                          "Id":  "2dbd9b50-5de0-453c-ab7a-5a79185b9d18",
+                                                          "Name":  "Servisi başlat · OfflineDemo",
+                                                          "Operation":  "ServiceControl",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "Action":  "Start"
+                                                                     },
+                                                          "AutoName":  true,
+                                                          "ConditionId":  "376014f7-2ba1-48b4-bf21-a0806d6c3544"
+                                                      }
+                                                  ]
+                                    },
+                     "Targets":  [
+                                     "SIM-PC1",
+                                     "SIM-PC2",
+                                     "SIM-PC3"
+                                 ],
+                     "Identity":  {
+                                      "Domain":  "OFFLINE",
+                                      "UserName":  "operator",
+                                      "IsMain":  true
+                                  },
+                     "CleanupLogs":  false,
+                     "Hash":  "BEC2606AA2EDD7AB6EA06FBF468A997A71435EB6C8C317B4EB9010A6FF34BDDC"
+                 },
+    "ReportRoot":  "C:\\Users\\OPERATOR\\AppData\\Local\\Temp\\RemoteOps-Lightweight-e8185be8a7d643bf82ed410de05a0afc\\data\\Logs\\Operations\\RecipeRun\\GUI-20261016-002216-AE35EF",
+    "Identity":  "OFFLINE\\operator",
+    "CoordinatorPid":  32948,
+    "CoordinatorStartUtc":  639276961361415915
+}

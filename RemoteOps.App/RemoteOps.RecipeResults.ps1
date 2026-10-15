@@ -34,6 +34,9 @@ function Get-RemoteOpsRecipeStepDecision {
   $Stop=-not $Matched -and $Values.OnFalse -ceq 'Stop'
   return [pscustomobject]@{Decision=$(if($Stop){'Stop'}else{'Continue'});Outcome=$(if($Stop){'Skipped'}else{'Completed'});Reason=$(if($Matched){'Koşul sağlandı.'}elseif($Stop){'Koşul sağlanmadı; bu hedefin reçetesi durduruldu.'}else{'Koşul sağlanmadı; bağlı adımlar atlanacak.'});ConditionMatched=[bool]$Matched}
  }
+ $Verification=@($Rows|ForEach-Object{Get-RemoteOpsPreviewValue $_ VerificationStatus ''})
+ if($Verification -contains 'Unknown'){return [pscustomobject]@{Decision='Stop';Outcome='Indeterminate';Reason='Komut kabul edildi; son durum doğrulanamadı. Bu hedefin sonraki adımları çalıştırılmadı.'}}
+ if($Verification -contains 'Failed'){return [pscustomobject]@{Decision='Stop';Outcome='Error';Reason='Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.'}}
  $Outcome='Error';$Reason='Adım sonucu doğrulanamadı.';$Continue=$false
  $Statuses=@($Rows|ForEach-Object{[string](Get-RemoteOpsPreviewValue $_ Status (Get-RemoteOpsPreviewValue $_ Durum ''))})
  $All=@($Statuses)+@($Outcomes|ForEach-Object{Get-RemoteOpsPreviewValue $_ Outcome ''})
@@ -61,6 +64,6 @@ function Get-RemoteOpsRecipeStepDecision {
    if($Continue){$O=$Outcomes[0];$Continue=$O.Outcome -eq 'Success' -or ($O.Outcome -eq 'Skipped' -and (Get-RemoteOpsPreviewValue $O DecisionCode '') -in @('AlreadyAbsent','AlreadyPresent','AlreadyAtOrAboveTarget','AlreadyAtTarget'))}
   }
  }
- if($Continue){$Outcome='Completed';$Reason='Adımın beklenen sonucu doğrulandı.'}elseif($All -contains 'Erisilemedi'){$Outcome='Unreachable'}
+ if($Continue){$Outcome='Completed';$Reason=if($Verification -contains 'Verified'){'İşlem tamamlandı; hedef tekrar okunarak doğrulandı.'}elseif($Operation -in @('FileDelete','PackageDeployment','FileCompare')){'Adımın mevcut sonuç kontrolleri tamamlandı.'}else{'Okuma / kontrol adımı tamamlandı.'}}elseif($All -contains 'Erisilemedi'){$Outcome='Unreachable'}
  [pscustomobject]@{Decision=$(if($Continue){'Continue'}else{'Stop'});Outcome=$Outcome;Reason=$Reason}
 }

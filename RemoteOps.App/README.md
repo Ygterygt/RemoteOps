@@ -1,6 +1,12 @@
-﻿# YD RemoteOps v26
+﻿# YD RemoteOps v28
 
 Tek operatör için Windows PowerShell 5.1 ve WPF uzak operasyon paneli.
+
+v28: Servis/registry/dosya gönderiminde otomatik son durum kontrolü; komut yanıtı ve doğrulamanın ayrı gösterildiği adım sonuçları. Mevcut Recipe/1..4 korunur. Beklenen durum oluşmazsa veya doğrulanamazsa o hedefin sonraki adımları durur. Önceki işlemler otomatik geri alınmaz. [v28 kullanım ve test kapsamı](../docs/V28_TEST_RAPORU.md).
+
+Hafif test paketi: kökte HAFIF_TEST_CALISTIR.bat. Canlı hedeflere bağlanmadan yerel kaynaklar ve SIM modeli kullanır.
+
+Aşağıdaki önceki sürüm özellikleri korunur.
 
 Başlatma: dağıtım kökündeki YD_RemoteOps.App.bat. Modules, RemoteOps.App ve PsExec.exe birlikte tutulmalıdır.
 

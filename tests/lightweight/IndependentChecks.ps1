@@ -1,4 +1,4 @@
-[CmdletBinding()]param([Parameter(Mandatory)][string]$EvidenceRoot)
+﻿[CmdletBinding()]param([Parameter(Mandatory)][string]$EvidenceRoot)
 $ErrorActionPreference='Stop'
 function Require($Value,$Message){if(-not $Value){throw $Message}}
 function Assert-Chain($Model,$Rows){
@@ -35,6 +35,24 @@ foreach($run in $summary.Runs){
   for($i=0;$i -lt $events.Count;$i++){if($events[$i].Operation -ceq 'StopService'){$stop=$i};if($events[$i].Operation -ceq 'StartService'){$start=$i}}
   for($i=$stop+1;$i -lt $start;$i++){if($events[$i].Operation -ceq 'GetService' -and $events[$i].Before.Service.State -ceq 'Stopped' -and $events[$i].Target -ceq 'SIM-PC1'){$observed=$true}}
   Require ($stop -ge 0 -and $start -gt $stop -and $observed) 'Restart did not observe stopped service between stop and start.'
+ }
+ foreach($row in @($rows|Where-Object{$_.Operation -in @('ServiceControl','ServiceStartup') -and $_.Status -ceq 'Success'})){
+  Require ($row.CommandStatus -ceq 'Success' -and $row.VerificationStatus -in @('Verified','Failed','Unknown')) 'Accepted mutation lacks verification record.'
+  Require (-not [string]::IsNullOrWhiteSpace($row.VerifiedAt)) 'Verification timestamp missing.'
+  if($row.VerificationStatus -ceq 'Verified'){
+   $expectedState=if($row.Action -ieq 'stop'){'Stopped'}else{'Running'}
+   if($row.Operation -ceq 'ServiceControl'){
+    Require (@($model.Events|Where-Object{$_.Operation -ceq 'Verify' -and $_.Target -ceq $row.ComputerName -and $_.Before.Service.Exists -and $_.Before.Service.State -ceq $expectedState -and -not $_.Error}).Count -gt 0) 'Verified service lacks independent observed-state event.'
+   }else{
+    $mode=switch([string]$row.NewStartMode){auto{'Automatic'}demand{'Manual'}disabled{'Disabled'}default{$row.NewStartMode}}
+    Require (@($model.Events|Where-Object{$_.Operation -ceq 'Verify' -and $_.Target -ceq $row.ComputerName -and $_.Before.Service.Startup -ceq $mode -and -not $_.Error}).Count -gt 0) 'Verified startup lacks independent event.'
+   }
+  }else{
+   Require (@($ledger|Where-Object{$_.ComputerName -ceq $row.ComputerName -and $_.Outcome -in @('Error','Indeterminate')}).Count -eq 1) 'Verification failure painted completed in ledger.'
+  }
+ }
+ if($run.Case -ceq '14-oracle-negative-controls'){
+  Require (@($rows|Where-Object VerificationStatus -ceq 'Failed').Count -eq 1 -and @($rows|Where-Object Status -ceq 'NotRun').Count -eq 1) 'No-op acceptance did not persist failed verification and stopped successor.'
  }
  $checked++
 }

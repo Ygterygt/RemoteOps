@@ -38,6 +38,7 @@ try {
     . (Join-Path $PSScriptRoot 'RemoteOps.RunState.ps1')
     . (Join-Path $PSScriptRoot 'RemoteOps.Recovery.ps1')
     . (Join-Path $PSScriptRoot 'RemoteOps.RecipeExecution.ps1')
+    . (Join-Path $PSScriptRoot 'RemoteOps.Verification.ps1')
     # ReportCandidates : modullerin Start-Process ile acmaya calistigi .html/.csv dosyalari (sonuc kaynagi)
     # OperationMessages: Write-Host ile yazilan tum mesajlar (Activity raporu + sonuc tahmini icin)
     $script:ReportCandidates=@()
@@ -267,6 +268,7 @@ try {
             $MessageStart=$script:OperationMessages.Count
             $TargetRows=@()
             $TargetResult=$null
+            $PushManifest=$null
             $script:TargetOutputQuiet=$true
             $LiveTargets[$Completed].Stage='Running'
             Write-TargetProgress -Path $ProgressPath -Total $InputTargets.Count -Completed $Completed -CurrentTarget $Target -Stage 'Running' -Targets $LiveTargets
@@ -288,7 +290,10 @@ try {
                         Add-Member -InputObject $TargetResult -NotePropertyName Outcomes -NotePropertyValue @($BlockedOutcome)
                     }
 
-                }else{$TargetResult=& $InvokeTarget}
+                }else{
+                    if($OperationName -eq 'FilePush'){$PushManifest=Get-RemoteOpsPushManifest ([string]$Values.LocalPath)}
+                    $TargetResult=& $InvokeTarget
+                }
                 $Sources=@($script:ReportCandidates)
                 if($null -ne $TargetResult -and $null -ne $TargetResult.PSObject.Properties['ResultCsv'] -and -not [string]::IsNullOrWhiteSpace([string]$TargetResult.ResultCsv)){
                     $Sources+=[string]$TargetResult.ResultCsv
@@ -325,6 +330,7 @@ try {
                 if($TargetRows.Count -eq 0){
                     $TargetRows=@([PSCustomObject]@{ComputerName=$Target;Status='NoData';ErrorDetail='No structured result rows returned. See Activity for details.'})
                 }
+                Set-RemoteOpsPostVerification $OperationName $Values $TargetRows $Target -PushManifest $PushManifest
                 foreach($Row in $TargetRows){$BatchRows.Add($Row)}
             }
             catch{

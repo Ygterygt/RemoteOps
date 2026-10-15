@@ -1,16 +1,18 @@
 # RemoteOps
 
-![Version: 27](https://img.shields.io/badge/version-v27-0A8C83)
+![Version: 28](https://img.shields.io/badge/version-v28-0A8C83)
 ![Platform: Windows](https://img.shields.io/badge/platform-Windows-0078D4)
 ![PowerShell: 5.1](https://img.shields.io/badge/PowerShell-5.1-5391FE)
 
-Tek operatörün yazılım dağıtımı ve uzak bilgisayar operasyonları için Windows PowerShell 5.1 / WPF uygulaması. **Güncel kabul edilen sürüm v27'dir.**
+Tek operatörün yazılım dağıtımı ve uzak bilgisayar operasyonları için Windows PowerShell 5.1 / WPF uygulaması. **Güncel kabul edilen sürüm v28'dir.**
 
-![Operasyon reçeteleri](docs/screenshots-v26/recete-ana.png)
+![Adım sonuçları — yerel örnek veri](docs/screenshots-v28/v28-adim-sonuclari.png)
+
+[v28 sürüm sayfası](https://github.com/Ygterygt/RemoteOps/releases/tag/v28) · [Tam v28 ZIP paketi — Google Drive](https://drive.google.com/file/d/1yEC8havMfPkcBlYaR_tYw_yGWCHpuqUG/view?usp=drivesdk)
 
 ## Güncel sürüm
 
-v27, v26 uygulama kodunu korur ve hafif operasyon kabul testini ekler. İşlem adları otomatik oluşur; koşullar ilgili adımın içinde düzenlenir. Registry türü seçmek gerekmez. Reçete ekranında Adımlar ve Hedefler ayrı sekmelerdedir; işlem ve çalışma koşulu ayrı düzenleme penceresinde açılır.
+v28, servis/registry/dosya gönderiminden sonra beklenen sonucu otomatik doğrular. Komut yanıtı ve doğrulama sonucu ayrı gösterilir; beklenen durum oluşmazsa veya kesinleştirilemezse ilgili hedefin sonraki reçete adımları durur. Tamamlanmış işlemler otomatik geri alınmaz. İşlem adları otomatik oluşur; koşullar ilgili adımın içinde düzenlenir. Registry türü seçmek gerekmez. Reçete ekranında Adımlar ve Hedefler ayrı sekmelerdedir; işlem ve çalışma koşulu ayrı düzenleme penceresinde açılır.
 
 - Servis/registry koşulları; Tümü / Herhangi biri; koşul sağlanmazsa adımı atlama veya hedefi durdurma.
 - Önceki reçetelerin özel adları ve ortak koşullarının tek değerlendirme davranışı korunur.
@@ -21,16 +23,16 @@ v27, v26 uygulama kodunu korur ve hafif operasyon kabul testini ekler. İşlem a
 
 | Kontrol | Sonuç |
 |---|---|
-| Durumu değişen yerel hedef modeliyle operasyon senaryoları | 17/17 geçti |
-| Güvenli yerel regresyon dosyaları | 12/12 geçti |
+| Durumu değişen yerel hedef modeliyle operasyon senaryoları | 19/19 geçti |
+| Güvenli yerel regresyon dosyaları | 22/22 geçti |
 | Model sınırı negatif kontrolleri | 5/5 geçti |
-| Bağımsız CSV/ledger/checkpoint incelemesi | 16 çalışma doğrulandı |
+| Bağımsız CSV/ledger/checkpoint incelemesi | 18 çalışma doğrulandı |
 
-Gerçek WPF denetimleri, gerçek istek oluşturma, koordinatör ve 48 çocuk süreç kullanıldı. Yanıltıcı Success raporu hedef durumu ayrıca kontrol edilerek yakalandı. Kabul koşusu yaklaşık 149 saniye sürdü; örneklenen toplam çalışma belleği yaklaşık 700 MiB idi. Sanal makine kullanılmadı.
+Gerçek WPF denetimleri, istek oluşturma, ayrı koordinatör ve çocuk süreçleri kullanıldı. Komut başarılı döndüğü halde durumun değişmediği ve okuma hatasının son durumu belirsiz bıraktığı senaryolarda sonraki adımların durduğu doğrulandı. Kabul koşusu yaklaşık 204 saniye sürdü; örneklenen toplam çalışma belleği yaklaşık 687 MiB idi. Sanal makine kullanılmadı.
 
 Bu sonuçlar gerçek ağ, Windows registry sağlayıcısı, domain yetkileri, SMB/PsExec veya güvenlik yazılımlarının doğrulandığı anlamına gelmez. Uzak erişim sınırları yalnızca geçici test kopyasında yerel modele yönlendirilir. İptal mekanizması sınanır; onay iletişim kutusunun fareyle tıklanması sınanmaz.
 
-[Kabul raporu](docs/V27_HAFIF_TEST_RAPORU.md) · [Özet kayıt](docs/V27_TEST_SUMMARY.json) · [Bağımsız inceleme](docs/V27_INDEPENDENT_REVIEW.json)
+[v28 test raporu](docs/V28_TEST_RAPORU.md) · [Özet kayıt](docs/V28_TEST_SUMMARY.json) · [Kod incelemesi](docs/V28_CODE_REVIEW.json)
 
 ## Hızlı başlangıç
 
@@ -49,9 +51,9 @@ Gerçek operasyonlarda uygun yönetim yetkileri ve operasyonun gerektirdiği ağ
 
 ## Canlı hedef kullanmadan test
 
-Reçete kabul testi için kökteki **HAFIF_TEST_CALISTIR.bat** dosyasını açın. PsExec, sanal makine veya yönetici yetkisi gerekmez. Yeni sonuçlar `docs/v27-offline-acceptance/Run-*` altında oluşur.
+Reçete kabul testi için kökteki **HAFIF_TEST_CALISTIR.bat** dosyasını açın. PsExec, sanal makine veya yönetici yetkisi gerekmez. Yeni sonuçlar `TestResults/Offline` altında oluşur.
 
-12 regresyon ve 17 kabul senaryosunu birlikte çalıştırmak için:
+22 regresyon dosyası ve 19 kabul senaryosunu birlikte çalıştırmak için:
 
 ```powershell
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Invoke-OfflineValidation.ps1

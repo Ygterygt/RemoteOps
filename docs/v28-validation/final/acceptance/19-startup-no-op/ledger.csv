@@ -1,0 +1,2 @@
+﻿"CompletedAt";"OperationID";"Operation";"Category";"ComputerName";"Outcome";"Identity";"RecipeName";"RecipeId";"RecipeRevision";"PackageName";"PackageId";"PackageRevision";"Action";"Detail"
+"2026-10-16 00:24:31";"GUI-20261016-002428-5419A8";"RecipeRun";"Recipes";"SIM-PC1";"Error";"OFFLINE\operator";"Offline 19-startup-no-op";"3aa0f374-b4ba-4b3d-9701-40a92cd9ac0d";"1";"";"";"";"";"Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı."

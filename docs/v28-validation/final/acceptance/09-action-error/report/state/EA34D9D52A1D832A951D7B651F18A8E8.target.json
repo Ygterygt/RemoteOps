@@ -1,0 +1,61 @@
+﻿{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261016-002306-CB47C2",
+    "SnapshotHash":  "4E98AC9A2D4F961662E9B7B6E00DDF4467BD5D09987D89994D765D38D56BAC23",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "start",
+                     "OldState":  "Stopped",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "",
+                     "Status":  "Failed",
+                     "ErrorDetail":  "Fixture mutation denied",
+                     "VerificationExpected":  "",
+                     "VerificationDetail":  "Komut tamamlanmadı veya öğeler atlandı; sonuç doğrulaması yapılmadı.",
+                     "VerifiedAt":  "",
+                     "VerificationObserved":  "",
+                     "VerificationStatus":  "NotPerformed",
+                     "CommandStatus":  "Failed",
+                     "StepName":  "Servisi başlat · OfflineDemo",
+                     "ComputerName":  "SIM-PC1",
+                     "StepIndex":  1,
+                     "StepResultReason":  "Adım sonucu doğrulanamadı.",
+                     "RecipeRevision":  1,
+                     "StepId":  "af6f1822-add9-42df-8772-fff44f5c0a4c",
+                     "OperationID":  "GUI-20261016-002306-CB47C2",
+                     "ParentRunId":  "GUI-20261016-002306-CB47C2",
+                     "RecipeName":  "Offline 09-action-error",
+                     "StepOperationID":  "GUI-20261016-002306-CB47C2-0001-S01",
+                     "Operation":  "ServiceControl",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "e0da5aeb-ca5a-4f95-8972-d90c915b074a"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261016-002306-CB47C2",
+                     "ParentRunId":  "GUI-20261016-002306-CB47C2",
+                     "StepOperationID":  "GUI-20261016-002306-CB47C2-0001-S02",
+                     "StepId":  "c0da3c4f-9a10-425f-a199-35af9546c9dc",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceStartup",
+                     "StepName":  "Servis başlangıcını değiştir · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Adım sonucu doğrulanamadı.",
+                     "StepResultReason":  "Adım sonucu doğrulanamadı."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Error",
+                    "CompletedAt":  "2026-10-16T00:23:10.1433146+03:00",
+                    "Detail":  "Adım sonucu doğrulanamadı.",
+                    "RecipeName":  "Offline 09-action-error",
+                    "RecipeId":  "e0da5aeb-ca5a-4f95-8972-d90c915b074a",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-16T00:23:10.1433146+03:00"
+}

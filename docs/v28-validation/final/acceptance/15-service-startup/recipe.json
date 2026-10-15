@@ -1,0 +1,59 @@
+﻿{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "d5bcbec4-5feb-4203-9a1c-5667d2ccd6b1",
+    "Revision":  1,
+    "Name":  "Offline 15-service-startup",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-16T00:24:32.4917808+03:00",
+    "UpdatedAt":  "2026-10-16T00:24:32.7804951+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "634289ff-ff30-44cf-93c1-74a1a8f38e4a",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "3f294579-7b12-4b52-bad9-75202a05f365",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "Startup",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  "Manual"
+                                                    },
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "Exists",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  ""
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "2de81185-deda-44c9-9fa2-d8e3ab1c8e5e",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "3f294579-7b12-4b52-bad9-75202a05f365"
+                  }
+              ]
+}

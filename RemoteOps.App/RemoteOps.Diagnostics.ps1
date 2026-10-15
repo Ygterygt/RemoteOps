@@ -5,10 +5,10 @@
     $Outcome=if($Target.Count){[string]$Target[0].Outcome}else{'Unknown'}
     $Evidence=New-Object System.Collections.ArrayList
     foreach($Row in $Rows){
-        $Step=Get-RemoteOpsRowValue $Row @('Step','Action')
+        $Step=Get-RemoteOpsRowValue $Row @('StepName','Step','Action')
         $Status=Get-RemoteOpsRowValue $Row @('Status','ExecutionStatus','Durum')
         $Code=Get-RemoteOpsRowValue $Row @('ExitCode','ReturnValue')
-        $Message=Get-RemoteOpsRowValue $Row @('ErrorDetail','HataDetayi','PostCheckErrorDetail','Detail')
+        $Message=Get-RemoteOpsRowValue $Row @('VerificationDetail','ErrorDetail','HataDetayi','PostCheckErrorDetail','Detail')
         [void]$Evidence.Add(('{0} | {1} | Code: {2} | {3}' -f $Step,$Status,$Code,$Message))
     }
     if($Target.Count -and $Target[0].Detail){[void]$Evidence.Add([string]$Target[0].Detail)}
@@ -44,6 +44,12 @@
     }elseif($Category -eq 'Success'){$NextAction='Sonuçları inceleyin; bu kayıt tek başına yeni işlem gerektirmiyor.'}
     elseif($Category -eq 'Cancelled'){$NextAction='Tamamlanan adımları ve hedefin mevcut durumunu kontrol ederek yeniden çalıştırmaya karar verin.'}
     if($Reboot -and $Category -eq 'Success'){$NextAction='Sonuç başarılı bildirildi; yeniden başlatma gereksinimi veya başlatılmış olması işaretini kontrol edin. Planlı yeniden başlatma sonrasında durumu doğrulayın.'}
+    $VerificationRows=@($Rows|Where-Object{(Get-RemoteOpsRowValue $_ @('VerificationStatus')) -in @('Failed','Unknown')})
+    if($VerificationRows.Count){
+      $Category='Verification';$Reason=if(@($VerificationRows|Where-Object{(Get-RemoteOpsRowValue $_ @('VerificationStatus')) -eq 'Unknown'}).Count){'Komut kabul edildi; hedefin son durumu okunamadı veya doğrulama kesinleştirilemedi.'}else{'Komut kabul edildi ancak hedefte beklenen sonuç oluşmadı.'}
+      $NextAction='Adım ayrıntısındaki beklenen ve gözlenen durumu karşılaştırın. Önceden tamamlanan adımlar geri alınmadı; hedefin mevcut durumunu kontrol ederek yeniden çalıştırmaya karar verin.'
+      $Checks=@($NextAction)
+    }
     $Fields=@{}
     foreach($Name in @('PackageId','PackageRevision','PreviousVersion','TargetVersion','FinalVersion')){
         $Fields[$Name]=''

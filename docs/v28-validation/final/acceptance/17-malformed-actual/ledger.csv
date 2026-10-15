@@ -1,0 +1,3 @@
+﻿"CompletedAt";"OperationID";"Operation";"Category";"ComputerName";"Outcome";"Identity";"RecipeName";"RecipeId";"RecipeRevision";"PackageName";"PackageId";"PackageRevision";"Action";"Detail"
+"2026-10-16 00:24:56";"GUI-20261016-002453-4357BD";"RecipeRun";"Recipes";"SIM-PC1";"Error";"OFFLINE\operator";"Offline 17-malformed-actual";"2d26f032-5fd6-4939-9dc9-6edbc546d658";"1";"";"";"";"";"Koşul kontrol edilemedi; bu hedef durduruldu."
+"2026-10-16 00:25:00";"GUI-20261016-002453-4357BD";"RecipeRun";"Recipes";"SIM-PC2";"Completed";"OFFLINE\operator";"Offline 17-malformed-actual";"2d26f032-5fd6-4939-9dc9-6edbc546d658";"1";"";"";"";"";"Bütün adımlar tamamlandı."

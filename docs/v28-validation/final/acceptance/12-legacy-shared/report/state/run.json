@@ -1,0 +1,71 @@
+﻿{
+    "Schema":  "RemoteOps.RecipeCheckpoint/1",
+    "RunId":  "GUI-20261016-002329-F73DF4",
+    "Snapshot":  {
+                     "Schema":  "RemoteOps.RecipeRun/1",
+                     "Definition":  {
+                                        "Schema":  "RemoteOps.Recipe/2",
+                                        "Id":  "4550c55d-a353-4e8e-a7d4-7138cefff2f2",
+                                        "Revision":  1,
+                                        "Name":  "Offline shared legacy",
+                                        "Description":  "",
+                                        "CreatedAt":  "2026-10-16T00:23:28.9988328+03:00",
+                                        "UpdatedAt":  "2026-10-16T00:23:29.0341146+03:00",
+                                        "Steps":  [
+                                                      {
+                                                          "Id":  "9605cae0-bb58-4fb8-b18c-bdaf9f8e1be0",
+                                                          "Name":  "Legacy stopped",
+                                                          "Operation":  "RecipeCondition",
+                                                          "Values":  {
+                                                                         "Checks":  [
+                                                                                        {
+                                                                                            "Kind":  "Service",
+                                                                                            "Path":  "",
+                                                                                            "Name":  "OfflineDemo",
+                                                                                            "Operator":  "State",
+                                                                                            "ExpectedType":  "",
+                                                                                            "Expected":  "Stopped"
+                                                                                        }
+                                                                                    ],
+                                                                         "Match":  "All",
+                                                                         "OnFalse":  "Skip"
+                                                                     }
+                                                      },
+                                                      {
+                                                          "Id":  "ef035eb9-08d6-4771-ab86-d3495a93a618",
+                                                          "Name":  "Legacy custom Start",
+                                                          "Operation":  "ServiceControl",
+                                                          "ConditionId":  "9605cae0-bb58-4fb8-b18c-bdaf9f8e1be0",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "Action":  "Start"
+                                                                     }
+                                                      },
+                                                      {
+                                                          "Id":  "6ac97002-0e2c-4dda-8669-5f26379ec3a6",
+                                                          "Name":  "Legacy custom Stop",
+                                                          "Operation":  "ServiceControl",
+                                                          "ConditionId":  "9605cae0-bb58-4fb8-b18c-bdaf9f8e1be0",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "Action":  "Stop"
+                                                                     }
+                                                      }
+                                                  ]
+                                    },
+                     "Targets":  [
+                                     "SIM-PC1"
+                                 ],
+                     "Identity":  {
+                                      "Domain":  "OFFLINE",
+                                      "UserName":  "operator",
+                                      "IsMain":  true
+                                  },
+                     "CleanupLogs":  false,
+                     "Hash":  "A9A52E30FBF0F6EBE1CE6DE9533A86CBFC0107F6A2505A23D06E11997856D12B"
+                 },
+    "ReportRoot":  "C:\\Users\\OPERATOR\\AppData\\Local\\Temp\\RemoteOps-Lightweight-e8185be8a7d643bf82ed410de05a0afc\\data\\Logs\\Operations\\RecipeRun\\GUI-20261016-002329-F73DF4",
+    "Identity":  "OFFLINE\\operator",
+    "CoordinatorPid":  45304,
+    "CoordinatorStartUtc":  639276962097502203
+}

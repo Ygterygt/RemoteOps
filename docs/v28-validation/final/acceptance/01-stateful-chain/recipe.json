@@ -1,0 +1,98 @@
+﻿{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "758a755c-7a31-40db-9f40-baa03d1fb204",
+    "Revision":  1,
+    "Name":  "Offline 01-stateful-chain",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-16T00:21:40.3415780+03:00",
+    "UpdatedAt":  "2026-10-16T00:21:41.3608512+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "bc6e1ca1-fc41-4f99-8111-4fe78b413a00",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "Equals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "16.0.444"
+                                                    },
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "State",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  "Stopped"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "6c6fca15-93ed-47d8-a53e-83f9fed48ffe",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "bc6e1ca1-fc41-4f99-8111-4fe78b413a00"
+                  },
+                  {
+                      "Id":  "0f8890c8-7850-4142-8690-dae2169d1d56",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "Service",
+                                                        "Path":  "",
+                                                        "Name":  "OfflineDemo",
+                                                        "Operator":  "State",
+                                                        "ExpectedType":  "",
+                                                        "Expected":  "Running"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "4c79a059-7c05-460f-8190-63061a7d80b3",
+                      "Name":  "Servisi durdur · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Stop"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "0f8890c8-7850-4142-8690-dae2169d1d56"
+                  },
+                  {
+                      "Id":  "6dcaece9-f6b5-4a2e-9fad-01bfb0ffa797",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "aa316216-294e-485a-a07e-141a164f3f18",
+                      "Name":  "Servisleri listele · OfflineDemo",
+                      "Operation":  "ServiceList",
+                      "Values":  {
+                                     "Filter":  "OfflineDemo"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

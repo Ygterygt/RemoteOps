@@ -1,0 +1,51 @@
+﻿{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "2b053900-2e4e-49c4-8b40-97988c6df960",
+    "Revision":  1,
+    "Name":  "Offline 08-onfalse-stop",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-16T00:22:53.8699812+03:00",
+    "UpdatedAt":  "2026-10-16T00:22:54.1835234+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "b09d6148-1236-4d59-92cc-851b173708d5",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Stop",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "Equals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "16.0.444"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "785da559-4ecd-49cd-a5d8-1bb6f1c929c1",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "b09d6148-1236-4d59-92cc-851b173708d5"
+                  },
+                  {
+                      "Id":  "b30a9eb3-ae15-43be-b941-9cba3d5fb546",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

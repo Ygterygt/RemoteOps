@@ -1,0 +1,52 @@
+﻿{
+    "Schema":  "RemoteOps.RecipeCheckpoint/1",
+    "RunId":  "GUI-20261016-002428-5419A8",
+    "Snapshot":  {
+                     "Schema":  "RemoteOps.RecipeRun/1",
+                     "Definition":  {
+                                        "Schema":  "RemoteOps.Recipe/4",
+                                        "Id":  "3aa0f374-b4ba-4b3d-9701-40a92cd9ac0d",
+                                        "Revision":  1,
+                                        "Name":  "Offline 19-startup-no-op",
+                                        "Description":  "Stateful offline acceptance fixture",
+                                        "CreatedAt":  "2026-10-16T00:24:26.7869587+03:00",
+                                        "UpdatedAt":  "2026-10-16T00:24:27.0256803+03:00",
+                                        "Steps":  [
+                                                      {
+                                                          "Id":  "5e666435-c51e-4537-ae4d-d12a003c958c",
+                                                          "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                                                          "Operation":  "ServiceStartup",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "StartupType":  "Manual"
+                                                                     },
+                                                          "AutoName":  true
+                                                      },
+                                                      {
+                                                          "Id":  "f0550c2b-c1dd-404d-be54-c11c4582202d",
+                                                          "Name":  "Servisi başlat · OfflineDemo",
+                                                          "Operation":  "ServiceControl",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "Action":  "Start"
+                                                                     },
+                                                          "AutoName":  true
+                                                      }
+                                                  ]
+                                    },
+                     "Targets":  [
+                                     "SIM-PC1"
+                                 ],
+                     "Identity":  {
+                                      "Domain":  "OFFLINE",
+                                      "UserName":  "operator",
+                                      "IsMain":  true
+                                  },
+                     "CleanupLogs":  false,
+                     "Hash":  "02E5E105D64383C0A037D350221190B5E83DDA1075784347E30B90E7491D7F18"
+                 },
+    "ReportRoot":  "C:\\Users\\OPERATOR\\AppData\\Local\\Temp\\RemoteOps-Lightweight-e8185be8a7d643bf82ed410de05a0afc\\data\\Logs\\Operations\\RecipeRun\\GUI-20261016-002428-5419A8",
+    "Identity":  "OFFLINE\\operator",
+    "CoordinatorPid":  36432,
+    "CoordinatorStartUtc":  639276962681759782
+}

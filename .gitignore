@@ -38,3 +38,7 @@ Desktop.ini
 /docs/v*-test-logs/
 /docs/v*-core-preflight/
 *.blocked.jsonl
+
+# Local v28 acceptance reruns. Curated final evidence is tracked.
+/docs/v28-offline-acceptance/Run-*/
+/docs/v28-pdf-preview/

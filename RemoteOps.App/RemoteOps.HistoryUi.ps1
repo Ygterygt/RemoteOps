@@ -1,4 +1,5 @@
-﻿# UI state is separate from active-run monitoring and never dispatches requests.
+﻿. (Join-Path $PSScriptRoot 'RemoteOps.StepResults.ps1')
+# UI state is separate from active-run monitoring and never dispatches requests.
 function New-RemoteOpsHistoryView {
     param([string]$Xaml)
     $Xml=[xml]$Xaml;$View=[Windows.Markup.XamlReader]::Load((New-Object Xml.XmlNodeReader $Xml))
@@ -26,7 +27,7 @@ function Initialize-RemoteOpsHistoryUi {
  <DockPanel Grid.Row="2" Margin="0,0,0,5"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button x:Name="Prev" Content="Önceki"/><Button x:Name="Next" Content="Sonraki"/></StackPanel><StackPanel><TextBlock x:Name="Count" Foreground="#31536B"/><Expander x:Name="IssuesPanel" Header="Okunamayan kayıtlar / eksik çıktılar" Visibility="Collapsed"><TextBox x:Name="Issues" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="80" VerticalScrollBarVisibility="Auto" Foreground="#A44721"/></Expander></StackPanel></DockPanel>
  <DataGrid x:Name="Runs" Grid.Row="3"><DataGrid.Columns><DataGridTextColumn Header="Tarih" Binding="{Binding CompletedAt}" Width="150"/><DataGridTextColumn Header="Operasyon" Binding="{Binding Operation}" Width="160"/><DataGridTextColumn Header="Paket / reçete" Binding="{Binding PackageName}" Width="*" MinWidth="100"/><DataGridTextColumn Header="Çalışma kimliği" Binding="{Binding OperationID}" Width="235"/><DataGridTextColumn Header="Hesap" Binding="{Binding Identity}" Width="145"/></DataGrid.Columns></DataGrid>
  <WrapPanel Grid.Row="4" Margin="0,9,0,5"><TextBlock Text="Çıktı:" VerticalAlignment="Center" Margin="0,0,6,0"/><ComboBox x:Name="Artifacts" Width="185" DisplayMemberPath="Kind" Margin="0,0,7,3"/><Button x:Name="OpenArtifact" Content="Aç"/><Button x:Name="OpenLogs" Content="Hedef logları"/><Button x:Name="OpenPulled" Content="Çekilen dosyalar"/><Button x:Name="Diagnose" Content="Hata teşhisini aç"/></WrapPanel>
- <Grid Grid.Row="5"><Grid.ColumnDefinitions><ColumnDefinition Width="285"/><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><DockPanel><TextBlock DockPanel.Dock="Top" Text="Hedef sonuçları" Foreground="#31536B" FontWeight="SemiBold" Margin="0,0,0,5"/><DataGrid x:Name="Targets"><DataGrid.Columns><DataGridTextColumn Header="Bilgisayar" Binding="{Binding ComputerName}" Width="140" MinWidth="100"/><DataGridTextColumn Header="Sonuç" Binding="{Binding Outcome}" Width="130"/></DataGrid.Columns></DataGrid></DockPanel><DockPanel Grid.Column="2"><TextBlock DockPanel.Dock="Top" Text="Seçili hedefin özgün adımları" Foreground="#31536B" FontWeight="SemiBold" Margin="0,0,0,5"/><DataGrid x:Name="Steps" AutoGenerateColumns="True"/></DockPanel></Grid>
+ <Grid Grid.Row="5"><Grid.ColumnDefinitions><ColumnDefinition Width="285"/><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><DockPanel><TextBlock DockPanel.Dock="Top" Text="Hedef sonuçları" Foreground="#31536B" FontWeight="SemiBold" Margin="0,0,0,5"/><DataGrid x:Name="Targets"><DataGrid.Columns><DataGridTextColumn Header="Bilgisayar" Binding="{Binding ComputerName}" Width="140" MinWidth="100"/><DataGridTextColumn Header="Sonuç" Binding="{Binding Outcome}" Width="130"/></DataGrid.Columns></DataGrid></DockPanel><DockPanel Grid.Column="2"><TextBlock DockPanel.Dock="Top" Text="Seçili hedefin adım sonuçları" Foreground="#31536B" FontWeight="SemiBold" Margin="0,0,0,5"/><DataGrid x:Name="Steps" AutoGenerateColumns="True"/></DockPanel></Grid>
 </Grid></ScrollViewer>
 '@
     $Diagnosis=New-RemoteOpsHistoryView @'
@@ -45,6 +46,9 @@ function Initialize-RemoteOpsHistoryUi {
         $Tab=New-Object Windows.Controls.TabItem;$Tab.Header=$Pair[1];$Tab.Content=$Pair[2];$Tab.Name=$Pair[0];[void]$Tabs.Items.Add($Tab);$script:HistoryState.($Pair[0])=$Tab
     }
     $C=$script:HistoryControls
+    $StepDetail=New-Object Windows.Controls.TextBox;$StepDetail.IsReadOnly=$true;$StepDetail.TextWrapping='Wrap';$StepDetail.VerticalScrollBarVisibility='Auto';$StepDetail.Height=100;$StepDetail.Margin='0,7,0,0';$StepDetail.Background=[Windows.Media.Brushes]::White;$StepDetail.Padding='8';$StepDetail.Visibility='Collapsed'
+    [Windows.Controls.DockPanel]::SetDock($StepDetail,'Bottom');$C.Steps.Parent.Children.Insert(1,$StepDetail);$C.Steps.Tag=$StepDetail
+    $C.Steps.Add_SelectionChanged({if($null -ne $this.SelectedItem -and $this.SelectedItem.PSObject.Properties['SourceRows']){$this.Tag.Text=Get-RemoteOpsStepViewDetail $this.SelectedItem}})
     $C.HistoryScroll.Add_SizeChanged({$this.Content.Height=[Math]::Max(500,$this.ActualHeight-4)})
     $C.Outcome.DisplayMemberPath='Label';$C.Outcome.SelectedValuePath='Value'
     foreach($Pair in @(@('','Tüm sonuçlar'),@('Success','Başarılı'),@('Error','Hata'),@('Unreachable','Erişilemedi'),@('Indeterminate','Belirsiz'),@('RebootRequired','Yeniden başlatma'),@('Cancelled','İptal'),@('Skipped','Atlandı'))){[void]$C.Outcome.Items.Add([pscustomobject]@{Value=$Pair[0];Label=$Pair[1]})};$C.Outcome.SelectedIndex=0
@@ -111,10 +115,10 @@ function Update-RemoteOpsHistorySelection {
 }
 function Update-RemoteOpsHistoryTarget {
     $S=$script:HistoryState;$C=$script:HistoryControls
-    $C.OpenLogs.IsEnabled=$false;$C.OpenPulled.IsEnabled=$false;$C.Diagnose.IsEnabled=$false;$C.Steps.ItemsSource=@()
+    $C.OpenLogs.IsEnabled=$false;$C.OpenPulled.IsEnabled=$false;$C.Diagnose.IsEnabled=$false;$C.Steps.ItemsSource=@();$C.Steps.Tag.Text='';$C.Steps.Tag.Visibility='Collapsed'
     if($null -eq $S.Run -or $null -eq $S.Details -or $null -eq $C.Targets.SelectedItem){return}
     $Computer=[string]$C.Targets.SelectedItem.ComputerName
-    $C.Steps.ItemsSource=@($S.Details.Rows|Where-Object{(Get-RemoteOpsHistoryRowComputer $_) -eq $Computer})
+    Set-RemoteOpsStepResultGrid $C.Steps @($S.Details.Rows|Where-Object{(Get-RemoteOpsHistoryRowComputer $_) -eq $Computer})
     $C.Diagnose.IsEnabled=$true
     foreach($Pair in @(@('PulledLogs','OpenLogs'),@('PulledFiles','OpenPulled'))){try{$Path=Get-RemoteOpsHistoryCollectionPath $Pair[0];$C.($Pair[1]).IsEnabled=[bool]$Path}catch{}}
 }

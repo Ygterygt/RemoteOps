@@ -1,0 +1,61 @@
+﻿{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261016-002341-D5DB8F",
+    "SnapshotHash":  "AC9382F65997366916CA4117B768062596B8C4F21AF31A91D8FA1F5CF6FE870D",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "start",
+                     "OldState":  "Stopped",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "",
+                     "Status":  "Success",
+                     "ErrorDetail":  "",
+                     "VerificationExpected":  "OfflineDemo · Çalışıyor",
+                     "VerificationDetail":  "Komut kabul edildi ancak beklenen sonuç görülmedi. Bu hedefin sonraki adımları çalıştırılmaz.",
+                     "VerifiedAt":  "2026-10-15T21:24:14.3484907Z",
+                     "VerificationObserved":  "State=Stopped; Startup=Automatic",
+                     "VerificationStatus":  "Failed",
+                     "CommandStatus":  "Success",
+                     "StepName":  "Servisi başlat · OfflineDemo",
+                     "ComputerName":  "SIM-PC1",
+                     "StepIndex":  1,
+                     "StepResultReason":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                     "RecipeRevision":  1,
+                     "StepId":  "ebedfe42-e759-4bfa-9b61-b1c07b4921b3",
+                     "OperationID":  "GUI-20261016-002341-D5DB8F",
+                     "ParentRunId":  "GUI-20261016-002341-D5DB8F",
+                     "RecipeName":  "Offline 14-oracle-negative-controls",
+                     "StepOperationID":  "GUI-20261016-002341-D5DB8F-0001-S01",
+                     "Operation":  "ServiceControl",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "cab3c632-c96a-441b-b4fe-98f96a9c56a3"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261016-002341-D5DB8F",
+                     "ParentRunId":  "GUI-20261016-002341-D5DB8F",
+                     "StepOperationID":  "GUI-20261016-002341-D5DB8F-0001-S02",
+                     "StepId":  "dd60504e-9c75-45e6-b7c5-44a45bfb10b5",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "StepName":  "Servisi durdur · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                     "StepResultReason":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Error",
+                    "CompletedAt":  "2026-10-16T00:24:14.7316718+03:00",
+                    "Detail":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                    "RecipeName":  "Offline 14-oracle-negative-controls",
+                    "RecipeId":  "cab3c632-c96a-441b-b4fe-98f96a9c56a3",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-16T00:24:14.7316718+03:00"
+}

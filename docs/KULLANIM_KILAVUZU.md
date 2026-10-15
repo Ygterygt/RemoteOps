@@ -1,5 +1,29 @@
 ﻿# RemoteOps kullanım kılavuzu
 
+16 Ekim 2026 · YD_RemoteOps.App_v28
+
+## v28 — Otomatik sonuç doğrulama ve adım sonuçları
+
+Servis başlatma, durdurma, yeniden başlatma ve başlangıç türü değişikliği sonrasında hedef tekrar okunur. Registry düzenlemede gerçek tür ve değer yeniden okunur; silmede değerin bulunmadığı kontrol edilir. Dosya gönderiminde gönderim öncesi kaynak özeti alınır; sonrasında kaynak sabitliği, hedef dosyaların SHA256 içerikleri ve klasörlerin varlığı/türü karşılaştırılır. Bu kontroller hem reçete adımlarında hem ilgili tekil işlemlerde otomatik uygulanır.
+
+Komut yanıtı ve sonuç doğrulaması ayrı kaydedilir. “Doğrulandı” beklenen durumun kontrol anında görüldüğünü; “Beklenen sonuç oluşmadı” komut kabul edildiği halde sonucun farklı olduğunu; “Doğrulanamadı” son durumun okunamadığını veya kaynak değişimi gibi bir nedenle kesinleştirilemediğini anlatır. Komut başarısızsa veya gönderimde öğe atlandıysa doğrulama yapılmaz. Servis durum geçişinde en fazla 30 saniyelik bekleme penceresi kullanılır; her uzak okuma ayrıca en fazla 10 saniyelik sağlayıcı sınırına tabidir. Kontrol anındaki durumun daha sonra değişmeyeceği garanti edilmez.
+
+Reçetede başarısız ya da belirsiz doğrulama o hedefte sonraki adımları durdurur; sonraki bilgisayarın reçetesi bağımsız devam eder. Tamamlanmış işlemler otomatik geri alınmaz, komutlar otomatik yeniden gönderilmez. Örneğin servis durdurulduktan sonra dosya gönderimi doğrulanamazsa servis başlatma adımı çalıştırılmaz. Geçmişte önceki adımın doğrulanmış durmuş durumunu ve sonraki adımın çalıştırılmadığını görebilirsiniz; bu geçmiş kaydı güncel canlı durum sorgusu değildir.
+
+Geçmiş ekranında çalışma ve hedef seçildiğinde adım adı, komut yanıtı ve doğrulama sonucu görünür. Bir adım seçildiğinde beklenen ve gözlenen durum, açıklama ve UTC kontrol zamanı alt bölümde gösterilir. Çoklu koşullar tek adımda özetlenir; özgün satırlar CSV ve raporlarda korunur. HTML raporunda ayrıca okunabilir adım sonuçları tablosu vardır. Eski geçmiş kayıtlarında otomatik doğrulama kanıtı yoksa “Bu kayıtta otomatik doğrulama yok” yazılır.
+
+Mevcut Recipe/1, /2, /3 ve /4 reçeteleri değiştirilmez; otomatik adlar, özel adlar, koşul grupları ve çalışma sırası korunur. Paket dağıtımının ve yedekleyerek silmenin önceki sonuç kontrolleri korunur; yeni servis/registry/gönderim kontrolü bunların yerine geçmez. Bağlantı/junction içeren dosya kapsamları doğrulanmış sayılmaz. Hedefte gönderim kapsamı dışında kalan dosyalar silinmez veya karşılaştırılmaz. Kaynak içerik özeti alınamıyorsa gönderim başlatılmaz.
+
+Runtime C:\Temp\YD_RemoteOps.App ve katalog/profil yolları %APPDATA%\MDRemoteOps olarak kalır. Canlı hedeflere işlem yapılmadan yerel testler ve sınırlandırılmış SIM hedef modeliyle doğrulanmıştır; gerçek ağ, Windows sağlayıcısı, domain, SMB/PsExec ve EDR doğrulanmış değildir.
+
+![v28 adım sonuçları — yerel örnek veri](screenshots-v28/v28-adim-sonuclari.png)
+
+[Ayrıntılı v28 kapsamı ve test raporu](V28_TEST_RAPORU.md)
+
+## Önceki teslimlerin tarihli referansları
+
+Aşağıdaki v27 ve önceki bölümler tarihli arşiv açıklamalarıdır; v28 değişiklikleri yukarıda açıklanmıştır.
+
 15 Ekim 2026 · YD_RemoteOps.App_v27
 
 ## v27 - v26 kodu için hafif operasyon kabul testi

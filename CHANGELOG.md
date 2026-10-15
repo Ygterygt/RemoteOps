@@ -1,5 +1,14 @@
 # Değişiklikler
 
+## v28 - 16 Ekim 2026
+
+- Servis/registry/dosya gönderimi sonrasında otomatik sonuç doğrulama.
+- Komut yanıtı ve son durum ayrı kaydedilir; uyumsuz veya belirsiz doğrulama ilgili hedefin sonraki adımlarını durdurur.
+- Geçmiş ve HTML raporlarında okunabilir adım sonuçları, beklenen/gözlenen durum ve hata ayrıntıları.
+- Recipe/1–4 kayıtları, özel/otomatik adlar ve ortak koşul davranışı korunur.
+- 22/22 güvenli regresyon dosyası, 19/19 operasyon senaryosu ve 18 kalıcı çalışma kaydı kontrolü geçti. Canlı hedeflere dokunulmadı.
+- Önceki dağıtımlar ve yayınlar korunur; PsExec ikilisi kaynak repoya dahil edilmez.
+
 ## v27 - 15 Ekim 2026
 
 - Güncel kabul edilen sürüm v27. v26 uygulama kodu korunarak hafif kabul testi ve doğrulama kayıtları eklendi.

@@ -1,0 +1,59 @@
+﻿{
+    "ComputerName":  "SIM-PC2",
+    "OperationID":  "GUI-20261016-002323-F5E60A",
+    "SnapshotHash":  "4C6B8ECB78DE90B0E7D8E502ACCEFFB127E0C6DB928D15CBA9C0626ED8F1F6B9",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  0,
+    "Rows":  [
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261016-002323-F5E60A",
+                     "ParentRunId":  "GUI-20261016-002323-F5E60A",
+                     "StepOperationID":  "GUI-20261016-002323-F5E60A-0002-S01",
+                     "StepId":  "7f42a0b3-bf72-4e15-92ae-8ee2e50c3664",
+                     "StepIndex":  1,
+                     "Operation":  "ServiceControl",
+                     "StepName":  "Servisi başlat · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu.",
+                     "StepResultReason":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 },
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261016-002323-F5E60A",
+                     "ParentRunId":  "GUI-20261016-002323-F5E60A",
+                     "StepOperationID":  "GUI-20261016-002323-F5E60A-0002-S02",
+                     "StepId":  "2d15f208-b6b0-410e-9ca6-3f3a75572051",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceStartup",
+                     "StepName":  "Servis başlangıcını değiştir · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu.",
+                     "StepResultReason":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 },
+                 {
+                     "ComputerName":  "SIM-PC2",
+                     "OperationID":  "GUI-20261016-002323-F5E60A",
+                     "ParentRunId":  "GUI-20261016-002323-F5E60A",
+                     "StepOperationID":  "GUI-20261016-002323-F5E60A-0002-S03",
+                     "StepId":  "3cc74e7d-2b1f-48c1-bacd-091a625a8ca3",
+                     "StepIndex":  3,
+                     "Operation":  "ServiceControl",
+                     "StepName":  "Servisi durdur · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Yeni adımlar kullanıcı isteğiyle durduruldu.",
+                     "StepResultReason":  "Yeni adımlar kullanıcı isteğiyle durduruldu."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC2",
+                    "Outcome":  "Cancelled",
+                    "CompletedAt":  "2026-10-16T00:23:28.3414345+03:00",
+                    "Detail":  "Yeni adımlar kullanıcı isteğiyle durduruldu.",
+                    "RecipeName":  "Offline 11-cancellation",
+                    "RecipeId":  "71d89f31-ef19-47ea-8591-6a29e01e0493",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-16T00:23:28.3414345+03:00"
+}

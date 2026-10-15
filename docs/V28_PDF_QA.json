@@ -1,0 +1,31 @@
+{
+  "documents": [
+    {
+      "file": "KULLANIM_KILAVUZU.pdf",
+      "pages": 43,
+      "rendered": true
+    },
+    {
+      "file": "docs\\RemoteOps_Calisma_Mantigi.pdf",
+      "pages": 26,
+      "rendered": true
+    },
+    {
+      "file": "docs\\RemoteOps_Inceleme_Raporu.pdf",
+      "pages": 27,
+      "rendered": true
+    },
+    {
+      "file": "docs\\RemoteOps_Operasyon_Olustur_Tasarim.pdf",
+      "pages": 18,
+      "rendered": true
+    },
+    {
+      "file": "docs\\RemoteOps_Teknik_El_Kitabi.pdf",
+      "pages": 35,
+      "rendered": true
+    }
+  ],
+  "pages_rendered": 149,
+  "visual_review": "Current v28 pages and all-page contact sheet inspected; historical content explicitly labelled."
+}

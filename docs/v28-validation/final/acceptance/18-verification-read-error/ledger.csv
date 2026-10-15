@@ -1,0 +1,3 @@
+﻿"CompletedAt";"OperationID";"Operation";"Category";"ComputerName";"Outcome";"Identity";"RecipeName";"RecipeId";"RecipeRevision";"PackageName";"PackageId";"PackageRevision";"Action";"Detail"
+"2026-10-16 00:24:21";"GUI-20261016-002416-0243AA";"RecipeRun";"Recipes";"SIM-PC1";"Indeterminate";"OFFLINE\operator";"Offline 18-verification-read-error";"0909f0a2-70c8-48d5-b281-7d6bfd70c6d8";"1";"";"";"";"";"Komut kabul edildi; son durum doğrulanamadı. Bu hedefin sonraki adımları çalıştırılmadı."
+"2026-10-16 00:24:26";"GUI-20261016-002416-0243AA";"RecipeRun";"Recipes";"SIM-PC2";"Completed";"OFFLINE\operator";"Offline 18-verification-read-error";"0909f0a2-70c8-48d5-b281-7d6bfd70c6d8";"1";"";"";"";"";"Bütün adımlar tamamlandı."

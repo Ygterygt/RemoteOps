@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param([string]$OutputRoot='')
 $ErrorActionPreference='Stop'
 $Root=Split-Path $PSScriptRoot -Parent
@@ -6,7 +6,7 @@ if(-not $OutputRoot){$OutputRoot=Join-Path $Root 'TestResults\Offline'}
 New-Item -ItemType Directory -Path $OutputRoot -Force|Out-Null
 $Engine=Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 $Rows=@()
-foreach($Name in @('Conditions','ConditionAuto','Recipes','RecipeAutoNames','RecipeFocused','ConditionUi','ConditionFriendlyUi','RecipeUi','V26Compatibility','V26Layout','RecipeResults','ConditionAutoExecution')){
+foreach($Name in @('Conditions','ConditionAuto','Recipes','RecipeAutoNames','RecipeFocused','ConditionUi','ConditionFriendlyUi','RecipeUi','V26Compatibility','V26Layout','RecipeResults','ConditionAutoExecution','V28Verification','V28Files','V28StepResults','HistoryUi','Reports','RecipeExecution','RecipeHistory','V28ResultUi','ConditionRunner','WindowsCompatibility')){
  $File='RemoteOps.'+$Name+'.Tests.ps1'
  $Previous=$ErrorActionPreference;$ErrorActionPreference='Continue'
  try{& $Engine -NoProfile -STA -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot $File) 1> (Join-Path $OutputRoot ($File+'.out.txt')) 2> (Join-Path $OutputRoot ($File+'.err.txt'));$Code=$LASTEXITCODE}finally{$ErrorActionPreference=$Previous}
@@ -19,4 +19,4 @@ $Acceptance=Join-Path $OutputRoot 'acceptance'
 if($LASTEXITCODE -ne 0){throw 'Offline acceptance failed.'}
 & $Engine -NoProfile -STA -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'lightweight\IndependentChecks.ps1') -EvidenceRoot $Acceptance
 if($LASTEXITCODE -ne 0){throw 'Independent evidence check failed.'}
-Write-Host 'PASS: 12 regression files, 17 operational scenarios, independent persisted evidence checks. No live targets.'
+Write-Host 'PASS: safe regression files, offline operational scenarios and persisted evidence checks. No live targets.'

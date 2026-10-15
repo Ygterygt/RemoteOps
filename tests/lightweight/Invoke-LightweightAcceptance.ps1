@@ -2,7 +2,7 @@
 param([string]$OutputRoot='', [switch]$Smoke)
 $ErrorActionPreference='Stop'
 $Root=Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-if(-not $OutputRoot){$OutputRoot=Join-Path $Root ('docs\v27-offline-acceptance\Run-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,6))}
+if(-not $OutputRoot){$OutputRoot=Join-Path $Root ('docs\v28-offline-acceptance\Run-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,6))}
 $OutputRoot=[IO.Path]::GetFullPath($OutputRoot)
 New-Item -ItemType Directory -Path $OutputRoot -Force|Out-Null
 $Sandbox=Join-Path $env:TEMP ('RemoteOps-Lightweight-'+[guid]::NewGuid().ToString('N'))
@@ -152,6 +152,8 @@ try{
   $Later=@($R.Rows|Where-Object{$_.Operation -eq 'ServiceList' -and $_.Status -eq 'Success'})
   Assert-Acceptance ($Later.Count -eq 1 -and $Later[0].State -ceq 'Stopped' -and $Later[0].StartMode -ceq 'Manual') 'Real service list report did not observe final model state.'
   Assert-Acceptance (@($R.Ledger|Where-Object Outcome -cne 'Completed').Count -eq 0) 'Chain did not complete.'
+  Assert-Acceptance (@($R.Rows|Where-Object VerificationStatus -ceq 'Verified').Count -eq 3) 'Mutations missing real runner post-verification.'
+  Assert-Acceptance ((Get-Content (Join-Path $R.Root 'Results.html') -Raw -Encoding UTF8).Contains('Adım sonuçları')) 'Readable HTML step summary missing.'
   Assert-Acceptance (@($R.Model.Events|ForEach-Object PID|Select-Object -Unique).Count -ge 2) 'Child process evidence absent.'
  }
  if(-not $Smoke){
@@ -238,14 +240,27 @@ try{
    $P=New-RemoteOpsRecipePreviewWindow (Get-RemoteOpsRecipeEditorDefinition) @('SIM-PC1');Click-TestControl $P.Controls.Cancel
    Assert-Acceptance ($script:ActiveRuns.Count -eq 0 -and (Read-Model).Events.Count -eq 0) 'Preview cancellation performed work.'
   }
-  Run-Case '14-oracle-negative-controls' 'Real CSV success with suppressed mutation is rejected by independent checker' {
+  Run-Case '14-oracle-negative-controls' 'Suppressed mutation is detected by runner and stops later steps' {
    $T=New-ModelTarget;$T|Add-Member NoteProperty SuppressMutation $true;Reset-Model @{'SIM-PC1'=$T}
-   $D=New-TestUiRecipe @((Step ServiceControl));$R=Invoke-TestGuiRun @('SIM-PC1')
+   $D=New-TestUiRecipe @((Step ServiceControl),(Step ServiceControl Stop));$R=Invoke-TestGuiRun @('SIM-PC1')
+   Assert-Acceptance (@($R.Rows|Where-Object{$_.VerificationStatus -ceq 'Failed'}).Count -eq 1 -and @($R.Rows|Where-Object Status -ceq 'NotRun').Count -eq 1 -and $R.Ledger[0].Outcome -ceq 'Error') 'No-op command did not stop later step.'
    Assert-Acceptance (@($R.Rows|Where-Object{$_.Operation -ceq 'ServiceControl' -and $_.Status -ceq 'Success'}).Count -eq 1) 'No-op negative fixture did not produce actual success report.'
    $Caught=0;try{Assert-OperationalEffect $R.Model 'SIM-PC1' 'Running' @('StartService')}catch{$Caught++}
    $Wrong=ConvertFrom-Json ($R.Model|ConvertTo-Json -Depth 50);$Wrong.Targets.'SIM-PC1'.Service.State='Running';@($Wrong.Events|Where-Object Operation -ceq 'StartService')[0].Target='SIM-PC2'
    try{Assert-OperationalEffect $Wrong 'SIM-PC1' 'Running' @('StartService')}catch{$Caught++}
    Assert-Acceptance ($Caught -eq 2) 'Acceptance checker accepted no-op success or deliberately changed target evidence.'
+  }
+  Run-Case '18-verification-read-error' 'Readback error stops only affected target; next target completes' {
+   $T=New-ModelTarget;$T|Add-Member NoteProperty VerificationError 'Readback denied';Reset-Model @{'SIM-PC1'=$T;'SIM-PC2'=(New-ModelTarget)}
+   $D=New-TestUiRecipe @((Step ServiceControl),(Step ServiceControl Stop));$R=Invoke-TestGuiRun @('SIM-PC1','SIM-PC2')
+   Assert-Acceptance (@($R.Rows|Where-Object{$_.ComputerName -ceq 'SIM-PC1' -and $_.VerificationStatus -ceq 'Unknown'}).Count -eq 1) 'Readback failure not uncertain.'
+   Assert-Acceptance (@($R.Rows|Where-Object{$_.ComputerName -ceq 'SIM-PC1' -and $_.Status -ceq 'NotRun'}).Count -eq 1) 'Unknown state allowed next step.'
+   Assert-Acceptance (@($R.Ledger|Where-Object{$_.ComputerName -ceq 'SIM-PC1' -and $_.Outcome -ceq 'Indeterminate'}).Count -eq 1 -and @($R.Ledger|Where-Object{$_.ComputerName -ceq 'SIM-PC2' -and $_.Outcome -ceq 'Completed'}).Count -eq 1) 'Target isolation lost on unknown verification.'
+  }
+  Run-Case '19-startup-no-op' 'Accepted startup command with unchanged mode fails verification' {
+   $T=New-ModelTarget;$T|Add-Member NoteProperty SuppressMutation $true;Reset-Model @{'SIM-PC1'=$T}
+   $D=New-TestUiRecipe @((Step ServiceStartup Manual),(Step ServiceControl));$R=Invoke-TestGuiRun @('SIM-PC1')
+   Assert-Acceptance ($R.Rows[0].VerificationStatus -ceq 'Failed' -and $R.Rows[1].Status -ceq 'NotRun' -and $R.Model.Targets.'SIM-PC1'.Service.Startup -ceq 'Automatic') 'Startup no-op accepted.'
   }
   Run-Case '15-service-startup' 'Startup change is observed by later startup and service existence condition' {
    Reset-Model @{'SIM-PC1'=(New-ModelTarget)}
@@ -278,7 +293,7 @@ try{
  $env:APPDATA=$OldAppData;$env:REMOTEOPS_OFFLINE_STATE=$OldState;$env:REMOTEOPS_OFFLINE_RUNNER=$OldRunner
  $Failed=@($script:Cases|Where-Object Status -ne 'PASS')
  $BlockedFile=Join-Path $Sandbox 'state.json.blocked.jsonl';$Blocks=if(Test-Path -LiteralPath $BlockedFile){@(Get-Content -LiteralPath $BlockedFile).Count}else{0}
- $Summary=[pscustomobject]@{SubjectVersion=26;DeliveryVersion=27;Total=$script:Cases.Count;Passed=$script:Cases.Count-$Failed.Count;Failed=$Failed.Count;UnexpectedBoundaryBlocks=$Blocks;Seconds=[Math]::Round($Clock.Elapsed.TotalSeconds,2);SampledPeakCombinedWorkingSetMiB=[Math]::Round($script:PeakCombinedBytes/1MB,1);Sandbox=$Sandbox;OutputRoot=$OutputRoot;Cases=@($script:Cases);Runs=@($script:AllRuns);LiveEndpointTests=$false;ActualTransportTested=$false;CancellationButtonDialogTested=$false}
+ $Summary=[pscustomobject]@{SubjectVersion=28;DeliveryVersion=28;Total=$script:Cases.Count;Passed=$script:Cases.Count-$Failed.Count;Failed=$Failed.Count;UnexpectedBoundaryBlocks=$Blocks;Seconds=[Math]::Round($Clock.Elapsed.TotalSeconds,2);SampledPeakCombinedWorkingSetMiB=[Math]::Round($script:PeakCombinedBytes/1MB,1);Sandbox=$Sandbox;OutputRoot=$OutputRoot;Cases=@($script:Cases);Runs=@($script:AllRuns);LiveEndpointTests=$false;ActualTransportTested=$false;CancellationButtonDialogTested=$false}
  [IO.File]::WriteAllText((Join-Path $OutputRoot 'summary.json'),($Summary|ConvertTo-Json -Depth 12),(New-Object Text.UTF8Encoding $true))
  $script:Cases|Export-Csv (Join-Path $OutputRoot 'cases.csv') -NoTypeInformation -Encoding UTF8
  Write-Output ('SUMMARY '+$Summary.Passed+'/'+$Summary.Total+' PASS; blocks='+$Blocks+'; output='+$OutputRoot)

@@ -1,0 +1,27 @@
+{
+  "status": "resolved",
+  "reviewer": "independent read-only agent",
+  "compared_to": "YD_RemoteOps.App_v27",
+  "changed_production_files": [
+    "RemoteOps.App\\README.md",
+    "RemoteOps.App\\RemoteOps.Diagnostics.ps1",
+    "RemoteOps.App\\RemoteOps.HistoryUi.ps1",
+    "RemoteOps.App\\RemoteOps.RecipeExecution.ps1",
+    "RemoteOps.App\\RemoteOps.RecipeResults.ps1",
+    "RemoteOps.App\\RemoteOps.Reports.ps1",
+    "RemoteOps.App\\RemoteOps.Runner.ps1",
+    "RemoteOps.App\\RemoteOps.StepResults.ps1",
+    "RemoteOps.App\\RemoteOps.Verification.ps1"
+  ],
+  "findings": [
+    {
+      "issue": "Source ancestor and destination root/ancestor junctions could be followed during verification",
+      "resolution": "Full ancestor chain validation added; local real-junction test failed before fix and passed after fix."
+    },
+    {
+      "issue": "Generic step decision could hide specific readback or command error",
+      "resolution": "Step details preserve provider and original command errors; regression demonstrated RED then GREEN."
+    }
+  ],
+  "live_targets": false
+}

@@ -1,0 +1,402 @@
+﻿{
+    "SubjectVersion":  28,
+    "DeliveryVersion":  28,
+    "Total":  19,
+    "Passed":  19,
+    "Failed":  0,
+    "UnexpectedBoundaryBlocks":  0,
+    "Seconds":  203.85,
+    "SampledPeakCombinedWorkingSetMiB":  687.1,
+    "Sandbox":  "C:\\Users\\OPERATOR\\AppData\\Local\\Temp\\RemoteOps-Lightweight-e8185be8a7d643bf82ed410de05a0afc",
+    "OutputRoot":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance",
+    "Cases":  [
+                  {
+                      "Id":  "01-stateful-chain",
+                      "Title":  "Registry + service condition, start, later state read, stop, startup and list",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  17.49
+                  },
+                  {
+                      "Id":  "02-target-scope",
+                      "Title":  "Match, nonmatch and missing value across three independent targets",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  17.56
+                  },
+                  {
+                      "Id":  "03-automatic-types",
+                      "Title":  "Automatic number and string registry comparison",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  12.6
+                  },
+                  {
+                      "Id":  "04-missing-not-equal",
+                      "Title":  "Missing registry value never satisfies NotEquals",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.25
+                  },
+                  {
+                      "Id":  "05-all-false",
+                      "Title":  "All requires every check",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  4.63
+                  },
+                  {
+                      "Id":  "06-any-true",
+                      "Title":  "Any permits one true check",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  6.95
+                  },
+                  {
+                      "Id":  "07-any-error",
+                      "Title":  "Any true never overrides a failed service read",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  5.04
+                  },
+                  {
+                      "Id":  "08-onfalse-stop",
+                      "Title":  "False Stop halts only that target",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  11.61
+                  },
+                  {
+                      "Id":  "09-action-error",
+                      "Title":  "Mutation failure halts chain and next target continues",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.67
+                  },
+                  {
+                      "Id":  "10-restart",
+                      "Title":  "Restart performs stop, observes stopped, then starts",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  7.32
+                  },
+                  {
+                      "Id":  "11-cancellation",
+                      "Title":  "Real cancellation request after first mutation prevents later work",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  6.53
+                  },
+                  {
+                      "Id":  "12-legacy-shared",
+                      "Title":  "Existing common condition evaluated once despite changed state",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.52
+                  },
+                  {
+                      "Id":  "13-approval-stale-cancel",
+                      "Title":  "Approval, stale snapshot and preview cancel never launch",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  1.38
+                  },
+                  {
+                      "Id":  "14-oracle-negative-controls",
+                      "Title":  "Suppressed mutation is detected by runner and stops later steps",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  35.53
+                  },
+                  {
+                      "Id":  "18-verification-read-error",
+                      "Title":  "Readback error stops only affected target; next target completes",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  11.36
+                  },
+                  {
+                      "Id":  "19-startup-no-op",
+                      "Title":  "Accepted startup command with unchanged mode fails verification",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  5.7
+                  },
+                  {
+                      "Id":  "15-service-startup",
+                      "Title":  "Startup change is observed by later startup and service existence condition",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.27
+                  },
+                  {
+                      "Id":  "16-key-and-service-existence",
+                      "Title":  "Registry key and service existence gate the correct target",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  10.05
+                  },
+                  {
+                      "Id":  "17-malformed-actual",
+                      "Title":  "Malformed observed numeric registry data stops target instead of matching",
+                      "Status":  "PASS",
+                      "Detail":  "Expected state, ordering and report assertions passed.",
+                      "Seconds":  9.45
+                  }
+              ],
+    "Runs":  [
+                 {
+                     "Case":  "01-stateful-chain",
+                     "RunId":  "GUI-20261016-002142-16695B",
+                     "CoordinatorPid":  16040,
+                     "WorkerPids":  [
+                                        16040,
+                                        29140,
+                                        25492,
+                                        11412,
+                                        11668,
+                                        3784,
+                                        44968
+                                    ],
+                     "Seconds":  15.36,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\01-stateful-chain"
+                 },
+                 {
+                     "Case":  "02-target-scope",
+                     "RunId":  "GUI-20261016-002158-5885AA",
+                     "CoordinatorPid":  18320,
+                     "WorkerPids":  [
+                                        18320,
+                                        1920,
+                                        16948,
+                                        5996,
+                                        37920,
+                                        12908,
+                                        2448,
+                                        4436
+                                    ],
+                     "Seconds":  16.58,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\02-target-scope"
+                 },
+                 {
+                     "Case":  "03-automatic-types",
+                     "RunId":  "GUI-20261016-002216-AE35EF",
+                     "CoordinatorPid":  32948,
+                     "WorkerPids":  [
+                                        32948,
+                                        5040,
+                                        3492,
+                                        15232,
+                                        5680,
+                                        1700
+                                    ],
+                     "Seconds":  11.78,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\03-automatic-types"
+                 },
+                 {
+                     "Case":  "04-missing-not-equal",
+                     "RunId":  "GUI-20261016-002228-8B1EFB",
+                     "CoordinatorPid":  33480,
+                     "WorkerPids":  [
+                                        33480,
+                                        14292,
+                                        31072,
+                                        9296
+                                    ],
+                     "Seconds":  8.36,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\04-missing-not-equal"
+                 },
+                 {
+                     "Case":  "05-all-false",
+                     "RunId":  "GUI-20261016-002237-F5B66D",
+                     "CoordinatorPid":  2356,
+                     "WorkerPids":  [
+                                        2356,
+                                        16436
+                                    ],
+                     "Seconds":  3.9,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\05-all-false"
+                 },
+                 {
+                     "Case":  "06-any-true",
+                     "RunId":  "GUI-20261016-002242-9E50F4",
+                     "CoordinatorPid":  43056,
+                     "WorkerPids":  [
+                                        43056,
+                                        46664,
+                                        45492
+                                    ],
+                     "Seconds":  6.06,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\06-any-true"
+                 },
+                 {
+                     "Case":  "07-any-error",
+                     "RunId":  "GUI-20261016-002249-F234B4",
+                     "CoordinatorPid":  14212,
+                     "WorkerPids":  [
+                                        14212,
+                                        8924
+                                    ],
+                     "Seconds":  4.08,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\07-any-error"
+                 },
+                 {
+                     "Case":  "08-onfalse-stop",
+                     "RunId":  "GUI-20261016-002255-C4FD06",
+                     "CoordinatorPid":  25972,
+                     "WorkerPids":  [
+                                        25972,
+                                        38560,
+                                        6832,
+                                        18372,
+                                        14220
+                                    ],
+                     "Seconds":  10.15,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\08-onfalse-stop"
+                 },
+                 {
+                     "Case":  "09-action-error",
+                     "RunId":  "GUI-20261016-002306-CB47C2",
+                     "CoordinatorPid":  13896,
+                     "WorkerPids":  [
+                                        13896,
+                                        8448,
+                                        15024,
+                                        37780
+                                    ],
+                     "Seconds":  8.67,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\09-action-error"
+                 },
+                 {
+                     "Case":  "10-restart",
+                     "RunId":  "GUI-20261016-002316-8E368E",
+                     "CoordinatorPid":  32532,
+                     "WorkerPids":  [
+                                        32532,
+                                        4356,
+                                        39664
+                                    ],
+                     "Seconds":  6.33,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\10-restart"
+                 },
+                 {
+                     "Case":  "11-cancellation",
+                     "RunId":  "GUI-20261016-002323-F5E60A",
+                     "CoordinatorPid":  14592,
+                     "WorkerPids":  [
+                                        14592,
+                                        7480
+                                    ],
+                     "Seconds":  5.14,
+                     "Cancelled":  true,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\11-cancellation"
+                 },
+                 {
+                     "Case":  "12-legacy-shared",
+                     "RunId":  "GUI-20261016-002329-F73DF4",
+                     "CoordinatorPid":  45304,
+                     "WorkerPids":  [
+                                        45304,
+                                        35852,
+                                        2440,
+                                        32920
+                                    ],
+                     "Seconds":  8.68,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\12-legacy-shared"
+                 },
+                 {
+                     "Case":  "14-oracle-negative-controls",
+                     "RunId":  "GUI-20261016-002341-D5DB8F",
+                     "CoordinatorPid":  13376,
+                     "WorkerPids":  [
+                                        13376,
+                                        37164
+                                    ],
+                     "Seconds":  34.21,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\14-oracle-negative-controls"
+                 },
+                 {
+                     "Case":  "18-verification-read-error",
+                     "RunId":  "GUI-20261016-002416-0243AA",
+                     "CoordinatorPid":  6920,
+                     "WorkerPids":  [
+                                        6920,
+                                        29376,
+                                        2656,
+                                        14192
+                                    ],
+                     "Seconds":  9.74,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\18-verification-read-error"
+                 },
+                 {
+                     "Case":  "19-startup-no-op",
+                     "RunId":  "GUI-20261016-002428-5419A8",
+                     "CoordinatorPid":  36432,
+                     "WorkerPids":  [
+                                        36432,
+                                        2436
+                                    ],
+                     "Seconds":  4.25,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\19-startup-no-op"
+                 },
+                 {
+                     "Case":  "15-service-startup",
+                     "RunId":  "GUI-20261016-002434-4A44C0",
+                     "CoordinatorPid":  39480,
+                     "WorkerPids":  [
+                                        39480,
+                                        29712,
+                                        45060,
+                                        23320
+                                    ],
+                     "Seconds":  7.67,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\15-service-startup"
+                 },
+                 {
+                     "Case":  "16-key-and-service-existence",
+                     "RunId":  "GUI-20261016-002443-23500C",
+                     "CoordinatorPid":  16240,
+                     "WorkerPids":  [
+                                        16240,
+                                        3756,
+                                        34392,
+                                        11048
+                                    ],
+                     "Seconds":  8.54,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\16-key-and-service-existence"
+                 },
+                 {
+                     "Case":  "17-malformed-actual",
+                     "RunId":  "GUI-20261016-002453-4357BD",
+                     "CoordinatorPid":  1880,
+                     "WorkerPids":  [
+                                        1880,
+                                        42388,
+                                        42252,
+                                        14084
+                                    ],
+                     "Seconds":  7.86,
+                     "Cancelled":  false,
+                     "Report":  "C:\\Users\\OPERATOR\\OneDrive\\Desktop\\RemoteOps\\YD_RemoteOps.App_v28\\docs\\v28-validation\\final\\acceptance\\17-malformed-actual"
+                 }
+             ],
+    "LiveEndpointTests":  false,
+    "ActualTransportTested":  false,
+    "CancellationButtonDialogTested":  false
+}

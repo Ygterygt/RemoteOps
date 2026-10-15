@@ -1,0 +1,80 @@
+﻿{
+    "Schema":  "RemoteOps.RecipeCheckpoint/1",
+    "RunId":  "GUI-20261016-002434-4A44C0",
+    "Snapshot":  {
+                     "Schema":  "RemoteOps.RecipeRun/1",
+                     "Definition":  {
+                                        "Schema":  "RemoteOps.Recipe/4",
+                                        "Id":  "d5bcbec4-5feb-4203-9a1c-5667d2ccd6b1",
+                                        "Revision":  1,
+                                        "Name":  "Offline 15-service-startup",
+                                        "Description":  "Stateful offline acceptance fixture",
+                                        "CreatedAt":  "2026-10-16T00:24:32.4917808+03:00",
+                                        "UpdatedAt":  "2026-10-16T00:24:32.7804951+03:00",
+                                        "Steps":  [
+                                                      {
+                                                          "Id":  "634289ff-ff30-44cf-93c1-74a1a8f38e4a",
+                                                          "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                                                          "Operation":  "ServiceStartup",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "StartupType":  "Manual"
+                                                                     },
+                                                          "AutoName":  true
+                                                      },
+                                                      {
+                                                          "Id":  "3f294579-7b12-4b52-bad9-75202a05f365",
+                                                          "Name":  "İşlem koşulu",
+                                                          "Operation":  "RecipeCondition",
+                                                          "Values":  {
+                                                                         "Match":  "All",
+                                                                         "OnFalse":  "Skip",
+                                                                         "Checks":  [
+                                                                                        {
+                                                                                            "Kind":  "Service",
+                                                                                            "Path":  "",
+                                                                                            "Name":  "OfflineDemo",
+                                                                                            "Operator":  "Startup",
+                                                                                            "ExpectedType":  "",
+                                                                                            "Expected":  "Manual"
+                                                                                        },
+                                                                                        {
+                                                                                            "Kind":  "Service",
+                                                                                            "Path":  "",
+                                                                                            "Name":  "OfflineDemo",
+                                                                                            "Operator":  "Exists",
+                                                                                            "ExpectedType":  "",
+                                                                                            "Expected":  ""
+                                                                                        }
+                                                                                    ]
+                                                                     }
+                                                      },
+                                                      {
+                                                          "Id":  "2de81185-deda-44c9-9fa2-d8e3ab1c8e5e",
+                                                          "Name":  "Servisi başlat · OfflineDemo",
+                                                          "Operation":  "ServiceControl",
+                                                          "Values":  {
+                                                                         "ServiceName":  "OfflineDemo",
+                                                                         "Action":  "Start"
+                                                                     },
+                                                          "AutoName":  true,
+                                                          "ConditionId":  "3f294579-7b12-4b52-bad9-75202a05f365"
+                                                      }
+                                                  ]
+                                    },
+                     "Targets":  [
+                                     "SIM-PC1"
+                                 ],
+                     "Identity":  {
+                                      "Domain":  "OFFLINE",
+                                      "UserName":  "operator",
+                                      "IsMain":  true
+                                  },
+                     "CleanupLogs":  false,
+                     "Hash":  "2FBE68512045911E6F47050369CD1C01A18A991B065F0D19F180DCDD2C19320E"
+                 },
+    "ReportRoot":  "C:\\Users\\OPERATOR\\AppData\\Local\\Temp\\RemoteOps-Lightweight-e8185be8a7d643bf82ed410de05a0afc\\data\\Logs\\Operations\\RecipeRun\\GUI-20261016-002434-4A44C0",
+    "Identity":  "OFFLINE\\operator",
+    "CoordinatorPid":  39480,
+    "CoordinatorStartUtc":  639276962740261079
+}

@@ -1,0 +1,31 @@
+﻿{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "3aa0f374-b4ba-4b3d-9701-40a92cd9ac0d",
+    "Revision":  1,
+    "Name":  "Offline 19-startup-no-op",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-16T00:24:26.7869587+03:00",
+    "UpdatedAt":  "2026-10-16T00:24:27.0256803+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "5e666435-c51e-4537-ae4d-d12a003c958c",
+                      "Name":  "Servis başlangıcını değiştir · OfflineDemo",
+                      "Operation":  "ServiceStartup",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "StartupType":  "Manual"
+                                 },
+                      "AutoName":  true
+                  },
+                  {
+                      "Id":  "f0550c2b-c1dd-404d-be54-c11c4582202d",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true
+                  }
+              ]
+}

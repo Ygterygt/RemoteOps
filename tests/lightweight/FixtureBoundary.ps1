@@ -1,4 +1,4 @@
-# Test-only remote boundary. Never dot-source into production.
+﻿# Test-only remote boundary. Never dot-source into production.
 function Invoke-OfflineBlocked {
  param([string]$Operation)
  $entry=[pscustomobject]@{PID=$PID;Operation=$Operation;Time=[datetime]::UtcNow.ToString('o')}
@@ -59,8 +59,9 @@ function Invoke-CimMethod {
  }
 }
 function Read-RemoteOpsConditionProbe {
- param($Check,[string]$ComputerName)
- Invoke-OfflineState $ComputerName 'Probe' {param($m)
+ param($Check,[string]$ComputerName,[switch]$Verification)
+ Invoke-OfflineState $ComputerName $(if($Verification){'Verify'}else{'Probe'}) {param($m)
+  if($Verification -and $m.PSObject.Properties['VerificationError'] -and $m.VerificationError){throw [string]$m.VerificationError}
   if($m.PSObject.Properties['ProbeErrors'] -and $m.ProbeErrors.PSObject.Properties[[string]$Check.Kind]){throw [string]$m.ProbeErrors.($Check.Kind)}
   if($m.PSObject.Properties['ProbeError'] -and $m.ProbeError){throw [string]$m.ProbeError}
   $p=[pscustomobject]@{Exists=$false;ValueType='';Value='';State='';Startup='';Detail='Missing'}
@@ -87,3 +88,5 @@ foreach($name in @('Get-WmiObject','Invoke-WmiMethod','Invoke-Command','Enter-PS
 
 
 
+
+function Read-RemoteOpsVerificationProbe {param($Check,[string]$ComputerName) Read-RemoteOpsConditionProbe $Check $ComputerName -Verification}

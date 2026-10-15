@@ -1,0 +1,61 @@
+﻿{
+    "ComputerName":  "SIM-PC1",
+    "OperationID":  "GUI-20261016-002428-5419A8",
+    "SnapshotHash":  "02E5E105D64383C0A037D350221190B5E83DDA1075784347E30B90E7491D7F18",
+    "Terminal":  true,
+    "SideEffectActive":  false,
+    "StepIndex":  1,
+    "Rows":  [
+                 {
+                     "ServiceName":  "OfflineDemo",
+                     "Action":  "StartupType",
+                     "OldState":  "Stopped",
+                     "OldStartMode":  "Auto",
+                     "NewStartMode":  "demand",
+                     "Status":  "Success",
+                     "ErrorDetail":  "",
+                     "VerificationExpected":  "OfflineDemo · Başlangıç: Manual",
+                     "VerificationDetail":  "Komut kabul edildi ancak beklenen sonuç görülmedi. Bu hedefin sonraki adımları çalıştırılmaz.",
+                     "VerifiedAt":  "2026-10-15T21:24:31.4076390Z",
+                     "VerificationObserved":  "State=Stopped; Startup=Automatic",
+                     "VerificationStatus":  "Failed",
+                     "CommandStatus":  "Success",
+                     "StepName":  "Servis başlangıcını değiştir · OfflineDemo",
+                     "ComputerName":  "SIM-PC1",
+                     "StepIndex":  1,
+                     "StepResultReason":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                     "RecipeRevision":  1,
+                     "StepId":  "5e666435-c51e-4537-ae4d-d12a003c958c",
+                     "OperationID":  "GUI-20261016-002428-5419A8",
+                     "ParentRunId":  "GUI-20261016-002428-5419A8",
+                     "RecipeName":  "Offline 19-startup-no-op",
+                     "StepOperationID":  "GUI-20261016-002428-5419A8-0001-S01",
+                     "Operation":  "ServiceStartup",
+                     "OriginalOperationID":  "",
+                     "RecipeId":  "3aa0f374-b4ba-4b3d-9701-40a92cd9ac0d"
+                 },
+                 {
+                     "ComputerName":  "SIM-PC1",
+                     "OperationID":  "GUI-20261016-002428-5419A8",
+                     "ParentRunId":  "GUI-20261016-002428-5419A8",
+                     "StepOperationID":  "GUI-20261016-002428-5419A8-0001-S02",
+                     "StepId":  "f0550c2b-c1dd-404d-be54-c11c4582202d",
+                     "StepIndex":  2,
+                     "Operation":  "ServiceControl",
+                     "StepName":  "Servisi başlat · OfflineDemo",
+                     "Status":  "NotRun",
+                     "ErrorDetail":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                     "StepResultReason":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı."
+                 }
+             ],
+    "Outcome":  {
+                    "ComputerName":  "SIM-PC1",
+                    "Outcome":  "Error",
+                    "CompletedAt":  "2026-10-16T00:24:31.8804747+03:00",
+                    "Detail":  "Komut kabul edildi ancak beklenen sonuç oluşmadı. Bu hedefin sonraki adımları çalıştırılmadı.",
+                    "RecipeName":  "Offline 19-startup-no-op",
+                    "RecipeId":  "3aa0f374-b4ba-4b3d-9701-40a92cd9ac0d",
+                    "RecipeRevision":  1
+                },
+    "UpdatedAt":  "2026-10-16T00:24:31.8804747+03:00"
+}

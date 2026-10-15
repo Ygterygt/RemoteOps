@@ -1,0 +1,41 @@
+﻿{
+    "Schema":  "RemoteOps.Recipe/4",
+    "Id":  "2d26f032-5fd6-4939-9dc9-6edbc546d658",
+    "Revision":  1,
+    "Name":  "Offline 17-malformed-actual",
+    "Description":  "Stateful offline acceptance fixture",
+    "CreatedAt":  "2026-10-16T00:24:51.8131366+03:00",
+    "UpdatedAt":  "2026-10-16T00:24:51.9771187+03:00",
+    "Steps":  [
+                  {
+                      "Id":  "a628f754-5210-4686-9a85-8a1a4d54baf0",
+                      "Name":  "İşlem koşulu",
+                      "Operation":  "RecipeCondition",
+                      "Values":  {
+                                     "Match":  "All",
+                                     "OnFalse":  "Skip",
+                                     "Checks":  [
+                                                    {
+                                                        "Kind":  "RegistryValue",
+                                                        "Path":  "HKLM\\SOFTWARE\\Fixture",
+                                                        "Name":  "Version",
+                                                        "Operator":  "Equals",
+                                                        "ExpectedType":  "Auto",
+                                                        "Expected":  "1"
+                                                    }
+                                                ]
+                                 }
+                  },
+                  {
+                      "Id":  "97927f87-1be1-4514-b675-c917acba6d40",
+                      "Name":  "Servisi başlat · OfflineDemo",
+                      "Operation":  "ServiceControl",
+                      "Values":  {
+                                     "ServiceName":  "OfflineDemo",
+                                     "Action":  "Start"
+                                 },
+                      "AutoName":  true,
+                      "ConditionId":  "a628f754-5210-4686-9a85-8a1a4d54baf0"
+                  }
+              ]
+}

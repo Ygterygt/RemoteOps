@@ -1,6 +1,8 @@
 ﻿# RemoteOps doküman dizini
 
-15 Ekim 2026 · YD_RemoteOps.App_v27
+[v28 yeni özellikler ve test kapsamı](V28_TEST_RAPORU.md) · [v28 sonuç ekranı](screenshots-v28/v28-adim-sonuclari.png)
+
+16 Ekim 2026 · YD_RemoteOps.App_v28
 
 Şirket pilotundan önce kullanım için kılavuzu, sistemin tamamını anlamak için teknik el kitabını okuyun. Markdown kaynaklar ve PDF'ler aynı güncel yapıyı anlatır. Görseller örnek verilerle gerçek WPF arayüzünden üretilmiştir.
 
@@ -10,8 +12,7 @@
 | [Teknik el kitabı](TEKNIK_EL_KITABI.md) | Bütün dosyalar, süreç/hesaplar, uzak yöntemler, 26 operasyon, veri yolları, sınırlar ve bakım. | [El kitabı](RemoteOps_Teknik_El_Kitabi.pdf) |
 | [Çalışma mantığı](CALISMA_MANTIGI.md) | Mimari ve paket akışının kısa açıklaması. | [Akış rehberi](RemoteOps_Calisma_Mantigi.pdf) |
 | [İnceleme raporu](INCELEME_RAPORU.md) | Güncel yerel doğrulamalar, bilinen test referans sorunu ve pilot sınırı. | [İnceleme](RemoteOps_Inceleme_Raporu.pdf) |
-| [Operasyon reçeteleri](GELECEK_OPERASYON_OLUSTUR.md) | Güncel reçete akışı ve tarihsel geliştirme kararları. | [Tasarım](RemoteOps_Operasyon_Olustur_Tasarim.pdf) |
-| [v27 hafif kabul testi](V27_HAFIF_TEST_RAPORU.md) | 17 operasyon senaryosu, yerel model ve bağımsız kanıt kontrolü. | [HTML](V27_HAFIF_TEST_RAPORU.html) |
+| [Gelecek operasyon tasarımı](GELECEK_OPERASYON_OLUSTUR.md) | Henüz uygulanmamış genel reçete motoru; mevcut paket yönetiminden farkı. | [Tasarım](RemoteOps_Operasyon_Olustur_Tasarim.pdf) |
 | [Pilot kontrolü](PAKET_YONETIMI_PILOT_KONTROLU.md) | Şirket testinde doldurulacak kabul senaryoları. | Markdown kayıt tablosu. |
 | [Paket geliştirme planı](PAKET_YONETIMI_GELISTIRME_PLANI.md) | Uygulanmış paket tasarımının kararı ve kapsamı. | Markdown tasarım kaydı. |
 
@@ -23,7 +24,7 @@ Runtime veri kökü C:\Temp\YD_RemoteOps.App; kişisel profiller/ayarlar/katalog
 
 ## Doküman bakımı
 
-PDF üreticisi tools/build_documents.py, ekran üreticisi tools/capture_documentation.ps1'dir. Paket görselleri tests/RemoteOps.PackageLibraryUi.Tests.ps1 -PreviewDirectory docs/paket-ui-preview ile üretilir. Güncel hafif test özeti V27_TEST_SUMMARY.json içindedir; önceki doğrulama dosyaları tarihsel kanıttır. docs/superpowers altındaki plan/inceleme kayıtları tarihsel geliştirme kanıtıdır; içlerindeki önceki klasör/yedek yolları güncel runtime yolu değildir.
+PDF üreticisi tools/build_documents.py, ekran üreticisi tools/capture_documentation.ps1'dir. Paket görselleri tests/RemoteOps.PackageLibraryUi.Tests.ps1 -PreviewDirectory docs/paket-ui-preview ile üretilir. Güncel yerel test kayıtları V18_TEST_RESULTS.csv içindedir; önceki doğrulama dosyaları tarihsel kanıttır. docs/superpowers altındaki plan/inceleme kayıtları tarihsel geliştirme kanıtıdır; içlerindeki önceki klasör/yedek yolları güncel runtime yolu değildir.
 
 14 Ekim kapsamlı güvenilirlik denetimi: [bulgular ve doğrulamalar](INCELEME_RAPORU.md), [tam test çıktısı](KAPSAMLI_TEST_SONUCLARI.csv). Tarihsel v11 regresyon turu toplam 50 test dosyasını kapsar.
 
